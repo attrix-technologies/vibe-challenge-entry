@@ -6,16 +6,36 @@
 
 Just your Geotab credentials. That's it.
 
+## ⚠️ CRITICAL SECURITY WARNING
+
+**NEVER share your production Geotab account credentials with Claude or any AI tool.**
+
+**ONLY use this guide with:**
+- ✅ Demo accounts (create free at https://my.geotab.com/registration.html)
+- ✅ Test/sandbox databases specifically created for development
+- ✅ Disposable credentials that you can immediately delete after
+
+**NEVER use:**
+- ❌ Your production fleet management account
+- ❌ Credentials with access to real company data
+- ❌ Any account you can't immediately delete/rotate
+
+**Why this matters:** When you share credentials with an AI tool, those credentials are processed by the AI service. While Claude doesn't intentionally store credentials between sessions, you should treat this the same as sharing your password with any third party - only do it with accounts that contain no sensitive data.
+
+**For learning and hackathons:** Create a separate demo account or ask your IT team for test environment credentials specifically for this purpose.
+
 ## Step 1: Share Your Credentials (10 seconds)
 
-Copy this template, fill in your details, and paste it to Claude:
+Copy this template, fill in your **demo/test account** details, and paste it to Claude:
 
 ```
 I want to explore the Geotab API. Here are my credentials:
 
-Database: your_database_name
-Username: your_email@domain.com
-Password: your_password
+⚠️ Using DEMO/TEST account only - NOT production credentials
+
+Database: your_demo_database_name
+Username: your_demo_email@domain.com
+Password: your_demo_password
 Server: my.geotab.com
 
 Help me connect and show me what data is available.
@@ -91,8 +111,8 @@ error handling, and comments.
 ```
 I want to explore Geotab API.
 
-Database: demo_database
-Username: demo@example.com
+Database: demo_database          ⚠️ DEMO ACCOUNT ONLY
+Username: demo@example.com        ⚠️ NOT PRODUCTION
 Password: Demo123!
 Server: my.geotab.com
 
@@ -215,16 +235,21 @@ python fleet_dashboard.py
 
 ## Security Note
 
-**Sharing credentials with Claude is safe** because:
+**⚠️ CRITICAL: Only use demo/test accounts with AI tools. NEVER production credentials.**
+
+While sharing credentials with Claude for learning purposes can work:
 - Claude doesn't store your credentials between sessions
 - All communication is encrypted (HTTPS)
 - Claude uses credentials only to help you
-- You can rotate passwords anytime at my.geotab.com
 
-**Best practice:**
-- Use a demo/test account for learning
-- Rotate passwords after hackathons
-- Use production credentials only when needed
+**REQUIRED security practices:**
+- ✅ **ALWAYS** use a dedicated demo/test account for learning
+- ✅ **ALWAYS** use disposable credentials that you can immediately delete
+- ✅ Rotate/delete test account passwords after hackathons
+- ❌ **NEVER** use production Geotab account credentials
+- ❌ **NEVER** share credentials that have access to real company data
+
+**Create a demo account:** https://my.geotab.com/registration.html (takes 2 minutes)
 
 ## Common Questions
 
@@ -285,14 +310,18 @@ Want more prompts for specific use cases? Check out [CLAUDE_PROMPTS.md](./CLAUDE
 
 ## Ready?
 
+⚠️ **Remember:** Only use demo/test account credentials. NEVER production credentials.
+
 Start now with this exact prompt:
 
 ```
 I want to explore the Geotab API and build something cool.
 
-Database: [your_database]
-Username: [your_email]
-Password: [your_password]
+⚠️ Using DEMO/TEST account only - NOT production credentials
+
+Database: [your_demo_database]
+Username: [your_demo_email]
+Password: [your_demo_password]
 Server: my.geotab.com
 
 Connect to my fleet, show me what data I have, and suggest
