@@ -59,25 +59,31 @@ Custom buttons that appear in MyGeotab pages to:
 
 ## Level 1: Your First Add-In (5 Minutes)
 
-Let's prove Add-Ins work by creating a simple one that displays a custom page.
+Let's prove Add-Ins work by creating a simple one that displays YOUR fleet information.
 
 ### Step 1: Copy This Configuration
 
+This is a complete, working Add-In that will show your username and database name:
+
 ```json
 {
-    "name": "My First Fleet Add-In",
-    "supportEmail": "your.email@example.com",
+    "name": "Hello World Embedded",
+    "supportEmail": "test@example.com",
     "version": "1.0",
     "items": [{
-        "url": "https://geotab.github.io/sdk/src/software/introduction/developing-addins.html",
         "path": "ActivityLink",
         "menuName": {
-            "en": "My Test Page"
-        }
+            "en": "Hello World"
+        },
+        "page": "helloWorld"
     }],
-    "files": {}
+    "files": {
+        "helloWorld.html": "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Hello World</title><style>body{font-family:Arial,sans-serif;padding:40px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;}#container{background:white;padding:60px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.3);text-align:center;max-width:600px;}h1{color:#2c3e50;margin-bottom:20px;font-size:2.5rem;}p{color:#6c757d;font-size:1.2rem;margin-bottom:10px;}#api-info{background:#f8f9fa;padding:20px;border-radius:8px;margin-top:30px;border-left:4px solid #667eea;}#api-info h2{color:#667eea;margin-bottom:15px;font-size:1.3rem;}#user-name,#database{font-weight:bold;color:#2c3e50;}</style></head><body><div id='container'><h1>🎉 Success!</h1><p>Your Geotab Add-In is working!</p><p>You just extended MyGeotab with custom code.</p><div id='api-info'><h2>Connection Info</h2><p>User: <span id='user-name'>Loading...</span></p><p>Database: <span id='database'>Loading...</span></p></div></div><script>function initialize(api,state,callback){console.log('Add-In initialized!');window.geotabApi=api;api.getSession(function(credentials,server){document.getElementById('user-name').textContent=credentials.userName;document.getElementById('database').textContent=credentials.database;});callback();}function focus(api,state){console.log('Add-In focused');}function blur(api,state){console.log('Add-In blurred');}</script></body></html>"
+    }
 }
 ```
+
+**Note**: The HTML is minified (all on one line) to work properly in JSON. You can see the readable version in `examples/addins/hello-world-embedded-readable.html`.
 
 ### Step 2: Install It
 
@@ -91,14 +97,23 @@ Let's prove Add-Ins work by creating a simple one that displays a custom page.
 
 ### Step 3: See It Work
 
-Look at the left-hand navigation menu. You should see a new entry called **"My Test Page"** right after the Activity section. Click it!
+Look at the left-hand navigation menu. You should see a new entry called **"Hello World"** right after the Activity section. Click it!
+
+You should see:
+- A success message
+- Your MyGeotab username
+- Your database name
 
 **What just happened?**
-- You told MyGeotab to add a navigation entry
-- The entry links to an external webpage
-- MyGeotab embedded that page into its interface
+- You created an Add-In with embedded HTML/CSS/JavaScript
+- The JavaScript accessed the MyGeotab API to get your session info
+- MyGeotab rendered your custom page in its interface
 
-**Next**: Let's build a real Add-In with your own content.
+**No external hosting needed!** Everything is in that JSON configuration.
+
+**Troubleshooting**: If you see "Issue Loading This Page", check the [Troubleshooting Guide](../../examples/addins/TROUBLESHOOTING.md).
+
+**Next**: Let's understand what's in that code and build something more advanced.
 
 ---
 
@@ -389,6 +404,8 @@ Build a Geotab Add-In that:
 ## Debugging Tips
 
 Add-Ins run in your browser, so use browser developer tools to debug.
+
+**Having issues?** See the comprehensive [Troubleshooting Guide](../../examples/addins/TROUBLESHOOTING.md) for common problems and solutions.
 
 ### Open Browser Console
 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Hello World</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #container {
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        p {
+            color: #6c757d;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        #api-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #667eea;
+        }
+        #api-info h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        #user-name, #database {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div id='container'>
+        <h1>🎉 Success!</h1>
+        <p>Your Geotab Add-In is working!</p>
+        <p>You just extended MyGeotab with custom code.</p>
+
+        <div id='api-info'>
+            <h2>Connection Info</h2>
+            <p>User: <span id='user-name'>Loading...</span></p>
+            <p>Database: <span id='database'>Loading...</span></p>
+        </div>
+    </div>
+
+    <script>
+        // REQUIRED: MyGeotab lifecycle methods
+
+        function initialize(api, state, callback) {
+            console.log('Add-In initialized!');
+
+            // Store API reference
+            window.geotabApi = api;
+
+            // Get user session info
+            api.getSession(function(credentials, server) {
+                document.getElementById('user-name').textContent = credentials.userName;
+                document.getElementById('database').textContent = credentials.database;
+            });
+
+            // IMPORTANT: Must call callback!
+            callback();
+        }
+
+        function focus(api, state) {
+            console.log('Add-In focused');
+        }
+
+        function blur(api, state) {
+            console.log('Add-In blurred');
+        }
+    </script>
+</body>
+</html>

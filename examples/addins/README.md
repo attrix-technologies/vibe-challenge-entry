@@ -8,6 +8,26 @@ Geotab Add-Ins are custom pages and buttons that integrate directly into the MyG
 
 **Learn more**: [Geotab Add-Ins Guide](../../guides/GEOTAB_ADDINS.md)
 
+## Quick Start Files
+
+### [hello-world-embedded.json](./hello-world-embedded.json)
+**Start here!** A minimal working Add-In that proves everything works. Just copy-paste into MyGeotab.
+
+Shows:
+- Success message
+- Your username and database from the API
+- Demonstrates the required lifecycle methods
+
+**This is guaranteed to work.** If it doesn't, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
+
+### [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+Comprehensive guide for fixing common Add-In issues:
+- "Issue Loading This Page" error
+- Menu items not appearing
+- GitHub Pages problems
+- JavaScript errors
+- Step-by-step debugging
+
 ## Examples
 
 ### [Simple Dashboard](./simple-dashboard/)

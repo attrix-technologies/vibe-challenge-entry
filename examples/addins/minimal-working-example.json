@@ -1,0 +1,13 @@
+{
+    "name": "Test Add-In - Hello World",
+    "supportEmail": "test@example.com",
+    "version": "1.0",
+    "items": [{
+        "path": "ActivityLink",
+        "menuName": {
+            "en": "Hello World Test"
+        },
+        "url": "https://www.example.com"
+    }],
+    "files": {}
+}
