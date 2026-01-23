@@ -1,14 +1,13 @@
 // Minimal test mimicking Heat Map structure
 "use strict";
 
-// CRITICAL: Name should match the HTML filename (without extension)
-// File: minimal-test.html -> geotab.addin.minimaltest or geotab.addin['minimal-test']
-geotab.addin.minimaltest = function() {
-    console.log('minimaltest Add-In loading...');
+// Register under BOTH possible names based on filename
+var addinImplementation = function() {
+    console.log('minimal-test Add-In loading...');
 
     return {
         initialize: function(api, state, callback) {
-            console.log('🎉🎉🎉 minimaltest initialize() called!');
+            console.log('🎉🎉🎉 initialize() called!');
 
             document.body.innerHTML = '<h1>SUCCESS!</h1><pre id="output"></pre>';
             var output = document.getElementById('output');
@@ -30,9 +29,13 @@ geotab.addin.minimaltest = function() {
         },
 
         focus: function(api, state) {
-            console.log('minimaltest focus() called');
+            console.log('focus() called');
         }
     };
-}();
+};
 
-console.log('minimaltest registered');
+// Register under multiple possible names
+geotab.addin.minimaltest = addinImplementation();
+geotab.addin['minimal-test'] = addinImplementation();
+
+console.log('Registered as: minimaltest and minimal-test');
