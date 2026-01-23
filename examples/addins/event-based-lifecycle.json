@@ -1,0 +1,18 @@
+{
+    "name": "EventBasedLifecycle",
+    "supportEmail": "test@example.com",
+    "version": "1.0",
+    "items": [{
+        "path": "ActivityLink",
+        "menuName": {
+            "en": "Event Lifecycle"
+        },
+        "url": "lifecycle.html"
+    }],
+    "files": {
+        "lifecycle.html": "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Event-Based Lifecycle</title><style>body{font-family:Arial,sans-serif;padding:20px;background:#f8f9fa;}#log{background:white;border:1px solid #ddd;border-radius:8px;padding:15px;max-height:400px;overflow-y:auto;font-family:monospace;font-size:12px;}p{margin:3px 0;}</style></head><body><h1>Event-Based Lifecycle Test</h1><div id='log'></div><script>var log=document.getElementById('log');function addLog(msg){var p=document.createElement('p');p.textContent=new Date().toLocaleTimeString()+' - '+msg;log.appendChild(p);log.scrollTop=log.scrollHeight;console.log(msg);}addLog('Page loaded');window.addEventListener('focus',function(event){addLog('FOCUS event fired!');addLog('event.detail: '+JSON.stringify(event.detail));if(event.detail&&event.detail.api){addLog('API in event.detail!');var api=event.detail.api;api.getSession(function(cred){addLog('SUCCESS! User: '+cred.userName+', DB: '+cred.database);},function(err){addLog('Session error: '+err);});}else{addLog('No API in event.detail');}},false);window.addEventListener('blur',function(event){addLog('BLUR event fired!');addLog('event.detail: '+JSON.stringify(event.detail));},false);var customEvents=['initialize','initialized','addinLoad','addinReady'];customEvents.forEach(function(name){window.addEventListener(name,function(event){addLog('Event: '+name);addLog('event.detail: '+JSON.stringify(event.detail));if(event.detail&&event.detail.api){addLog('Found API in '+name+' event!');var api=event.detail.api;api.getSession(function(cred){addLog('User: '+cred.userName);},function(err){addLog('Error: '+err);});}},false);});addLog('Event listeners registered');addLog('Waiting for events...');</script></body></html>",
+        "translations": {
+            "en.json": "{\"name\":\"Event Lifecycle Test\"}"
+        }
+    }
+}
