@@ -5,8 +5,8 @@
     <title>API Test</title>
 </head>
 <body>
-    <h1>GitHub Pages API Test v3.0</h1>
-    <p><strong>Version: 2026-01-23 19:50 UTC</strong></p>
+    <h1>GitHub Pages API Test v4.0</h1>
+    <p><strong>Version: 2026-01-23 19:55 UTC (with translations file)</strong></p>
     <pre id="output"></pre>
 
     <script>
@@ -17,13 +17,13 @@
             document.getElementById('output').textContent = output;
         }
 
-        log('VERSION: 2026-01-23 19:50 UTC');
+        log('VERSION: v4.0 - 2026-01-23 19:55 UTC');
         log('1. Page loaded');
         log('2. JavaScript running');
 
         // Define initialize as global function
         window.initialize = function(api, state, callback) {
-            log('3. ✅ initialize() CALLED!');
+            log('3. ✅✅✅ initialize() CALLED!');
             log('4. API: ' + (api ? 'EXISTS' : 'NULL'));
 
             if (api) {
