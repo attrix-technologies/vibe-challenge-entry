@@ -1,0 +1,18 @@
+{
+    "name": "DeepExplore",
+    "supportEmail": "test@example.com",
+    "version": "1.0",
+    "items": [{
+        "path": "ActivityLink",
+        "menuName": {
+            "en": "Deep Explore"
+        },
+        "url": "deep.html"
+    }],
+    "files": {
+        "deep.html": "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Deep Explore</title></head><body><h1>Deep Exploration</h1><div id='log'></div><script>var log=document.getElementById('log');function addLog(msg){console.log(msg);log.innerHTML+='<p style=\"margin:2px 0;font-size:12px;\">'+msg+'</p>';}addLog('=== Exploring window.parent.geotab ===');var g=window.parent.geotab;if(g.provide){addLog('geotab.provide: function');}if(g.getGlobalObject){addLog('geotab.getGlobalObject: function');try{var globalObj=g.getGlobalObject();addLog('Global object type: '+typeof globalObj);if(globalObj){addLog('Global object keys: '+Object.keys(globalObj).slice(0,10).join(', ')+'...');}}catch(e){addLog('getGlobalObject error: '+e.message);}}addLog('');addLog('=== Looking for API in window ===');var checkForApi=function(obj,path){if(!obj)return;if(obj.call&&obj.multiCall){addLog('FOUND API at: '+path);addLog('API methods: call, multiCall, getSession');try{obj.getSession(function(cred){addLog('SUCCESS! User: '+cred.userName+', DB: '+cred.database);},function(err){addLog('getSession error: '+err);});}catch(e){addLog('getSession exception: '+e.message);}return true;}return false;};if(!checkForApi(window.api,'window.api')){if(!checkForApi(window.parent.api,'window.parent.api')){if(!checkForApi(window.top.api,'window.top.api')){addLog('No API found in standard locations');addLog('Checking geotab object...');for(var key in g){if(g[key]&&typeof g[key]==='object'&&g[key].call){addLog('Found object with call method: geotab.'+key);checkForApi(g[key],'window.parent.geotab.'+key);break;}}}}}addLog('');addLog('=== Done ===');</script></body></html>",
+        "translations": {
+            "en.json": "{\"name\":\"Deep Explore\"}"
+        }
+    }
+}
