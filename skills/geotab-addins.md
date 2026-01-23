@@ -305,24 +305,7 @@ initialize: function(api, state, callback) {
 }
 ```
 
-### 2. Inconsistent Naming
-**Problem:** Add-In name doesn't match between JS and configuration
-**Solution:** Use exact same name in both places
-
-```javascript
-// In JS:
-geotab.addin["fleet-dashboard"] = function() { /*...*/ };
-
-// In configuration:
-{
-  "items": [{
-    "menuName": {"en": "Fleet Dashboard"},  // Display name (can differ)
-    "url": "https://.../fleet-dashboard.html"  // Should match addin name
-  }]
-}
-```
-
-### 3. Not Handling Errors
+### 2. Not Handling Errors
 **Problem:** API calls fail silently
 **Solution:** Always provide error callback
 
@@ -344,7 +327,7 @@ api.call("Get", {typeName: "Device"},
 );
 ```
 
-### 4. Using Immediate Invocation
+### 3. Using Immediate Invocation
 **Problem:** Using `}();` instead of `};` when registering the Add-In
 **Solution:** Assign the function itself, not its result
 
@@ -356,7 +339,7 @@ geotab.addin["name"] = function() { return {...}; }();
 geotab.addin["name"] = function() { return {...}; };
 ```
 
-### 5. Using Modern JS Features
+### 4. Using Modern JS Features
 **Problem:** MyGeotab may run in older browsers
 **Solution:** Use ES5 JavaScript (no arrow functions, const/let, template literals)
 
@@ -379,13 +362,11 @@ api.call("Get", {typeName: "Device"}, function(devices) {
 When an Add-In doesn't work:
 
 1. **Check browser console** (F12) for JavaScript errors
-2. **Verify the pattern** - no `()` after the function assignment
-3. **Check callback** - are you calling `callback()` in initialize?
-4. **Verify naming** - does `geotab.addin["name"]` match your configuration?
-5. **Check GitHub Pages** - is the URL accessible? Wait 2-3 minutes after push
-6. **Test the URL** - open it directly in browser, does it load?
-7. **Check configuration** - valid JSON? Correct URL?
-8. **Hard refresh** - Clear cache with Ctrl+Shift+R
+2. **Check callback** - are you calling `callback()` in initialize?
+3. **Check GitHub Pages** - is the URL accessible? Wait 2-3 minutes after push
+4. **Test the URL** - open it directly in browser, does it load?
+5. **Check configuration** - valid JSON? Correct URL?
+6. **Hard refresh** - Clear cache with Ctrl+Shift+R
 
 ## Complete Working Example
 

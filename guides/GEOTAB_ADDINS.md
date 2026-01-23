@@ -67,7 +67,7 @@ When working with Claude or other AI assistants, tell them:
 Use the geotab-addins skill to help me build a Geotab Add-In
 ```
 
-The skill file (`/skills/geotab-addins.md`) teaches AIs the correct patterns and common mistakes.
+The [skill file](/skills/geotab-addins.md) teaches AIs the correct patterns and common mistakes.
 
 ### Step 2: Describe What You Want
 
@@ -281,7 +281,7 @@ show vehicle locations as pins on a map with different colors for each group.
 
 **Tools:**
 - [GitHub Pages](https://pages.github.com/) - Free HTTPS hosting
-- `/skills/geotab-addins.md` - AI skill file (use this when prompting)
+- [Geotab Add-Ins Skill](/skills/geotab-addins.md) - AI skill file (use this when prompting)
 
 ---
 
