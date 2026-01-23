@@ -1,0 +1,18 @@
+{
+    "name": "ExploreAddinObject",
+    "supportEmail": "test@example.com",
+    "version": "1.0",
+    "items": [{
+        "path": "ActivityLink",
+        "menuName": {
+            "en": "Explore Addin"
+        },
+        "url": "explore.html"
+    }],
+    "files": {
+        "explore.html": "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Explore Addin Object</title></head><body><h1>Exploring geotab.addin</h1><div id='log'></div><script>var log=document.getElementById('log');function addLog(msg){console.log(msg);log.innerHTML+='<p>'+msg+'</p>';}addLog('Page loaded');var geotabAddin=window.parent.geotab.addin;addLog('geotab.addin type: '+typeof geotabAddin);if(geotabAddin){addLog('geotab.addin keys: '+Object.keys(geotabAddin).join(', '));if(typeof geotabAddin==='object'){for(var key in geotabAddin){var val=geotabAddin[key];addLog(key+': '+typeof val);}}if(geotabAddin.parentNode){addLog('parentNode exists');addLog('parentNode keys: '+Object.keys(geotabAddin.parentNode).join(', '));}if(geotabAddin.container){addLog('container exists');}if(geotabAddin.api){addLog('API EXISTS!');addLog('api keys: '+Object.keys(geotabAddin.api).join(', '));}if(geotabAddin.getCurrentApi){addLog('getCurrentApi method exists');try{var api=geotabAddin.getCurrentApi();addLog('Got API: '+(api?'YES':'NO'));if(api){addLog('API keys: '+Object.keys(api).join(', '));}}catch(e){addLog('getCurrentApi error: '+e.message);}}}else{addLog('geotab.addin is null/undefined');}</script></body></html>",
+        "translations": {
+            "en.json": "{\"name\":\"Explore Addin Object\"}"
+        }
+    }
+}
