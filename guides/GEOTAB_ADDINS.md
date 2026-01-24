@@ -81,7 +81,13 @@ Copy-paste this into MyGeotab (no hosting required):
   "name": "Embedded Fleet Stats",
   "supportEmail": "test@example.com",
   "version": "1.0",
-  "items": [],
+  "items": [{
+    "page": "fleet",
+    "path": "ActivityLink/",
+    "menuName": {
+      "en": "Fleet Stats"
+    }
+  }],
   "files": {
     "fleet.html": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Fleet</title><style>body{font-family:Arial;padding:20px;background:#f5f5f5;}h1{color:#333;}.info{margin:15px 0;padding:10px;background:#e8f4f8;border-radius:4px;}</style></head><body><h1>Fleet Statistics</h1><div id='status'>Initializing...</div><div id='info'></div><script src='app.js'></script></body></html>",
     "js": {

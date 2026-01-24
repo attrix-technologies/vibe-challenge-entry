@@ -45,7 +45,13 @@ This add-in demonstrates:
 ```json
 {
   "name": "Add-In name",
-  "items": [],  // Empty - not using external hosting
+  "items": [{
+    "page": "embedded-fleet",
+    "path": "ActivityLink/",
+    "menuName": {
+      "en": "Fleet Stats"
+    }
+  }],
   "files": {
     "embedded-fleet.html": "HTML content as a string",
     "js": {
@@ -58,6 +64,13 @@ This add-in demonstrates:
   }
 }
 ```
+
+**Key Points:**
+- `items[].page`: References the HTML file name without the `.html` extension
+- The HTML file in `files` must match: `{page}.html`
+- Example: `"page": "embedded-fleet"` → `"embedded-fleet.html"` in files
+- `path`: Where the add-in appears in MyGeotab menu (usually "ActivityLink/")
+- `menuName`: The text shown in the menu
 
 The HTML file references JS/CSS files by name:
 ```html
@@ -110,6 +123,19 @@ The AI will generate the properly formatted embedded JSON for you.
 - Version control important
 
 ## Common Issues
+
+**"The Add-In must have at least one custom page or button"**
+- This means your `items` array is empty: `"items": []`
+- You MUST have at least one item that references your HTML file
+- Example fix:
+  ```json
+  "items": [{
+    "page": "mypage",
+    "path": "ActivityLink/",
+    "menuName": {"en": "My Page"}
+  }]
+  ```
+- The `page` value must match the HTML filename without `.html`
 
 **Add-In doesn't appear?**
 - Make sure you clicked "Save"

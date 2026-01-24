@@ -120,7 +120,13 @@ Instead of hosting files externally, you can embed everything directly in the JS
   "name": "Embedded Add-In",
   "supportEmail": "you@example.com",
   "version": "1.0",
-  "items": [],
+  "items": [{
+    "page": "page",
+    "path": "ActivityLink/",
+    "menuName": {
+      "en": "My Add-In"
+    }
+  }],
   "files": {
     "page.html": "<html><head><title>My Add-In</title></head><body><div id=\"app\">Loading...</div><script src=\"main.js\"></script><link rel=\"stylesheet\" href=\"styles.css\"></body></html>",
     "js": {
@@ -134,6 +140,11 @@ Instead of hosting files externally, you can embed everything directly in the JS
 }
 ```
 
+**Key Points:**
+- `items[].page`: References the file name without `.html` extension
+- The HTML file must be named `{page}.html` in the `files` object
+- Example: `"page": "page"` references `"page.html"` in files
+
 ### Complete Working Example
 
 This embedded add-in shows vehicle count using the MyGeotab API:
@@ -143,7 +154,13 @@ This embedded add-in shows vehicle count using the MyGeotab API:
   "name": "Embedded Fleet Stats",
   "supportEmail": "test@example.com",
   "version": "1.0",
-  "items": [],
+  "items": [{
+    "page": "fleet-stats",
+    "path": "ActivityLink/",
+    "menuName": {
+      "en": "Fleet Stats"
+    }
+  }],
   "files": {
     "fleet-stats.html": "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Fleet Stats</title><link rel=\"stylesheet\" href=\"styles.css\"></head><body><h1>Fleet Statistics</h1><div id=\"status\">Initializing...</div><div id=\"info\"></div><script src=\"app.js\"></script></body></html>",
     "js": {
