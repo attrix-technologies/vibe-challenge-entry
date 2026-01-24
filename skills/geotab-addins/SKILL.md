@@ -121,29 +121,24 @@ Instead of hosting files externally, you can embed everything directly in the JS
   "supportEmail": "you@example.com",
   "version": "1.0",
   "items": [{
-    "page": "page",
-    "path": "ActivityLink/",
+    "url": "page.html",
+    "path": "ActivityLink",
     "menuName": {
       "en": "My Add-In"
     }
   }],
   "files": {
-    "page.html": "<html><head><title>My Add-In</title></head><body><div id=\"app\">Loading...</div><script src=\"main.js\"></script><link rel=\"stylesheet\" href=\"styles.css\"></body></html>",
-    "js": {
-      "main.js": "geotab.addin[\"myapp\"]=function(){return{initialize:function(api,state,callback){document.getElementById(\"app\").textContent=\"Connected!\";api.call(\"Get\",{typeName:\"Device\"},function(devices){document.getElementById(\"app\").textContent=\"Vehicles: \"+devices.length;});callback();},focus:function(api,state){},blur:function(api,state){}};};",
-      "helpers.js": "function formatDate(d){return d.toISOString().split('T')[0];}"
-    },
-    "css": {
-      "styles.css": "body{font-family:Arial;padding:20px;}#app{font-size:2em;}"
-    }
+    "page.html": "<html><head><title>My Add-In</title><style>body{font-family:Arial;padding:20px;}#app{font-size:2em;}</style></head><body><div id='app'>Loading...</div><script>geotab.addin['myapp']=function(){return{initialize:function(api,state,callback){document.getElementById('app').textContent='Connected!';api.call('Get',{typeName:'Device'},function(devices){document.getElementById('app').textContent='Vehicles: '+devices.length;});callback();},focus:function(api,state){},blur:function(api,state){}};};console.log('Add-in registered');</script></body></html>"
   }
 }
 ```
 
-**Key Points:**
-- `items[].page`: References the file name without `.html` extension
-- The HTML file must be named `{page}.html` in the `files` object
-- Example: `"page": "page"` references `"page.html"` in files
+**Critical Points:**
+- Use `"url": "page.html"` in items (NOT `"page"`)
+- Remove trailing slash from path: `"ActivityLink"` not `"ActivityLink/"`
+- **All CSS and JavaScript MUST be inlined** in the HTML using `<style>` and `<script>` tags
+- **Cannot use separate file references** like `<script src="app.js">` - they will cause 404 errors
+- Everything must be in a single HTML string
 
 ### Complete Working Example
 
@@ -155,28 +150,29 @@ This embedded add-in shows vehicle count using the MyGeotab API:
   "supportEmail": "test@example.com",
   "version": "1.0",
   "items": [{
-    "page": "fleet-stats",
-    "path": "ActivityLink/",
+    "url": "fleet-stats.html",
+    "path": "ActivityLink",
     "menuName": {
       "en": "Fleet Stats"
     }
   }],
   "files": {
-    "fleet-stats.html": "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Fleet Stats</title><link rel=\"stylesheet\" href=\"styles.css\"></head><body><h1>Fleet Statistics</h1><div id=\"status\">Initializing...</div><div id=\"info\"></div><script src=\"app.js\"></script></body></html>",
-    "js": {
-      "app.js": "\"use strict\";geotab.addin[\"embedded-fleet\"]=function(){return{initialize:function(api,state,callback){var statusEl=document.getElementById(\"status\");var infoEl=document.getElementById(\"info\");statusEl.textContent=\"Connected to MyGeotab!\";api.getSession(function(session){var html=\"<div class='info'>\";html+=\"<strong>User:</strong> \"+session.userName+\"<br>\";html+=\"<strong>Database:</strong> \"+session.database;html+=\"</div>\";api.call(\"Get\",{typeName:\"Device\"},function(devices){html+=\"<div class='info'><strong>Total Vehicles:</strong> \"+devices.length+\"</div>\";infoEl.innerHTML=html;},function(error){infoEl.innerHTML=\"<div class='error'>Error: \"+error+\"</div>\";});infoEl.innerHTML=html;});callback();},focus:function(api,state){},blur:function(api,state){}};};console.log(\"Embedded fleet stats registered\");"
-    },
-    "css": {
-      "styles.css": "body{font-family:Arial,sans-serif;padding:20px;background:#f5f5f5;}h1{color:#333;}.info{margin:15px 0;padding:10px;background:#e8f4f8;border-radius:4px;}.error{color:#d9534f;padding:10px;background:#f8d7da;border-radius:4px;}"
-    }
+    "fleet-stats.html": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Fleet Stats</title><style>body{font-family:Arial,sans-serif;padding:20px;background:#f5f5f5;}h1{color:#333;}.info{margin:15px 0;padding:10px;background:#e8f4f8;border-radius:4px;}.stat{font-size:2em;font-weight:bold;color:#2c3e50;margin:10px 0;}.error{color:#d9534f;padding:10px;background:#f8d7da;border-radius:4px;}</style></head><body><h1>Fleet Statistics</h1><div id='status'>Initializing...</div><div id='info'></div><script>geotab.addin['embedded-fleet']=function(){return{initialize:function(api,state,callback){var statusEl=document.getElementById('status');var infoEl=document.getElementById('info');statusEl.textContent='Connected to MyGeotab!';api.getSession(function(session){var html='<div class=\"info\"><strong>User:</strong> '+session.userName+'<br><strong>Database:</strong> '+session.database+'</div>';infoEl.innerHTML=html;api.call('Get',{typeName:'Device'},function(vehicles){html+='<div class=\"info\"><div class=\"stat\">'+vehicles.length+'</div><strong>Total Vehicles</strong></div>';infoEl.innerHTML=html;},function(error){html+='<div class=\"error\">Error: '+error+'</div>';infoEl.innerHTML=html;});});callback();},focus:function(api,state){},blur:function(api,state){}};};console.log('Embedded fleet stats registered');</script></body></html>"
   }
 }
 ```
 
 ### Important Notes for Embedded Add-Ins
 
+**Everything Must Be Inlined:**
+- ❌ **Cannot use** `<script src="app.js">` or `<link rel="stylesheet" href="styles.css">`
+- ✅ **Must use** inline `<script>` and `<style>` tags within the HTML
+- All JavaScript and CSS must be embedded directly in the HTML string
+- External file references will cause 404 errors and MIME type errors
+
 **JSON String Escaping:**
 - Double quotes must be escaped: `\"` instead of `"`
+- Single quotes are safer for HTML attributes: `<div class='card'>` instead of `<div class="card">`
 - Newlines should be removed (use minified code)
 - Backslashes must be escaped: `\\` instead of `\`
 
@@ -188,11 +184,6 @@ var message = "Hello \"World\"";
 // In JSON string
 "var message=\"Hello \\\"World\\\"\";"
 ```
-
-**File References:**
-- HTML can reference JS/CSS files by name: `<script src="app.js">`
-- MyGeotab automatically resolves these references within the `files` object
-- The HTML file is the entry point
 
 **API Access:**
 - Full MyGeotab API access works exactly like external add-ins

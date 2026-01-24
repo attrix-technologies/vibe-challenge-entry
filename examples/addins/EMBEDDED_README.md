@@ -46,39 +46,27 @@ This add-in demonstrates:
 {
   "name": "Add-In name",
   "items": [{
-    "page": "embedded-fleet",
-    "path": "ActivityLink/",
+    "url": "embedded-fleet.html",
+    "path": "ActivityLink",
     "menuName": {
       "en": "Fleet Stats"
     }
   }],
   "files": {
-    "embedded-fleet.html": "HTML content as a string",
-    "js": {
-      "app.js": "JavaScript as a string",
-      "helpers.js": "More JS files if needed"
-    },
-    "css": {
-      "styles.css": "CSS as a string"
-    }
+    "embedded-fleet.html": "<!DOCTYPE html><html><head><style>CSS goes here inline</style></head><body><h1>My Add-In</h1><script>JavaScript goes here inline</script></body></html>"
   }
 }
 ```
 
-**Key Points:**
-- `items[].page`: References the HTML file name without the `.html` extension
-- The HTML file in `files` must match: `{page}.html`
-- Example: `"page": "embedded-fleet"` → `"embedded-fleet.html"` in files
-- `path`: Where the add-in appears in MyGeotab menu (usually "ActivityLink/")
-- `menuName`: The text shown in the menu
+**Critical Points:**
+- Use `"url": "filename.html"` in items (NOT `"page"`)
+- Remove trailing slash from path: `"ActivityLink"` not `"ActivityLink/"`
+- **All CSS and JavaScript MUST be inlined** using `<style>` and `<script>` tags
+- **Cannot use external file references** like `<script src="app.js">` - causes 404 errors
+- Everything (HTML, CSS, JS) must be in a single HTML string in the `files` object
 
-The HTML file references JS/CSS files by name:
-```html
-<link rel='stylesheet' href='styles.css'>
-<script src='app.js'></script>
-```
-
-MyGeotab automatically resolves these from the `files` object.
+**Why inline everything?**
+When you use `<script src='app.js'>`, MyGeotab tries to load it as an external URL, which doesn't exist. The `files` object doesn't create a virtual file system - it only stores the HTML content that gets rendered directly.
 
 ## Developing Your Own
 
@@ -124,20 +112,34 @@ The AI will generate the properly formatted embedded JSON for you.
 
 ## Common Issues
 
+**"Issue Loading This Page" or 404 errors for app.js/styles.css**
+- This means you're using external file references: `<script src='app.js'>`
+- **Fix:** Inline everything using `<script>` and `<style>` tags
+- The `files` object doesn't create a virtual file system
+- Example:
+  ```html
+  <!-- ❌ Wrong - causes 404 -->
+  <script src='app.js'></script>
+
+  <!-- ✅ Correct - inline -->
+  <script>geotab.addin['myapp']=function(){...};</script>
+  ```
+
 **"The Add-In must have at least one custom page or button"**
-- This means your `items` array is empty: `"items": []`
-- You MUST have at least one item that references your HTML file
+- Your `items` array is empty: `"items": []`
+- You MUST have at least one item with `url` property
 - Example fix:
   ```json
   "items": [{
-    "page": "mypage",
-    "path": "ActivityLink/",
+    "url": "mypage.html",
+    "path": "ActivityLink",
     "menuName": {"en": "My Page"}
   }]
   ```
-- The `page` value must match the HTML filename without `.html`
 
-**Add-In doesn't appear?**
+**Add-In doesn't appear in menu?**
+- Use `"url"` not `"page"` in items array
+- Remove trailing slash: `"path": "ActivityLink"` not `"ActivityLink/"`
 - Make sure you clicked "Save"
 - Hard refresh: `Ctrl+Shift+R`
 - Check browser console (F12) for errors
@@ -146,6 +148,7 @@ The AI will generate the properly formatted embedded JSON for you.
 - Make sure all quotes are properly escaped
 - Use a JSON validator: https://jsonlint.com
 - Common issue: unescaped `"` characters
+- Use single quotes for HTML attributes to avoid escaping: `<div class='card'>`
 
 **API not working?**
 - Embedded add-ins have FULL API access
