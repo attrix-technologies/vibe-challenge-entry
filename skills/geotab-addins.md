@@ -1,10 +1,6 @@
 # Geotab Add-Ins Skill
 
-This directory contains an Agent Skills-formatted skill for building Geotab Add-Ins.
-
-## Using This Skill
-
-The full skill has been converted to the [Agent Skills](https://agentskills.io) standard format and is available at:
+The Geotab Add-Ins skill has been moved to the [Agent Skills](https://agentskills.io) standard format:
 
 **[skills/geotab-addins/SKILL.md](geotab-addins/SKILL.md)**
 
@@ -13,14 +9,6 @@ This skill teaches AI assistants how to:
 - Use the MyGeotab JavaScript API
 - Deploy Add-Ins to GitHub Pages
 - Handle common pitfalls and debugging issues
-
-## What Changed?
-
-This file previously contained the full skill content inline. It has now been restructured to follow the Agent Skills specification with:
-
-- **YAML frontmatter** - Metadata that helps AI assistants know when to use this skill
-- **Structured content** - Organized instructions optimized for AI consumption
-- **Progressive disclosure** - Core instructions in SKILL.md, with option to add references/, scripts/, and assets/ directories
 
 ## How to Use
 
