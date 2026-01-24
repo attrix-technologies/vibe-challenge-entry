@@ -83,10 +83,11 @@ The AI will generate the properly formatted embedded JSON for you.
 
 For easier debugging during development:
 
-1. **Start with external hosting** (GitHub Pages)
+1. **Start with external hosting** (any HTTPS server - GitHub Pages, your own server, etc.)
    - Create separate HTML, CSS, and JS files
    - Use the external add-in pattern with `<script src="app.js">`
    - Test and debug in MyGeotab
+   - Can even use dynamic server-side code if needed
 
 2. **When ready, convert to embedded:**
    - Copy your HTML file

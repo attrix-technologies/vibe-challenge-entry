@@ -59,15 +59,16 @@ Add-Ins extend MyGeotab with custom functionality. There are two types:
 
 ## Two Ways to Deploy
 
-**External Hosted (Using GitHub Pages)**
-- Files hosted on GitHub Pages (free HTTPS hosting)
+**External Hosted**
+- Files hosted on any HTTPS server (GitHub Pages, your own server, CDN, etc.)
+- Can be static files or dynamically generated content
 - Best for development - easy to update and debug
-- Example above uses this method
+- Example above uses GitHub Pages for simplicity
 - See the full guide below for how to build this way
 
 **Embedded (No Hosting Required)**
 - Everything embedded directly in the JSON configuration
-- No GitHub, no hosting, no waiting
+- No external hosting needed at all
 - Just copy-paste JSON into MyGeotab and it works
 - Perfect for quick tests, prototypes, and sharing
 - Full MyGeotab API access (same as external)
