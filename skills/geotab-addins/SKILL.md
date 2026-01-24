@@ -3,7 +3,7 @@ name: geotab-addins
 description: Build custom Add-Ins that extend the MyGeotab fleet management interface with custom pages, dashboards, and functionality. Use when creating integrations that appear directly in MyGeotab UI or when someone wants to add custom features to their Geotab fleet management system.
 license: Apache-2.0
 metadata:
-  author: geotab-vibe-guide
+  author: Felipe Hoffa (https://www.linkedin.com/in/hoffa/)
   version: "1.0"
 ---
 
