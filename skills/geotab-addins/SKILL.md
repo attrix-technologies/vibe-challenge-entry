@@ -16,10 +16,16 @@ Custom pages that integrate directly into MyGeotab. They can display dashboards,
 
 | External Hosted (Recommended) | Embedded (No Hosting) |
 |------------------------------|----------------------|
-| Files on HTTPS server (GitHub Pages, Replit, etc.) | Code in JSON configuration |
+| Files on HTTPS server | Code in JSON configuration |
 | Separate HTML, CSS, JS files | Everything inline in one string |
 | Easy to develop and debug | Good for simple prototypes |
 | **Use external CSS files for styling** | Must use inline `style=""` attributes |
+
+**Recommended Hosting: GitHub Pages** - Free, simple static hosting with proper CORS support. Just push files and enable Pages in repo settings.
+
+Other options: Netlify, Vercel, Firebase Hosting (all have CORS support).
+
+<!-- TODO: Explore Replit server-side capabilities for dynamic add-ins (API proxies, data processing) -->
 
 **CORS Required:** Hosting must include `Access-Control-Allow-Origin: *` header.
 
@@ -123,6 +129,10 @@ api.call("Get", {
     typeName: "User",
     search: { isDriver: true }
 }, function(drivers) { ... });
+
+// DON'T use resultsLimit when counting!
+// api.call("Get", { typeName: "Device", resultsLimit: 100 })
+// ^ Wrong - only returns up to 100, not total count
 ```
 
 ### Update Data (Set)
@@ -234,6 +244,29 @@ var x = 1;
 devices.forEach(function(d) { console.log(d); });
 ```
 
+### 6. Variable name collision with 'state'
+```javascript
+// WRONG - 'state' parameter shadows your variable
+var state = { data: [] };
+initialize: function(api, state, callback) {
+    state.data = [];  // Modifies parameter, not your variable!
+}
+
+// CORRECT - use different name
+var appState = { data: [] };
+initialize: function(api, pageState, callback) {
+    appState.data = [];  // Clear which is which
+}
+```
+
+### 7. React/Modern Frameworks
+React and modern frameworks often have issues in MyGeotab's iframe:
+- State management may not work properly
+- CDN libraries may be blocked
+- CSS-in-JS/Tailwind may not apply
+
+**Recommendation:** Use vanilla JavaScript for add-ins. If you must use React, test extensively in actual MyGeotab environment.
+
 ## Embedded Add-Ins (No Hosting)
 
 For quick prototypes without hosting:
@@ -259,6 +292,7 @@ For quick prototypes without hosting:
 - Single quotes for HTML attributes
 - Escape double quotes: `\"`
 - No external file references
+- Path without trailing slash: `"ActivityLink"` (not `"ActivityLink/"`)
 
 ## Complete Example: Vehicle Manager
 
