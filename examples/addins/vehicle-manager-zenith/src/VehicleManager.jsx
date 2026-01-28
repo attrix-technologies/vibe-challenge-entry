@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Button,
   TextInput,
+  FeedbackProvider,
   Alert,
   Waiting
 } from '@geotab/zenith';
@@ -109,6 +110,7 @@ function VehicleManager({ api }) {
   };
 
   return (
+    <FeedbackProvider>
     <div style={{
       padding: '24px',
       fontFamily: '"Segoe UI", sans-serif',
@@ -282,6 +284,7 @@ function VehicleManager({ api }) {
         )}
       </div>
     </div>
+    </FeedbackProvider>
   );
 }
 
