@@ -1,332 +1,127 @@
 # Transforming a Vanilla Add-In to Zenith
 
-You have a working Add-In with vanilla JS/CSS. Now you want the polished MyGeotab look. This guide shows you how to transform it using AI.
+You have a working Add-In with vanilla JS/CSS. Now you want the polished MyGeotab look. Here's how to use AI to transform it.
 
 ---
 
 ## Before You Start
 
-**Make sure your vanilla version works first!** Don't try to build with Zenith from scratch - it's much harder to debug.
+**Your vanilla version must work first.** Seriously. Don't skip this.
 
-**You'll need:**
-- Node.js installed
-- Your working vanilla Add-In code
-- 10-15 minutes for the build setup
+Debugging a broken Zenith app is much harder than debugging vanilla JS. Get your logic working, then transform.
 
 ---
 
 ## The Transformation Prompt
 
-Give your AI this prompt along with your vanilla code:
+Point your AI to your existing code:
 
 ```
-Transform this vanilla JavaScript Geotab Add-In to use React + Zenith.
+Look at my working Geotab Add-In in [folder path or GitHub URL].
 
-Here's my current working code:
-[paste your HTML/JS here]
+Transform it to use React + Zenith (@geotab/zenith).
 
-Requirements:
-1. Use @geotab/zenith components
-2. Keep the same functionality
-3. Set up webpack to build a single bundle
-4. The output should work in MyGeotab's iframe
+Keep the same functionality. Set up webpack to build a single bundle
+that works in MyGeotab's iframe.
 
-Create:
-- package.json with dependencies
-- webpack.config.js
-- src/index.jsx (entry point)
-- src/[ComponentName].jsx (main component)
-- Instructions to build
+Create all the files I need and tell me how to build it.
 ```
+
+That's it. The AI will:
+- Read your existing code
+- Create package.json, webpack.config.js, and React components
+- Preserve your business logic
+- Give you build instructions
 
 ---
 
-## What the AI Will Generate
+## Should You Transform?
 
-### 1. package.json
+### What You Gain
 
-```json
-{
-  "name": "vehicle-manager-zenith",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "webpack --mode production"
-  },
-  "dependencies": {
-    "@geotab/zenith": "^50.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.23.0",
-    "@babel/preset-env": "^7.23.0",
-    "@babel/preset-react": "^7.23.0",
-    "babel-loader": "^9.1.0",
-    "css-loader": "^6.8.0",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.0",
-    "style-loader": "^3.3.0",
-    "webpack": "^5.88.0",
-    "webpack-cli": "^5.1.0"
-  }
-}
-```
+**Professional appearance** - Your Add-In looks exactly like native MyGeotab pages. Same buttons, inputs, colors, fonts.
 
-### 2. webpack.config.js
+**Consistency** - Users don't notice they're in a custom Add-In. It feels integrated.
 
-```javascript
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+**Future-proof** - When Geotab updates their design, Zenith updates too.
 
-module.exports = {
-  entry: './src/index.jsx',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'your-addin.js',
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: 'babel-loader',
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.(woff|woff2|otf|ttf|eot)$/,
-        type: 'asset/resource',
-      },
-    ],
-  },
-  resolve: {
-    extensions: ['.js', '.jsx'],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './src/index.html',
-      filename: 'your-addin.html',
-    }),
-  ],
-};
-```
+### What You Lose
 
-### 3. src/index.jsx (Entry Point)
+**Speed of iteration** - Every change requires a rebuild. Vanilla is edit → refresh. Zenith is edit → build → refresh.
 
-```jsx
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import '@geotab/zenith/dist/index.css';
-import YourComponent from './YourComponent';
+**Easy debugging** - Errors in minified React bundles are cryptic. Vanilla JS errors point to the exact line.
 
-// Store React root globally
-let root = null;
+**Small footprint** - Your 5 KB Add-In becomes 2.3 MB (fonts, React, components).
 
-geotab.addin['your-addin-name'] = function() {
-  return {
-    initialize: function(api, state, callback) {
-      const container = document.getElementById('app');
-      root = createRoot(container);
-      root.render(<YourComponent api={api} />);
-      callback();
-    },
-    focus: function(api, state) {
-      // Re-render if needed
-    },
-    blur: function(api, state) {
-      // Cleanup if needed
-    }
-  };
-};
-```
+**Simplicity** - You now have a build pipeline: Node.js, npm, webpack, Babel. Things that can break.
 
-### 4. src/YourComponent.jsx (Main Component)
+### The Honest Trade-off
 
-The AI will transform your vanilla logic into React:
-
-```jsx
-import React, { useState, useEffect } from 'react';
-import { Button, TextInput, FeedbackProvider, Alert, Waiting } from '@geotab/zenith';
-
-function YourComponent({ api }) {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = () => {
-    setLoading(true);
-    api.call('Get', { typeName: 'Device' },
-      (result) => {
-        setData(result);
-        setLoading(false);
-      },
-      (err) => {
-        setError(err.message);
-        setLoading(false);
-      }
-    );
-  };
-
-  if (loading) return <Waiting />;
-
-  return (
-    <FeedbackProvider>
-      <div style={{ padding: '20px' }}>
-        {error && <Alert variant="error">{error}</Alert>}
-        {/* Your UI here */}
-      </div>
-    </FeedbackProvider>
-  );
-}
-
-export default YourComponent;
-```
+| | Vanilla | Zenith |
+|---|---------|--------|
+| **Time to first working version** | Minutes | Hours |
+| **Time to iterate** | Seconds | Minutes |
+| **Debugging** | Easy | Hard |
+| **Looks like MyGeotab** | No | Yes |
+| **Bundle size** | ~5 KB | ~2.3 MB |
+| **Dependencies** | None | ~200 packages |
 
 ---
 
-## Build and Test
+## When Zenith Is Worth It
 
-```bash
-# Install dependencies
-npm install
+**Yes, transform when:**
+- The Add-In will be used by many people
+- Professional appearance matters to stakeholders
+- You're done iterating on features
+- You have time for the build setup
 
-# Build the bundle
-npm run build
-
-# Output will be in dist/
-# - your-addin.html
-# - your-addin.js
-# - font files (woff, woff2)
-```
-
-Host the `dist/` folder on GitHub Pages or your server.
+**No, stay vanilla when:**
+- It's an internal tool or prototype
+- You're still figuring out what it should do
+- You need to iterate quickly
+- Bundle size matters (slow connections, mobile)
 
 ---
 
-## Common Issues and Fixes
+## Gotchas We Discovered
 
-### "FeedbackProvider is not initialized"
+Things the AI might get wrong (and how to fix):
 
-Wrap your component with `FeedbackProvider`:
+**"FeedbackProvider is not initialized"**
+Tell AI: "Wrap the component with FeedbackProvider for Alert to work"
 
-```jsx
-// WRONG
-<Alert variant="error">Error!</Alert>
+**"TextField is not exported"**
+Tell AI: "Use TextInput instead of TextField, and Waiting instead of Spinner"
 
-// CORRECT
-<FeedbackProvider>
-  <Alert variant="error">Error!</Alert>
-</FeedbackProvider>
-```
+**Table component breaks**
+Tell AI: "Use an HTML table with Zenith styling instead of the Zenith Table component"
 
-### "TextField is not exported" / "Spinner is not exported"
-
-Zenith uses different names:
-- `TextField` → `TextInput`
-- `Spinner` → `Waiting`
-
-### Zenith Table breaks with custom render functions
-
-Use HTML table with Zenith colors instead:
-
-```jsx
-<table style={{ width: '100%', borderCollapse: 'collapse' }}>
-  <thead>
-    <tr>
-      <th style={{
-        padding: '12px',
-        borderBottom: '1px solid #EDEBE9',
-        color: '#605E5C',
-        textAlign: 'left'
-      }}>
-        Name
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {items.map(item => (
-      <tr key={item.id}>
-        <td style={{ padding: '12px', borderBottom: '1px solid #EDEBE9' }}>
-          {item.name}
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-```
-
-### Minified errors are hard to read
-
-Add source maps for development:
-
-```javascript
-// webpack.config.js
-module.exports = {
-  // ... other config
-  devtool: 'source-map',  // Add this for readable errors
-};
-```
-
-Build with: `webpack --mode development` for debugging.
+**Errors are unreadable**
+Tell AI: "Add source maps to webpack config for debugging"
 
 ---
 
 ## Working Example
 
-Compare the before and after:
+Compare the results:
 
-**Vanilla version:**
-`https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager/vehicle-manager.html`
+| Version | URL |
+|---------|-----|
+| **Vanilla** | `https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager/vehicle-manager.html` |
+| **Zenith** | `https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager-zenith/dist/vehicle-manager.html` |
 
-**Zenith version:**
-`https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager-zenith/dist/vehicle-manager.html`
+Source code: [vehicle-manager](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager) vs [vehicle-manager-zenith](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager-zenith)
 
-**Source code:**
-- [Vanilla source](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager)
-- [Zenith source](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager-zenith)
-
----
-
-## Is It Worth It?
-
-| Vanilla | Zenith |
-|---------|--------|
-| Edit file, refresh browser | Edit, rebuild, refresh |
-| ~5 KB total | ~2.3 MB bundle |
-| Clear error messages | Minified stack traces |
-| Looks custom | Looks like MyGeotab |
-
-**Transform to Zenith when:**
-- Professional appearance matters
-- Your Add-In will be used by many people
-- You want consistency with MyGeotab UI
-
-**Stay vanilla when:**
-- Quick prototype or internal tool
-- You're still iterating on features
-- Bundle size matters
+Same functionality. The Zenith version looks more polished but took longer to build and debug.
 
 ---
 
-## Quick Reference: Zenith Components
+## Quick Decision
 
-| Need | Zenith Component |
-|------|-----------------|
-| Button | `<Button>Click</Button>` |
-| Text input | `<TextInput value={val} onChange={setVal} />` |
-| Loading spinner | `<Waiting />` |
-| Alert/notification | `<Alert variant="error">Message</Alert>` |
-| Checkbox | `<Checkbox checked={val} onChange={setVal} />` |
-| Dropdown | `<Select options={opts} value={val} onChange={setVal} />` |
+Ask yourself: **"Is the MyGeotab look worth an hour of build setup and slower iteration?"**
 
-Always wrap with `<FeedbackProvider>` if using Alert components.
+- If yes → Transform to Zenith
+- If no → Keep vanilla, ship faster
 
----
-
-**Start simple, transform when ready. A working vanilla Add-In beats a broken Zenith one.**
+**A working vanilla Add-In beats a broken Zenith one.**
