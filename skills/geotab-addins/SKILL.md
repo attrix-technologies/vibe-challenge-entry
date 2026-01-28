@@ -181,6 +181,71 @@ api.getSession(function(session) {
 });
 ```
 
+## Navigating to MyGeotab Pages
+
+Add-Ins can navigate the parent MyGeotab window to other pages using `window.parent.location.hash`. This makes entity names (vehicles, drivers, zones) clickable.
+
+### Navigation Hash Patterns
+
+| Page | Hash Format | Example |
+|------|-------------|---------|
+| Vehicle detail | `#device,id:{id}` | `#device,id:b3230` |
+| Trip history | `#tripsHistory,devices:!({id})` | `#tripsHistory,devices:!(b12)` |
+| Exceptions | `#exceptions2,assetsFilter:!({id})` | `#exceptions2,assetsFilter:!(b3306)` |
+| Live map | `#map,liveVehicleIds:!({id})` | `#map,liveVehicleIds:!(b3230)` |
+| Zone | `#zones,zoneId:{id}` | `#zones,zoneId:b1234` |
+
+### Creating Clickable Vehicle Links
+
+```javascript
+function createVehicleLink(device) {
+    var link = document.createElement("a");
+    link.textContent = device.name;
+    link.href = "#";
+    link.style.cssText = "color:#2563eb;cursor:pointer;";
+    link.onclick = function(e) {
+        e.preventDefault();
+        window.parent.location.hash = "device,id:" + device.id;
+    };
+    return link;
+}
+```
+
+### Multiple Action Links
+
+```javascript
+// In a table row, add links for different destinations
+var actionsCell = document.createElement("td");
+
+// Link to vehicle page
+var vehicleLink = document.createElement("a");
+vehicleLink.textContent = "Details";
+vehicleLink.href = "#";
+vehicleLink.onclick = function(e) {
+    e.preventDefault();
+    window.parent.location.hash = "device,id:" + device.id;
+};
+actionsCell.appendChild(vehicleLink);
+
+actionsCell.appendChild(document.createTextNode(" | "));
+
+// Link to trip history
+var tripsLink = document.createElement("a");
+tripsLink.textContent = "Trips";
+tripsLink.href = "#";
+tripsLink.onclick = function(e) {
+    e.preventDefault();
+    window.parent.location.hash = "tripsHistory,devices:!(" + device.id + ")";
+};
+actionsCell.appendChild(tripsLink);
+```
+
+**Key points:**
+- Use `device.id` (the internal ID like "b3230"), not `device.name`
+- Array parameters use `!(id)` syntax
+- Multiple IDs: `devices:!(b12,b13,b14)`
+- Always call `e.preventDefault()` in click handlers
+
 ### Common Type Names
 `Device` (vehicles), `User`, `Trip`, `Zone` (geofences), `LogRecord` (GPS), `ExceptionEvent` (rule violations), `Group`, `Rule`, `FuelTransaction`, `StatusData`
 

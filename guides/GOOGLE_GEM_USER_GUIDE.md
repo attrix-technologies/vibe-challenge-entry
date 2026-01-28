@@ -155,6 +155,33 @@ Use these colors:
 Show "Loading..." while fetching data, then display the results.
 ```
 
+### Request Clickable Links
+
+Make your Add-In interactive by asking for clickable links that navigate to other MyGeotab pages:
+
+```
+Create a vehicle list where clicking the vehicle name opens that vehicle's detail page in MyGeotab.
+```
+
+```
+Build a table of vehicles with clickable links to:
+- View the vehicle's page
+- View the vehicle's trip history
+- View the vehicle's exceptions
+```
+
+```
+Show a list of vehicles. When I click a vehicle name, take me to that vehicle's page.
+Add a "View Trips" link next to each vehicle that opens trip history.
+```
+
+**Available navigation destinations:**
+- Vehicle detail page
+- Trip history
+- Exceptions/rule violations
+- Live map tracking
+- Zone/geofence pages
+
 ---
 
 ## Troubleshooting
@@ -212,6 +239,7 @@ The styling isn't working. Can you make sure all CSS is inline using style="" at
 - Simple filters
 - Data tables
 - Search boxes (basic)
+- **Clickable links** to vehicle pages, trip history, exceptions, and maps
 
 ### Styling Options
 - Card layouts
@@ -233,6 +261,7 @@ The styling isn't working. Can you make sure all CSS is inline using style="" at
 | Build responsive layouts | Include images (without URLs) |
 | Style with inline CSS | Use external CSS files |
 | Multiple API calls | Real-time streaming updates |
+| Navigate to other MyGeotab pages | Open external websites |
 
 **For advanced Add-Ins** (external APIs, complex interactivity, React frameworks), you'll need external hosting. See the [Building Geotab Add-Ins guide](GEOTAB_ADDINS.md) for hosted options.
 

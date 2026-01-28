@@ -161,6 +161,79 @@ api.call("Set", {
 - FuelTransaction
 - StatusData
 
+## Navigating to MyGeotab Pages (Clickable Links)
+
+Add-Ins run inside MyGeotab's iframe. To make items clickable and navigate the parent MyGeotab window to a specific page, use `window.parent.location.hash`.
+
+**You don't need the full URL** - just set the hash portion. MyGeotab handles the rest.
+
+### Navigation Patterns
+
+| Destination | Hash Format | Example |
+|-------------|-------------|---------|
+| Vehicle page | `#device,id:{deviceId}` | `#device,id:b3230` |
+| Trip history | `#tripsHistory,devices:!({deviceId})` | `#tripsHistory,devices:!(b12)` |
+| Exceptions | `#exceptions2,assetsFilter:!({deviceId})` | `#exceptions2,assetsFilter:!(b3306)` |
+| Map following vehicle | `#map,liveVehicleIds:!({deviceId})` | `#map,liveVehicleIds:!(b3230)` |
+| Zone/Geofence | `#zones,zoneId:{zoneId}` | `#zones,zoneId:b1234` |
+
+### Code Pattern for Clickable Vehicle Names
+
+// Create a clickable link that navigates to the vehicle's page
+function createVehicleLink(device) {
+    var link = document.createElement('a');
+    link.textContent = device.name;
+    link.href = '#';
+    link.style.cssText = 'color:#2563eb;text-decoration:none;cursor:pointer;';
+    link.onclick = function(e) {
+        e.preventDefault();
+        window.parent.location.hash = 'device,id:' + device.id;
+    };
+    return link;
+}
+
+### Example: Vehicle List with Clickable Names
+
+// In your render function:
+devices.forEach(function(device) {
+    var row = document.createElement('tr');
+
+    // Clickable vehicle name
+    var nameCell = document.createElement('td');
+    var link = document.createElement('a');
+    link.textContent = device.name;
+    link.href = '#';
+    link.style.cssText = 'color:#2563eb;cursor:pointer;';
+    link.onclick = function(e) {
+        e.preventDefault();
+        window.parent.location.hash = 'device,id:' + device.id;
+    };
+    nameCell.appendChild(link);
+    row.appendChild(nameCell);
+
+    // View trips link
+    var tripsCell = document.createElement('td');
+    var tripsLink = document.createElement('a');
+    tripsLink.textContent = 'View Trips';
+    tripsLink.href = '#';
+    tripsLink.style.cssText = 'color:#2563eb;cursor:pointer;';
+    tripsLink.onclick = function(e) {
+        e.preventDefault();
+        window.parent.location.hash = 'tripsHistory,devices:!(' + device.id + ')';
+    };
+    tripsCell.appendChild(tripsLink);
+    row.appendChild(tripsCell);
+
+    tableBody.appendChild(row);
+});
+
+### Important Notes
+
+1. **Use device.id, not device.name**: The hash requires the internal ID (like "b3230"), not the display name
+2. **Exclamation mark syntax**: For array parameters, use `!(id)` syntax: `devices:!(b12)`
+3. **Multiple vehicles**: Comma-separate IDs: `devices:!(b12,b13,b14)`
+4. **Prevent default**: Always call `e.preventDefault()` in click handlers to avoid page jumps
+
 ## Critical Mistakes to Avoid
 
 | Mistake | Problem | Solution |
