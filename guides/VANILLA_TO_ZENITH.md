@@ -17,7 +17,7 @@ Debugging a broken Zenith app is much harder than debugging vanilla JS. Get your
 First, tell your AI to use the Zenith skill:
 
 ```
-Use the geotab-zenith-design skill
+Use the geotab-addin-zenith-styling skill
 ```
 
 Then point it to your existing code:
@@ -136,5 +136,5 @@ Ask yourself: **"Is the MyGeotab look worth an hour of build setup and slower it
 
 ## Resources
 
-- [Zenith Skill](/skills/geotab-zenith-design/SKILL.md) - AI skill with component patterns and gotchas
+- [Zenith Skill](/skills/geotab-addin-zenith-styling/SKILL.md) - AI skill with component patterns and gotchas
 - [Add-Ins Guide](GEOTAB_ADDINS.md) - Start here for vanilla Add-Ins

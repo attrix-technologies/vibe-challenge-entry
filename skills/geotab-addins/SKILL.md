@@ -34,7 +34,7 @@ Other options: Netlify, Vercel, Firebase Hosting (all have CORS support).
 | Approach | Best For | Notes |
 |----------|----------|-------|
 | **Vanilla JS + External CSS** | Most add-ins, embedded | ES5 only, external CSS for reliable styling |
-| **React + Zenith** | Professional UI matching MyGeotab | See `geotab-zenith-design` skill |
+| **React + Zenith** | Professional UI matching MyGeotab | See `geotab-addin-zenith-styling` skill |
 
 **Note:** Embedded add-ins must use vanilla JS with inline styles. React/Zenith requires external hosting.
 
@@ -498,7 +498,7 @@ Here's my current vanilla JS add-in:
 ## Additional Resources
 
 **Related Skills:**
-- `geotab-zenith-design` - React component library for professional Geotab UI
+- `geotab-addin-zenith-styling` - React component library for professional Geotab UI
 
 **Reference Files:**
 - [Complete Examples](references/EXAMPLES.md) - Full working add-in code
