@@ -481,7 +481,7 @@ The AI will create files that use the injected `api` object to fetch your data.
 
 Once it works, you can optionally upgrade to **Zenith** (Geotab's official design system) to match MyGeotab's look exactly. But there's a trade-off: Zenith requires React, webpack, and a build step.
 
-**→ [Transforming Vanilla to Zenith](VANILLA_TO_ZENITH.md)** - when you're ready for the polished look
+**→ [Transform Add-In Design with Zenith](TRANSFORM_ADDIN_ZENITH.md)** - when you're ready for the polished look
 
 **Compare both approaches:**
 - [Vanilla version](https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager/vehicle-manager.html)

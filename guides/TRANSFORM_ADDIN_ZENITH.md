@@ -1,47 +1,14 @@
-# Transforming a Vanilla Add-In to Zenith
+# Transform Add-In Design with Zenith
 
-You have a working Add-In with vanilla JS/CSS. Now you want the polished MyGeotab look. Here's how to use AI to transform it.
+You have a working Add-In with vanilla JS/CSS. Should you transform it to Zenith for that polished MyGeotab look? Read this first.
 
----
-
-## Before You Start
-
-**Your vanilla version must work first.** Seriously. Don't skip this.
-
-Debugging a broken Zenith app is much harder than debugging vanilla JS. Get your logic working, then transform.
+> **AI Skill Available:** Use the [geotab-addin-zenith-styling skill](/skills/geotab-addin-zenith-styling/SKILL.md) to help your AI assistant with Zenith components and patterns.
 
 ---
 
-## The Transformation Prompt
+## Advantages and Drawbacks
 
-First, tell your AI to use the Zenith skill:
-
-```
-Use the geotab-addin-zenith-styling skill
-```
-
-Then point it to your existing code:
-
-```
-Look at my working Geotab Add-In in [folder path or GitHub URL].
-
-Transform it to use React + Zenith (@geotab/zenith).
-
-Keep the same functionality. Set up webpack to build a single bundle
-that works in MyGeotab's iframe.
-
-Create all the files I need and tell me how to build it.
-```
-
-That's it. The AI will:
-- Read your existing code
-- Create package.json, webpack.config.js, and React components
-- Preserve your business logic
-- Give you build instructions
-
----
-
-## Should You Transform?
+Before writing any code, understand what you're trading.
 
 ### What You Gain
 
@@ -88,9 +55,55 @@ That's it. The AI will:
 - You need to iterate quickly
 - Bundle size matters (slow connections, mobile)
 
+### Quick Decision
+
+Ask yourself: **"Is the MyGeotab look worth an hour of build setup and slower iteration?"**
+
+- If yes → Transform to Zenith
+- If no → Keep vanilla, ship faster
+
+**A working vanilla Add-In beats a broken Zenith one.**
+
 ---
 
-## Gotchas We Discovered
+## Before You Start
+
+**Your vanilla version must work first.** Seriously. Don't skip this.
+
+Debugging a broken Zenith app is much harder than debugging vanilla JS. Get your logic working, then transform.
+
+---
+
+## The Transformation Prompt
+
+First, tell your AI to use the Zenith skill:
+
+```
+Use the geotab-addin-zenith-styling skill
+```
+
+Then point it to your existing code:
+
+```
+Look at my working Geotab Add-In in [folder path or GitHub URL].
+
+Transform it to use React + Zenith (@geotab/zenith).
+
+Keep the same functionality. Set up webpack to build a single bundle
+that works in MyGeotab's iframe.
+
+Create all the files I need and tell me how to build it.
+```
+
+That's it. The AI will:
+- Read your existing code
+- Create package.json, webpack.config.js, and React components
+- Preserve your business logic
+- Give you build instructions
+
+---
+
+## Common Gotchas
 
 Things the AI might get wrong (and how to fix):
 
@@ -120,17 +133,6 @@ Compare the results:
 Source code: [vehicle-manager](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager) vs [vehicle-manager-zenith](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager-zenith)
 
 Same functionality. The Zenith version looks more polished but took longer to build and debug.
-
----
-
-## Quick Decision
-
-Ask yourself: **"Is the MyGeotab look worth an hour of build setup and slower iteration?"**
-
-- If yes → Transform to Zenith
-- If no → Keep vanilla, ship faster
-
-**A working vanilla Add-In beats a broken Zenith one.**
 
 ---
 

@@ -53,7 +53,7 @@ Are you a human or AI tool?
 │      │  └─> INSTANT_START_WITH_CLAUDE.md → HACKATHON_IDEAS.md → CLAUDE_PROMPTS.md
 │      │
 │      └─ Custom page IN MyGeotab? (extend the interface)
-│         └─> GEOTAB_ADDINS.md → VANILLA_TO_ZENITH.md (for styling)
+│         └─> GEOTAB_ADDINS.md → TRANSFORM_ADDIN_ZENITH.md (for styling)
 │
 └─ AI TOOL
    │
