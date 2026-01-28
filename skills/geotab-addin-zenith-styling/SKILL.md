@@ -1,13 +1,13 @@
 ---
-name: geotab-zenith-design
-description: Build UIs for Geotab applications using the Zenith design system and React component library. Use when creating MyGeotab Add-Ins, custom dashboards, or any Geotab-branded frontend that needs consistent styling and accessible components.
+name: geotab-addin-zenith-styling
+description: Style Geotab Add-Ins using the Zenith design system and React component library. Use when upgrading vanilla JS Add-Ins to professional React-based UIs that match MyGeotab's look exactly.
 license: Apache-2.0
 metadata:
   author: Felipe Hoffa (https://www.linkedin.com/in/hoffa/)
   version: "1.0"
 ---
 
-# Geotab Zenith Design System
+# Styling Add-Ins with Zenith
 
 ## What is Zenith?
 
@@ -22,9 +22,11 @@ Zenith pages increase development speed by over 40%.
 
 ## When to Use This Skill
 
+- Upgrading a working vanilla JS Add-In to professional styling
 - Building React-based MyGeotab Add-Ins
-- Creating fleet management dashboards
-- When you need accessible, consistent Geotab-branded UI
+- When you need the exact MyGeotab look and feel
+
+**Note:** Start with the `geotab-addins` skill first to build a working Add-In, then use this skill to upgrade its styling.
 
 ## Installation
 

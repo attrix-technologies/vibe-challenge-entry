@@ -1,33 +1,38 @@
-# Geotab Vibe Coding: Zero to Hero 🚀
+# Geotab Vibe Coding: Zero to Hero
 
 **Build fleet management apps in minutes using AI.**
 
 This repository is a "Vibe Coding" starter kit. You don't need to be an expert coder. You just need to know how to ask the right questions.
 
-## 🏁 Start Here
+## Before You Start
 
-**New to coding?** Check out the [**Beginner's Glossary**](./guides/BEGINNER_GLOSSARY.md) to understand terms like GitHub, Python, API, IDE, and "vibe coding" before diving in.
+1. **Get credentials:** [Create a free demo database](https://my.geotab.com/registration.html) (takes 2 minutes)
+2. **New to coding?** Read the [**Beginner's Glossary**](./guides/BEGINNER_GLOSSARY.md) first
 
-Recommended workflow:
+## Choose Your Path
 
-### **Part 1: The Chatbot (Web)**
-**[👉 CLAUDE QUICKSTART (VIBE PROMPTS)](./guides/CLAUDE_PROMPTS.md)**
-Start here! Copy-paste these "magic spells" into Claude, ChatGPT, or Gemini to build your first script in the browser. Perfect for rapid prototyping.
+### Path A: Quick Exploration (No Setup)
+**Just want to explore the Geotab API in a browser?**
 
-### **Part 2: The IDE (Interactive App)**
-**[⚡️ ANTIGRAVITY QUICKSTART (STREAMLIT)](./guides/ANTIGRAVITY_QUICKSTART.md)**
-Ready to get serious? Use **Google Antigravity IDE** to build a full interactive dashboard with maps and charts, running locally on your machine.
+[**INSTANT START WITH CLAUDE**](./guides/INSTANT_START_WITH_CLAUDE.md) - Zero to working code in 60 seconds. No installation needed.
 
-### **Part 3: MyGeotab Add-Ins (Advanced)**
-**[🔌 GEOTAB ADD-INS GUIDE](./guides/GEOTAB_ADDINS.md)**
-Want to customize MyGeotab itself? Build custom pages and buttons that live directly inside your fleet management system.
+Then use [**CLAUDE PROMPTS**](./guides/CLAUDE_PROMPTS.md) for ready-made prompts to build things.
 
-### 2. **Authentication**
-You will need a Geotab account. **[Create a free demo database here](https://my.geotab.com/registration.html)**.
+---
 
-*   **Database**: `database_name` (e.g., `geotab_demo`)
-*   **Username**: `your_email@example.com`
-*   **Password**: (Use a `.env` file or disposable demo credentials)
+### Path B: Build a Python Dashboard
+**Want a standalone app with maps, charts, and data analysis?**
+
+[**ANTIGRAVITY QUICKSTART**](./guides/ANTIGRAVITY_QUICKSTART.md) - Use Google's free IDE to build interactive Streamlit dashboards.
+
+---
+
+### Path C: Build a MyGeotab Add-In
+**Want a custom page that lives INSIDE MyGeotab?**
+
+[**GEOTAB ADD-INS GUIDE**](./guides/GEOTAB_ADDINS.md) - Build custom pages and buttons directly in your fleet management system.
+
+This is the path if you want to extend MyGeotab itself with custom functionality.
 
 ---
 

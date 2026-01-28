@@ -20,30 +20,19 @@ Build custom Add-Ins that extend the MyGeotab interface.
 
 ---
 
-### 📋 geotab-api-quickstart
-**Priority:** HIGH - Foundation for all other skills
+### ✅ geotab-addin-zenith-styling
+Style Add-Ins using Geotab's Zenith design system (React).
+- **Location:** `skills/geotab-addin-zenith-styling/SKILL.md`
+- **Description:** Upgrade vanilla JS Add-Ins to professional React UIs matching MyGeotab
+- **Use Cases:** Professional styling, React components, accessibility compliance
 
+---
+
+### ✅ geotab-api-quickstart
 Authenticate with Geotab API and make basic data queries.
-
-**What it should teach:**
-- Authentication flow (username, password, database, server)
-- Making basic Get calls (Device, Trip, Driver)
-- Error handling patterns
-- Session management
-- Rate limiting awareness
-
-**Use Cases:**
-- "Help me connect to Geotab API"
-- "Fetch all vehicles from my fleet"
-- "Get trip data for the last week"
-
-**Code Examples Needed:**
-- Python authentication
-- JavaScript/Node.js authentication
-- Handling multi-database scenarios
-- Retry logic for API failures
-
-**Estimated Effort:** 2-3 hours
+- **Location:** `skills/geotab-api-quickstart/SKILL.md`
+- **Description:** Foundation skill for all Geotab API integrations
+- **Use Cases:** Connect to API, fetch vehicles/trips/drivers, Python dashboards
 
 ---
 
@@ -378,9 +367,10 @@ Use LLMs to generate insights from fleet data.
 
 ### Phase 1: Foundation (Hackathon Weekend)
 1. ✅ geotab-addins
-2. 📋 geotab-api-quickstart
-3. 📋 geotab-trip-analysis
-4. 📋 geotab-safety-scoring
+2. ✅ geotab-addin-zenith-styling
+3. ✅ geotab-api-quickstart
+4. 📋 geotab-trip-analysis
+5. 📋 geotab-safety-scoring
 
 **Goal:** Cover 80% of common use cases
 

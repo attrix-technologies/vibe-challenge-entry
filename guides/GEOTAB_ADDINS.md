@@ -370,6 +370,35 @@ show vehicle locations as pins on a map with different colors for each group.
 | **Firebase Hosting** | Google ecosystem, good performance | 5 minutes |
 | **Vercel** | Modern web apps, serverless | 2 minutes |
 
+### GitHub Pages for Beginners
+
+**Never used GitHub?** No problem. You don't need to learn Git commands.
+
+**The easy way - ask your AI assistant:**
+
+```
+I built this Geotab Add-In [paste your HTML code].
+
+Help me:
+1. Create a new GitHub repository for it
+2. Upload these files to GitHub
+3. Enable GitHub Pages so it's hosted on the web
+4. Give me the URL to use in MyGeotab
+```
+
+The AI will walk you through every step. When done, your URL will look like:
+`https://yourusername.github.io/your-repo-name/your-addin.html`
+
+**Alternative - manual steps:**
+1. Go to [github.com](https://github.com) and create a free account
+2. Click "New repository" (green button)
+3. Name it something like `my-geotab-addin`
+4. Check "Add a README file"
+5. Click "Create repository"
+6. Click "Add file" → "Upload files" → drag your HTML file
+7. Go to Settings → Pages → Source: "Deploy from a branch" → Branch: "main" → Save
+8. Wait 2-3 minutes, then your URL is: `https://yourusername.github.io/my-geotab-addin/yourfile.html`
+
 **User Permissions:** Add-Ins inherit the logged-in user's permissions
 - If the user can't see driver salaries, the Add-In can't either
 - Test with different user roles

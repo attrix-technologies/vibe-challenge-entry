@@ -10,6 +10,7 @@ Quick navigation to the right resource for your needs.
 | Using Claude on web | [INSTANT_START_WITH_CLAUDE.md](./guides/INSTANT_START_WITH_CLAUDE.md) | Zero to working code in 60 seconds |
 | Want ready-made prompts | [CLAUDE_PROMPTS.md](./guides/CLAUDE_PROMPTS.md) | 10+ copy-paste prompts for instant productivity |
 | First time here | [INSTANT_START_WITH_CLAUDE.md](./guides/INSTANT_START_WITH_CLAUDE.md) | The fastest path - start here! |
+| **Building a MyGeotab Add-In** | [GEOTAB_ADDINS.md](./guides/GEOTAB_ADDINS.md) | **Custom pages inside MyGeotab** |
 | What is Geotab? | [GEOTAB_OVERVIEW.md](./GEOTAB_OVERVIEW.md) | Platform overview, 6 pillars, use cases, write-back capabilities |
 | Setting up credentials | [CREDENTIALS.md](./guides/CREDENTIALS.md) | Concise .env setup |
 | Credential issues | [CREDENTIALS.md](./guides/CREDENTIALS.md) | Detailed troubleshooting |
@@ -47,7 +48,12 @@ Are you a human or AI tool?
 │  │  └─> TUTORIAL_DESIGN.md → MINUTE_BY_MINUTE.md
 │  │
 │  └─ Building a project?
-│      └─> INSTANT_START_WITH_CLAUDE.md → HACKATHON_IDEAS.md → CLAUDE_PROMPTS.md
+│      │
+│      ├─ Standalone Python app? (dashboards, reports, data analysis)
+│      │  └─> INSTANT_START_WITH_CLAUDE.md → HACKATHON_IDEAS.md → CLAUDE_PROMPTS.md
+│      │
+│      └─ Custom page IN MyGeotab? (extend the interface)
+│         └─> GEOTAB_ADDINS.md → VANILLA_TO_ZENITH.md (for styling)
 │
 └─ AI TOOL
    │
