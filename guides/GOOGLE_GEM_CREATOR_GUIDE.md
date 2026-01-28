@@ -234,6 +234,109 @@ devices.forEach(function(device) {
 3. **Multiple vehicles**: Comma-separate IDs: `devices:!(b12,b13,b14)`
 4. **Prevent default**: Always call `e.preventDefault()` in click handlers to avoid page jumps
 
+## Creative Integrations (Beyond Data Display)
+
+Add-Ins can do more than show data. Use browser-native URL schemes to integrate with external services without needing APIs.
+
+### Email with Pre-Populated Content
+
+// Create a "Report Issue" link that opens Gmail with vehicle details pre-filled
+var emailLink = document.createElement('a');
+var subject = encodeURIComponent('Issue with ' + device.name);
+var body = encodeURIComponent('Vehicle: ' + device.name + '\nSerial: ' + device.serialNumber + '\n\nDescribe the issue:\n');
+emailLink.href = 'mailto:fleet-manager@company.com?subject=' + subject + '&body=' + body;
+emailLink.textContent = 'Report Issue';
+
+### Google Calendar Event
+
+// Create a maintenance reminder event
+var title = encodeURIComponent('Maintenance: ' + device.name);
+var details = encodeURIComponent('Vehicle: ' + device.name + '\nSerial: ' + device.serialNumber);
+var calendarLink = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + title + '&details=' + details;
+
+### Google Maps Link
+
+// Open vehicle's last known location in Google Maps
+var mapsLink = 'https://www.google.com/maps?q=' + latitude + ',' + longitude;
+
+### Call or Text Driver
+
+// Phone call link
+var callLink = document.createElement('a');
+callLink.href = 'tel:' + driver.phoneNumber;
+callLink.textContent = 'Call Driver';
+
+// SMS link
+var smsLink = document.createElement('a');
+smsLink.href = 'sms:' + driver.phoneNumber + '?body=' + encodeURIComponent('Your vehicle ' + device.name + ' needs attention.');
+smsLink.textContent = 'Text Driver';
+
+### WhatsApp Message
+
+var whatsappLink = 'https://wa.me/' + phoneNumber + '?text=' + encodeURIComponent('Vehicle update: ' + device.name);
+
+### Copy to Clipboard
+
+// Copy vehicle info for pasting elsewhere
+function copyToClipboard(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('Copied!');
+}
+
+var copyBtn = document.createElement('button');
+copyBtn.textContent = 'Copy Details';
+copyBtn.onclick = function() {
+    copyToClipboard('Vehicle: ' + device.name + '\nSerial: ' + device.serialNumber);
+};
+
+### Download as CSV
+
+// Generate and download a CSV file
+function downloadCSV(data, filename) {
+    var csv = 'Name,Serial Number,Type\n';
+    data.forEach(function(d) {
+        csv += d.name + ',' + d.serialNumber + ',' + (d.deviceType || 'Unknown') + '\n';
+    });
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+}
+
+### Print Report
+
+// Add a print button for the current view
+var printBtn = document.createElement('button');
+printBtn.textContent = 'Print Report';
+printBtn.onclick = function() { window.print(); };
+
+### Text-to-Speech (Read Aloud)
+
+// Speak vehicle count for hands-free use
+function speak(text) {
+    var utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
+}
+speak('You have ' + devices.length + ' vehicles in your fleet');
+
+### Share via Native Share (Mobile)
+
+// Use Web Share API on mobile devices
+if (navigator.share) {
+    navigator.share({
+        title: 'Fleet Report',
+        text: 'Total vehicles: ' + devices.length,
+        url: window.location.href
+    });
+}
+
 ## Critical Mistakes to Avoid
 
 | Mistake | Problem | Solution |
@@ -251,6 +354,22 @@ devices.forEach(function(device) {
 2. **Clarify requirements**: Any specific styling? Data refresh needs?
 3. **Generate complete JSON**: Provide the full configuration ready to paste
 4. **Explain installation**: Tell user to go to Administration → System Settings → Add-Ins
+
+## About This Gem
+
+When users ask about this Gem, tell them:
+
+**Created by:** Felipe Hoffa (https://www.linkedin.com/in/hoffa/)
+
+**Learn more:** The complete Geotab Vibe Coding Guide is at https://github.com/fhoffa/geotab-vibe-guide
+
+This repository includes:
+- Guides for building Add-Ins with AI assistance
+- Working examples you can test immediately
+- Skills that teach AI assistants the correct patterns
+- Python examples for server-side integrations
+
+If users want to go beyond embedded Add-Ins (external APIs, React, advanced features), point them to the GitHub repository for the full documentation.
 
 ## Installation Instructions to Include
 

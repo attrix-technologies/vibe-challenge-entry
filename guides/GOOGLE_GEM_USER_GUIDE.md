@@ -182,6 +182,63 @@ Add a "View Trips" link next to each vehicle that opens trip history.
 - Live map tracking
 - Zone/geofence pages
 
+### Request Creative Integrations
+
+Add-Ins can do more than display data. Ask for integrations with email, calendars, maps, and more:
+
+**Email with vehicle info:**
+```
+Add a "Report Issue" button next to each vehicle that opens an email
+with the vehicle name and serial number pre-filled in the body.
+```
+
+**Calendar events:**
+```
+Add a "Schedule Maintenance" link that creates a Google Calendar event
+with the vehicle name and details pre-filled.
+```
+
+**Maps integration:**
+```
+When showing vehicle locations, add a "Open in Google Maps" link
+that opens the vehicle's position in a new tab.
+```
+
+**Call or text drivers:**
+```
+Show driver phone numbers as clickable links to call them.
+Add a "Text Driver" button that opens SMS with a pre-written message.
+```
+
+**WhatsApp messages:**
+```
+Add a WhatsApp button next to each driver that opens a chat
+with a vehicle status update pre-filled.
+```
+
+**Copy to clipboard:**
+```
+Add a "Copy Details" button that copies vehicle info to the clipboard
+so I can paste it into other apps.
+```
+
+**Download data:**
+```
+Add an "Export CSV" button that downloads all the vehicle data
+as a spreadsheet file.
+```
+
+**Print reports:**
+```
+Add a "Print" button that opens the print dialog for the current view.
+```
+
+**Voice readout:**
+```
+Add a "Read Aloud" button that speaks the fleet statistics
+using text-to-speech. Good for hands-free use.
+```
+
 ---
 
 ## Troubleshooting

@@ -246,6 +246,180 @@ actionsCell.appendChild(tripsLink);
 - Multiple IDs: `devices:!(b12,b13,b14)`
 - Always call `e.preventDefault()` in click handlers
 
+## Creative Integrations (Browser-Native)
+
+Add-Ins can integrate with external services using URL schemes and browser APIs - no external hosting or API keys needed.
+
+### Email with Pre-Populated Content
+
+```javascript
+// "Report Issue" link that opens email with vehicle details
+function createEmailLink(device, recipientEmail) {
+    var link = document.createElement("a");
+    var subject = encodeURIComponent("Issue with " + device.name);
+    var body = encodeURIComponent(
+        "Vehicle: " + device.name + "\n" +
+        "Serial: " + device.serialNumber + "\n\n" +
+        "Describe the issue:\n"
+    );
+    link.href = "mailto:" + recipientEmail + "?subject=" + subject + "&body=" + body;
+    link.textContent = "Report Issue";
+    return link;
+}
+```
+
+### Google Calendar Event
+
+```javascript
+// Create a maintenance reminder in Google Calendar
+function createCalendarLink(device, date) {
+    var title = encodeURIComponent("Maintenance: " + device.name);
+    var details = encodeURIComponent(
+        "Vehicle: " + device.name + "\n" +
+        "Serial: " + device.serialNumber
+    );
+    var dateStr = date.toISOString().replace(/-|:|\.\d+/g, "").slice(0, 15) + "Z";
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+           "&text=" + title +
+           "&details=" + details +
+           "&dates=" + dateStr + "/" + dateStr;
+}
+```
+
+### Google Maps Link
+
+```javascript
+// Open location in Google Maps
+function createMapsLink(latitude, longitude, label) {
+    var link = document.createElement("a");
+    link.href = "https://www.google.com/maps?q=" + latitude + "," + longitude;
+    link.textContent = label || "Open in Maps";
+    link.target = "_blank";
+    return link;
+}
+```
+
+### Call or Text Driver
+
+```javascript
+// Phone call link
+function createCallLink(phoneNumber, label) {
+    var link = document.createElement("a");
+    link.href = "tel:" + phoneNumber;
+    link.textContent = label || "Call";
+    return link;
+}
+
+// SMS link with pre-filled message
+function createSmsLink(phoneNumber, message, label) {
+    var link = document.createElement("a");
+    link.href = "sms:" + phoneNumber + "?body=" + encodeURIComponent(message);
+    link.textContent = label || "Text";
+    return link;
+}
+```
+
+### WhatsApp Message
+
+```javascript
+// WhatsApp link with pre-filled message (use number without + or spaces)
+function createWhatsAppLink(phoneNumber, message, label) {
+    var link = document.createElement("a");
+    link.href = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+    link.textContent = label || "WhatsApp";
+    link.target = "_blank";
+    return link;
+}
+```
+
+### Copy to Clipboard
+
+```javascript
+// Copy text to clipboard
+function copyToClipboard(text, button) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+
+    // Visual feedback
+    var originalText = button.textContent;
+    button.textContent = "Copied!";
+    setTimeout(function() { button.textContent = originalText; }, 2000);
+}
+
+// Usage
+var copyBtn = document.createElement("button");
+copyBtn.textContent = "Copy Details";
+copyBtn.onclick = function() {
+    copyToClipboard("Vehicle: " + device.name + "\nSerial: " + device.serialNumber, copyBtn);
+};
+```
+
+### Download as CSV
+
+```javascript
+// Generate and download CSV file
+function downloadCSV(data, filename) {
+    var csv = "Name,Serial Number,Type\n";
+    data.forEach(function(d) {
+        csv += '"' + (d.name || "") + '","' + (d.serialNumber || "") + '","' + (d.deviceType || "") + '"\n';
+    });
+
+    var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = filename || "export.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+}
+```
+
+### Print Report
+
+```javascript
+// Print button
+var printBtn = document.createElement("button");
+printBtn.textContent = "Print Report";
+printBtn.onclick = function() { window.print(); };
+```
+
+### Text-to-Speech
+
+```javascript
+// Speak text aloud (hands-free use)
+function speak(text) {
+    if ("speechSynthesis" in window) {
+        var utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+// Example: Read fleet summary
+speak("You have " + devices.length + " vehicles and " + drivers.length + " drivers.");
+```
+
+### Native Share (Mobile)
+
+```javascript
+// Use device's native share functionality
+function shareData(title, text) {
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            text: text,
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        copyToClipboard(text);
+    }
+}
+```
+
 ### Common Type Names
 `Device` (vehicles), `User`, `Trip`, `Zone` (geofences), `LogRecord` (GPS), `ExceptionEvent` (rule violations), `Group`, `Rule`, `FuelTransaction`, `StatusData`
 
