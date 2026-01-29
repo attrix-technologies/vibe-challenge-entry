@@ -102,8 +102,10 @@ Create an Add-In that shows my drivers with their:
 - Email
 - Group membership
 
-Display it as a clean list with alternating row colors.
+Display it as a clean list (never use alternating row colors).
 ```
+
+Ps: Why [not to use alternating row colors](https://ux.stackexchange.com/questions/3562/to-use-or-not-to-use-zebra-stripes-or-alternating-row-colors-for-tables/121430#121430).
 
 ### Quick Stats Widget
 
