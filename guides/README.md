@@ -28,6 +28,7 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 
 - **[API_REFERENCE_FOR_AI.md](./API_REFERENCE_FOR_AI.md)** - Complete guide for any AI coding tool (ChatGPT, Copilot, Cursor, etc.).
 - **[GEOTAB_API_REFERENCE.md](./GEOTAB_API_REFERENCE.md)** - Quick reference card for authentication and common API patterns.
+- **[DEMO_DATABASE_REFERENCE.md](./DEMO_DATABASE_REFERENCE.md)** - Complete entity schemas and sample data from demo databases.
 
 ### Building Add-Ins
 

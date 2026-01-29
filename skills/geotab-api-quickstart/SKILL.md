@@ -315,6 +315,7 @@ trips = api.get('Trip',
 - **Build a dashboard:** Use Streamlit with this data
 - **Create an Add-In:** See the `geotab-addins` skill
 - **Analyze trips:** See [references/TRIP_ANALYSIS.md](references/TRIP_ANALYSIS.md)
+- **Understand demo data:** See [Demo Database Reference](../../guides/DEMO_DATABASE_REFERENCE.md) for complete entity schemas and sample values
 
 ## Resources
 
