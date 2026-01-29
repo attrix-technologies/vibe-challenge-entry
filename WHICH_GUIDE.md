@@ -7,10 +7,9 @@ Quick navigation to the right resource for your needs.
 | Situation | Use This | Why |
 |-----------|----------|-----|
 | Complete beginner | [BEGINNER_GLOSSARY.md](./guides/BEGINNER_GLOSSARY.md) | Explains GitHub, Python, APIs, vibe coding, and all terms used in these guides |
+| **First time here** | [GOOGLE_GEM_USER_GUIDE.md](./guides/GOOGLE_GEM_USER_GUIDE.md) | **Easiest path - no coding required!** |
 | Using Claude on web | [INSTANT_START_WITH_CLAUDE.md](./guides/INSTANT_START_WITH_CLAUDE.md) | Zero to working code in 60 seconds |
-| Using Google Gemini | [GOOGLE_GEM_USER_GUIDE.md](./guides/GOOGLE_GEM_USER_GUIDE.md) | Generate Add-Ins via the Geotab Add-In Architect Gem |
 | Want ready-made prompts | [CLAUDE_PROMPTS.md](./guides/CLAUDE_PROMPTS.md) | 10+ copy-paste prompts for instant productivity |
-| First time here | [INSTANT_START_WITH_CLAUDE.md](./guides/INSTANT_START_WITH_CLAUDE.md) | The fastest path - start here! |
 | **Building a MyGeotab Add-In** | [GEOTAB_ADDINS.md](./guides/GEOTAB_ADDINS.md) | **Custom pages inside MyGeotab** |
 | What is Geotab? | [GEOTAB_OVERVIEW.md](./GEOTAB_OVERVIEW.md) | Platform overview, 6 pillars, use cases, write-back capabilities |
 | Setting up credentials | [CREDENTIALS.md](./guides/CREDENTIALS.md) | Concise .env setup |
@@ -81,7 +80,7 @@ If you need to minimize context size:
 ## How Instructors Use These
 
 **Pre-workshop:**
-1. Share INSTANT_START_WITH_CLAUDE.md or CREDENTIALS.md with participants
+1. Share GOOGLE_GEM_USER_GUIDE.md (easiest) or INSTANT_START_WITH_CLAUDE.md with participants
 2. Review TUTORIAL_DESIGN.md for philosophy
 3. Practice with MINUTE_BY_MINUTE.md
 

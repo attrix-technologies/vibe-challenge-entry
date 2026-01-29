@@ -7,8 +7,8 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 | Your situation | Start here |
 |----------------|------------|
 | **New to coding/APIs** | [BEGINNER_GLOSSARY.md](./BEGINNER_GLOSSARY.md) |
-| **Want to build NOW (Claude users)** | [INSTANT_START_WITH_CLAUDE.md](./INSTANT_START_WITH_CLAUDE.md) |
-| **Using Google Gemini** | [GOOGLE_GEM_USER_GUIDE.md](./GOOGLE_GEM_USER_GUIDE.md) |
+| **Want to build NOW (easiest!)** | [GOOGLE_GEM_USER_GUIDE.md](./GOOGLE_GEM_USER_GUIDE.md) |
+| **Using Claude** | [INSTANT_START_WITH_CLAUDE.md](./INSTANT_START_WITH_CLAUDE.md) |
 | **Using other AI tools** | [API_REFERENCE_FOR_AI.md](./API_REFERENCE_FOR_AI.md) |
 | **At a hackathon** | [HACKATHON_IDEAS.md](./HACKATHON_IDEAS.md) |
 | **Teaching a workshop** | [MINUTE_BY_MINUTE.md](./MINUTE_BY_MINUTE.md) |
@@ -19,6 +19,7 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 
 ### Getting Started
 
+- **[GOOGLE_GEM_USER_GUIDE.md](./GOOGLE_GEM_USER_GUIDE.md)** - Easiest path! Describe what you want, paste JSON, done. No coding required.
 - **[INSTANT_START_WITH_CLAUDE.md](./INSTANT_START_WITH_CLAUDE.md)** - Zero to working code in 60 seconds using Claude. Includes network egress setup.
 - **[BEGINNER_GLOSSARY.md](./BEGINNER_GLOSSARY.md)** - New to coding? Start here for plain-English explanations of APIs, terminals, and more.
 - **[CREDENTIALS.md](./CREDENTIALS.md)** - How to set up your `.env` file with Geotab API credentials.
