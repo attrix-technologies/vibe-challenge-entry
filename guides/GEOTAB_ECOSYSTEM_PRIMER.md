@@ -1,6 +1,6 @@
 # The Geotab Ecosystem: A Primer for Partners
 
-**Discover how 250+ companies have built profitable businesses on the world's largest fleet telematics platform.**
+**Discover how 350 companies have built profitable businesses on the world's largest fleet telematics platform.**
 
 If you have a solution that helps fleet operators—video, safety, maintenance, fuel, routing, compliance, or anything else—the Geotab ecosystem offers a path to millions of vehicles and a global reseller network.
 
@@ -14,12 +14,13 @@ This primer shows you what's possible.
 |--------|-------|
 | Connected vehicles | 4.7 million+ |
 | Daily data points | 75 billion+ |
-| Marketplace partners | 250+ |
-| Available solutions | 350+ |
+| Marketplace partners | 350+ |
+| Available solutions | 430+ |
 | Countries | 160+ |
+| Global partnerships | 700+ |
 | Resellers worldwide | 300+ |
 
-Geotab is the largest commercial telematics platform in the world. When your solution integrates with Geotab, you gain access to this entire ecosystem.
+Geotab ranks #1 in ABI Research's commercial telematics rankings for four consecutive years (2022-2025). When your solution integrates with Geotab, you join the largest telematics ecosystem in the world.
 
 ---
 
@@ -37,23 +38,24 @@ Geotab is the largest commercial telematics platform in the world. When your sol
 
 **Access to Customers**
 - 4.7 million vehicles already on Geotab
-- Fleet operators actively looking for solutions in the Marketplace
-- 300+ resellers who can sell your integration alongside Geotab
+- Fleet operators actively browsing the Marketplace for solutions
+- 300+ resellers who can sell your integration alongside Geotab hardware
 
 **Shared Data Infrastructure**
-- Vehicle location, trips, driver behavior, engine diagnostics
-- No need to deploy your own hardware for telematics data
-- Real-time and historical data access
+- Vehicle location, trips, driver behavior, engine diagnostics—already collected
+- No need to deploy your own telematics hardware
+- Real-time and historical data via open APIs
 
 **Trust and Credibility**
-- Geotab vets Marketplace solutions
-- Premier and "Order Now" badges signal quality
-- Customers trust the ecosystem
+- Geotab vets Marketplace solutions at higher tiers
+- Partner badges signal quality to customers
+- 20 years of ecosystem development
 
 **Co-Marketing**
-- Presence at Geotab Connect (5,000+ attendees)
-- Joint case studies and announcements
-- Marketplace visibility to active buyers
+- Dedicated Partner Exhibitor Hall at Geotab Connect (3,500+ attendees)
+- Marketplace Stage presentations
+- Joint case studies and press releases
+- Innovation Awards recognition
 
 ---
 
@@ -61,102 +63,119 @@ Geotab is the largest commercial telematics platform in the world. When your sol
 
 The Marketplace spans 15 categories. Find where your solution fits:
 
-| Category | What Customers Need |
-|----------|---------------------|
-| **Asset & Trailer Tracking** | Track non-powered equipment: trailers, containers, tools |
-| **Cameras & ADAS** | Dashcams, AI video, driver monitoring, collision avoidance |
-| **Compliance** | ELD, HOS, DVIR, regulatory reporting |
-| **Connected Sensors & Hardware** | Temperature, fuel level, door status, PTO |
-| **Fleet Management** | Operations, dispatching, utilization |
-| **Fuel Management** | Fuel cards, tank monitoring, theft prevention |
-| **Hardware Device Management** | GO device installation and configuration services |
-| **Insurance** | Usage-based insurance, risk scoring, claims |
-| **Integration & Consulting** | Custom development, implementation services |
-| **Maintenance & Diagnostics** | Predictive maintenance, shop integration, parts |
-| **Mobile Workflow** | Forms, proof of delivery, field service |
-| **Risk Management** | Safety scoring, driver coaching, alerts |
-| **Routing & Dispatch** | Route optimization, scheduling, ETAs |
-| **Sustainability** | EV management, carbon tracking, green fleet |
-| **TMS & Logistics** | Transportation management, freight, load planning |
+| Category | What Customers Need | Example Partners |
+|----------|---------------------|------------------|
+| **Asset & Trailer Tracking** | Track non-powered equipment | Link Labs, CalAmp |
+| **Cameras & ADAS** | Dashcams, AI video, driver monitoring | Lytx, Netradyne, Surfsight |
+| **Compliance** | ELD, HOS, DVIR, IFTA | BigRoad, Transflo |
+| **Connected Sensors** | Temperature, TPMS, fuel level, door status | Bridgestone IntelliTire |
+| **Fleet Management** | Operations, dispatching, utilization | Verizon Connect |
+| **Fuel Management** | Fuel cards, tank monitoring, theft prevention | WEX, Fleetcor |
+| **Hardware Services** | GO device installation and configuration | Pana Pacific |
+| **Insurance** | Usage-based insurance, risk scoring | Various insurers |
+| **Integration & Consulting** | Custom development, implementation | Ecatenate |
+| **Maintenance & Diagnostics** | Predictive maintenance, shop integration | Fleetio, Uptake, Decisiv |
+| **Mobile Workflow** | Forms, proof of delivery, field service | Samsara (competitor) |
+| **Risk Management** | Safety scoring, driver coaching | Applied Driving |
+| **Routing & Dispatch** | Route optimization, scheduling | Prophesy, Welltrax |
+| **Sustainability** | EV management, carbon tracking | Synop |
+| **TMS & Logistics** | Transportation management, freight | Various TMS providers |
 
 ---
 
 ## Partner Success Stories
 
-### Lytx: Video Safety at Scale
+### Lytx + Surfsight: Video Safety at Scale
 
-**The company:** Leading provider of video telematics and driver safety solutions.
+**The integration:** Lytx video telematics and AI-powered dashcams integrated directly into the Geotab platform. The Surfsight AI-12 camera uses machine vision to detect risky driving in real-time.
 
-**The integration:** Combined Lytx video and DOT compliance with Geotab telematics in a single platform. Fleet managers see video events alongside trip data, driver scores, and vehicle diagnostics—without switching systems.
+**Customer result:** 3 Sisters Logistics deployed Geotab GO devices with Lytx Surfsight cameras. Result: **30% reduction in insurance premiums ($45,000/year saved)** by providing their insurer with video evidence and safety data.
 
-**The result:** "Lytx+ with Geotab" launched as an all-in-one fleet safety solution. Operators get intelligent video, advanced telematics, and compliance tools in one integrated experience.
-
----
-
-### Link Labs: Asset Tracking Beyond Vehicles
-
-**The company:** Industrial IoT and asset tracking specialists.
-
-**The integration:** BLE and cellular asset trackers that work through Geotab's IOX port. Custom Add-In for viewing and managing tracked assets directly in MyGeotab.
-
-**The opportunity:** Fleet operators already track vehicles with Geotab. Now they can track trailers, containers, tools, and equipment in the same interface—no separate system needed.
-
-**The result:** Real-time visibility across powered and non-powered assets, all in one platform.
+**The business model:** Lytx sells cameras and subscriptions through the Geotab Marketplace. Geotab resellers bundle them with GO devices.
 
 ---
 
-### Brigade Electronics & Streamax: Video Telematics
+### Bridgestone: Tire Intelligence
 
-**The company:** Video telematics and safety camera specialists.
+**The integration:** Bridgestone's IntelliTire TPMS (tire pressure monitoring system) connects through Geotab's IOX port. Tire data flows directly into MyGeotab.
 
-**The integration:**
-- Live multi-camera streaming on the MyGeotab Map page
-- On-demand footage retrieval in Trip History
-- Automatic video upload when Geotab detects harsh braking or steering
-- "Driving events" portal with violations and video evidence
+**Customer result:** Internal studies with large waste fleets showed **40% reduction in tire-related downtime**.
 
-**The value:** Fleet managers review video evidence in the same place they review trips. No separate video system to log into.
+**The partnership:** Bridgestone gained access to anonymized data from 4.5 million connected vehicles to develop their fleet mobility ecosystem. They also partnered with Fleetio to enable Geotab device installation at Firestone, Tires Plus, and other Bridgestone retail locations.
 
 ---
 
-### Uptake: Predictive Maintenance
+### Fleetio: Maintenance Management
 
-**The company:** Industrial AI and predictive analytics.
+**The integration:** Fleetio's fleet maintenance software syncs with Geotab for automated odometer updates, real-time vehicle tracking, and fault code alerts. When Geotab detects a check engine light, Fleetio can automatically create a work order.
 
-**The integration:** Machine learning models that analyze Geotab engine diagnostics to predict failures before they happen.
+**The reach:** Fleetio connects to 85,000+ national and independent maintenance shops across the US, automating in-house and external maintenance workflows.
 
-**The value:** Reduce unplanned downtime. Know which vehicles need attention before they break down on the road.
+**Why it works:** Fleet managers already use Geotab for telematics. Fleetio adds the maintenance layer without requiring duplicate data entry.
 
 ---
 
-### White Cap + Holman: Safety Transformation
+### Uptake: Predictive Maintenance AI
 
-**The challenge:** Construction materials distributor with 600+ fleet vehicles needed to improve driver safety.
+**The integration:** Uptake's machine learning models analyze engine diagnostic data from Geotab to predict component failures before they happen.
 
-**The solution:** Geotab telematics combined with Netradyne cameras and driver coaching.
+**The value:** Fleets avoid unplanned roadside breakdowns. Maintenance teams know which vehicles need attention and why—before the driver calls in with a problem.
+
+**The ecosystem effect:** Uptake insights can flow into Fleetio to automatically generate work orders. Multiple Marketplace partners working together.
+
+---
+
+### Decisiv: Service Relationship Management
+
+**The integration:** Decisiv manages the commercial vehicle service ecosystem—connecting fleets, dealers, and service providers. Their platform integrates with Geotab to share vehicle health data with service networks.
+
+**The scale:** Largest asset service management ecosystem for commercial vehicles in North America.
+
+---
+
+### Netradyne + White Cap: Safety Transformation
+
+**The challenge:** White Cap, a construction materials distributor with 600+ vehicles, needed to transform driver safety culture.
+
+**The solution:** Geotab telematics combined with Netradyne AI cameras and driver coaching programs.
 
 **The results:**
-- 97% reduction in speeding violations
-- 97% reduction in seatbelt violations
-- 62% reduction in aggressive driving
-- 35% reduction in accident frequency
+- **97% reduction** in speeding violations
+- **97% reduction** in seatbelt violations
+- **62% reduction** in aggressive driving
+- **35% reduction** in accident frequency
 
-**The business impact:** Lower insurance costs, fewer accidents, better driver retention.
+**The business impact:** Dramatically lower insurance costs, fewer accidents, improved driver retention.
+
+---
+
+## More Customer ROI Examples
+
+| Customer | Result | Source |
+|----------|--------|--------|
+| Missouri DOT | 25% reduction in fleet liability claims, **$1M+ saved** | Geotab case study |
+| Nussbaum Trucking | **$300,000 saved** in insurance costs | Geotab case study |
+| California Freight | **59% reduction** in idling costs | Geotab case study |
+| Food Bank of Madrid | 50% decrease in idling, **12% fuel reduction** | Geotab case study |
+| City of Spokane | Hundreds of thousands saved via route optimization | Geotab case study |
+| Orkin | 8.4% idling reduction in 3 months via driver contest | Geotab case study |
+
+These results come from the Geotab platform—but they're enabled by partner solutions for cameras, routing, maintenance, and driver coaching.
 
 ---
 
 ## Partnership Tiers
 
-As you grow with Geotab, you can progress through partnership tiers:
+Marketplace partnerships are defined by integration depth and vetting level:
 
-| Tier | Description | Benefits |
-|------|-------------|----------|
-| **Basic** | Uses Geotab's open platform | Access to SDK, Marketplace listing |
-| **Standard** | Vetted integration | Quality badge, better visibility |
-| **Premier** | Best-in-class solutions | Premium placement, co-marketing |
-| **Order Now** | Seamless purchase experience | Highest visibility, streamlined activation |
+| Tier | Description | Vetting |
+|------|-------------|---------|
+| **Premium** | Seamlessly integrated, native user experience | Exceeds quality standards |
+| **Advanced** | Best-in-class, deep integration | Meets industry quality standards |
+| **Integrated** | Solid integrations extending Geotab | Meets industry quality standards |
+| **SDK** | Uses open platform and SDK | No formal vetting |
 
-Higher tiers mean more visibility, more trust signals, and closer collaboration with Geotab.
+Higher tiers get better Marketplace placement, trust badges, and closer collaboration with Geotab's partner team.
 
 ---
 
@@ -167,22 +186,28 @@ Partners integrate with Geotab in four ways:
 ### Software Add-Ins
 Custom pages inside MyGeotab. Users access your functionality without leaving the platform.
 
-*Best for:* Dashboards, reporting, workflow tools, data visualization
+*Best for:* Dashboards, reporting, workflow tools, video viewers, data visualization
+
+*Examples:* Brigade Electronics video viewer, Fleetio maintenance dashboard
 
 ### API Integration
-Pull Geotab data into your system or push data to Geotab.
+Pull Geotab data into your system or push data to Geotab. Bi-directional data flow.
 
-*Best for:* Backend systems, mobile apps, enterprise software, analytics platforms
+*Best for:* Backend systems, mobile apps, enterprise software, TMS/ERP integration
+
+*Examples:* Salesforce integration, QuickBooks sync, custom analytics
 
 ### Hardware (IOX)
-Physical devices that connect to Geotab's GO device.
+Physical devices that connect to Geotab's GO device via the IOX expansion port.
 
-*Best for:* Cameras, sensors, driver ID, specialized hardware
+*Best for:* Cameras, temperature sensors, TPMS, driver ID, asset trackers
+
+*Examples:* Lytx Surfsight cameras, Bridgestone IntelliTire, Link Labs BLE trackers
 
 ### Data Feeds
-Continuous export of Geotab data to external systems.
+Continuous streaming export of Geotab data to external systems.
 
-*Best for:* Data warehouses, BI tools, compliance systems
+*Best for:* Data warehouses, BI platforms, compliance systems, real-time monitoring
 
 ---
 
@@ -191,84 +216,94 @@ Continuous export of Geotab data to external systems.
 ### For Solution Providers
 
 **Revenue streams:**
-- Subscription fees for your solution
-- Implementation and consulting services
+- Subscription fees for your software
 - Hardware sales (for IOX integrations)
-- Upsells to existing Geotab customers
+- Implementation and consulting services
+- Ongoing support contracts
 
 **Cost savings:**
 - No need to build telematics hardware
 - No need to deploy vehicle tracking infrastructure
-- Leverage Geotab's data collection
+- Leverage Geotab's cellular connectivity and data collection
 
 **Market access:**
-- 4.7M+ vehicles you can reach
-- 300+ resellers who can sell your solution
-- Geotab's marketing and events
+- 4.7M+ vehicles you can reach immediately
+- 300+ resellers who can bundle your solution
+- Geotab's global marketing and events
 
 ### For Fleet Operators
 
 **Why they buy integrated solutions:**
-- One platform instead of many
-- Data already connected
-- Trusted by Geotab vetting process
-- Easier procurement and support
-
----
-
-## Getting Started
-
-### 1. Explore the Marketplace
-Browse [marketplace.geotab.com](https://marketplace.geotab.com/) to see what's already available. Find gaps your solution could fill.
-
-### 2. Get SDK Access
-The [Geotab SDK](https://developers.geotab.com/) is free and open. No approval required to start exploring.
-
-### 3. Build a Prototype
-Use a demo account to test your integration concept. Prove it works before committing resources.
-
-### 4. Apply to Partner
-Submit your application at [marketplace.geotab.com/integrate-geotab/](https://marketplace.geotab.com/integrate-geotab/)
-
-### 5. Launch and Grow
-Once approved, your solution appears in the Marketplace. Geotab resellers can start selling it.
+- One platform instead of many disconnected tools
+- Data already connected—no manual sync
+- Vetted by Geotab's partner program
+- Single point of support through their Geotab reseller
 
 ---
 
 ## Key Events
 
-**Geotab Connect** — Annual partner conference
-- 5,000+ attendees
-- Partner showcases and awards
-- Networking with resellers and customers
-- Las Vegas, February 2026
+### Geotab Connect
 
-**Marketplace Innovators** — Geotab highlights top partners each year with innovation awards across categories.
+The annual partner and customer conference.
+
+- **2024:** Las Vegas, 65+ Marketplace partners with dedicated Exhibitor Hall
+- **2025:** Orlando, Walt Disney World Swan & Dolphin Resort
+- **2026:** Las Vegas, MGM Grand (February 10-12), expecting 3,500+ attendees
+
+Connect features a Marketplace Stage for partner presentations, Innovation Awards, and direct access to Geotab's largest customers and reseller network.
+
+### Geotab Innovation Awards
+
+Annual recognition for organizations using connected vehicle technology effectively. Categories include:
+- Sustainability
+- Productivity
+- Excellence
+- Safety Champion
+- Maintenance Champion
+
+Winners announced at Geotab Connect each year.
+
+---
+
+## Industry Position
+
+Geotab leads in third-party analyst rankings:
+
+- **#1 in ABI Research Commercial Telematics** (2022, 2023, 2024, 2025)
+- **#1 in ABI Research Commercial Video Telematics** (ahead of Lytx, Samsara, Solera, PowerFleet)
+- **Best Estimated ROI** — G2 Fleet Management category (Summer 2025)
+
+The platform's open SDK and extensive Marketplace are cited as key differentiators versus closed competitors.
 
 ---
 
 ## Resources
 
-| Resource | Link |
-|----------|------|
-| Geotab Marketplace | [marketplace.geotab.com](https://marketplace.geotab.com/) |
-| Partner Program | [geotab.com/partners/overview](https://www.geotab.com/partners/overview/) |
-| SDK Documentation | [developers.geotab.com](https://developers.geotab.com/) |
-| Geotab Extensions | [marketplace.geotab.com/partner/geotab-extensions](https://marketplace.geotab.com/partner/geotab-extensions/) |
-| Partner Application | [marketplace.geotab.com/integrate-geotab](https://marketplace.geotab.com/integrate-geotab/) |
+| Resource | What You'll Find |
+|----------|------------------|
+| [Geotab Marketplace](https://marketplace.geotab.com/) | Browse 430+ existing solutions |
+| [Partner Program](https://www.geotab.com/partners/overview/) | Partnership overview and benefits |
+| [Become a Partner](https://marketplace.geotab.com/integrate-geotab/) | Application to join the Marketplace |
+| [Customer Success Stories](https://www.geotab.com/success-stories/) | Case studies with ROI metrics |
+| [SDK Documentation](https://developers.geotab.com/) | Technical documentation for builders |
 
 ---
 
 ## The Bottom Line
 
-Geotab has built the infrastructure. They've acquired the customers. They've created the ecosystem.
+Geotab has built the infrastructure—4.7 million connected vehicles, 75 billion daily data points, 20 years of ecosystem development.
 
-Your job is to bring the solution.
+They've acquired the customers—fleets actively looking for solutions in the Marketplace.
+
+They've created the channel—300+ resellers worldwide who can sell your solution alongside Geotab hardware.
+
+**Your job is to bring the solution.**
 
 If you have something that helps fleet operators run safer, more efficient, more profitable operations—Geotab's platform can get it in front of millions of vehicles.
 
-**The ecosystem is open. The opportunity is real. The partners are thriving.**
+**The ecosystem is open. The partners are thriving. The opportunity is real.**
 
 ---
 
-*Want to build on Geotab? Start at [marketplace.geotab.com/integrate-geotab](https://marketplace.geotab.com/integrate-geotab/)*
+*Ready to explore? Browse the [Geotab Marketplace](https://marketplace.geotab.com/) to see what's possible.*
