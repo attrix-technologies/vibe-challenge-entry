@@ -28,6 +28,49 @@ MONITOR → DETECT → DECIDE → ACT → (repeat forever)
 3. **Decide**: Apply rules or AI reasoning to determine response
 4. **Act**: Send alerts, create tickets, update systems, notify people
 
+### Example Flows
+
+**Simple: Speeding Alert**
+```
+MONITOR: Check vehicle speeds every 5 minutes
+DETECT:  Speed > 80 mph
+DECIDE:  Alert supervisor
+ACT:     Send Slack message with vehicle, driver, location
+```
+
+**Medium: Maintenance Automation**
+```
+MONITOR: Watch for engine fault codes
+DETECT:  Critical fault code appears
+DECIDE:  Check if vehicle is near service center
+ACT:     → Create ticket in ServiceNow
+         → Alert driver via SMS
+         → Notify fleet manager
+         → Update vehicle status in CRM
+```
+
+**Advanced: AI Safety Coaching**
+```
+MONITOR: Analyze driving patterns over 7 days
+DETECT:  Driver's safety score declining
+DECIDE:  AI determines personalized coaching needed
+ACT:     → Generate custom training recommendations
+         → Schedule coaching session
+         → Send materials to driver
+         → Log intervention in HR system
+```
+
+**External Events: Weather Protection**
+```
+MONITOR: Weather API for fleet regions
+DETECT:  Severe storm warning issued
+DECIDE:  Identify affected vehicles and drivers
+ACT:     → Create temporary hazard zones in Geotab
+         → Alert drivers in affected areas
+         → Notify dispatch of potential delays
+         → Remove zones when weather clears
+```
+
 ---
 
 ## When Do You Need an Agentic System?
