@@ -110,6 +110,34 @@ Then use Bootstrap classes: `<body class='bg-light p-4'><div class='card shadow'
 - **Dates:** Day.js (`https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js`) - Lightweight date formatting
 - **CSS Framework:** Bootstrap (`https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css` via dynamic load) - Ready-made components and grid
 
+**Leaflet Map Example (Vehicle Positions):**
+
+<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>
+<script>
+// Load Leaflet CSS dynamically
+var link=document.createElement('link');
+link.rel='stylesheet';
+link.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+document.head.appendChild(link);
+</script>
+
+// In your Add-In code:
+var map = L.map('map').setView([37.7749, -122.4194], 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'OpenStreetMap'
+}).addTo(map);
+
+// Get vehicle positions and add markers
+api.call('Get', { typeName: 'DeviceStatusInfo' }, function(statuses) {
+    statuses.forEach(function(status) {
+        if (status.latitude && status.longitude) {
+            L.marker([status.latitude, status.longitude])
+                .addTo(map)
+                .bindPopup('<b>' + status.device.id + '</b><br>Speed: ' + (status.speed || 0) + ' km/h');
+        }
+    });
+});
+
 3. **JavaScript Must Use ES5**: No arrow functions, const/let, or template literals.
 
 WRONG:

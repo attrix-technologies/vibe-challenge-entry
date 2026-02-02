@@ -120,6 +120,31 @@ body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
 - **Dates:** Day.js (`https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js`)
 - **CSS Framework:** Bootstrap (load CSS dynamically: `https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css`)
 
+**Leaflet Vehicle Map Pattern:**
+```javascript
+// Load Leaflet JS in HTML head, CSS dynamically
+var link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+document.head.appendChild(link);
+
+// Create map and add markers for vehicle positions
+var map = L.map('map').setView([37.7749, -122.4194], 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'OpenStreetMap'
+}).addTo(map);
+
+api.call('Get', { typeName: 'DeviceStatusInfo' }, function(statuses) {
+    statuses.forEach(function(status) {
+        if (status.latitude && status.longitude) {
+            L.marker([status.latitude, status.longitude])
+                .addTo(map)
+                .bindPopup('<b>' + status.device.id + '</b>');
+        }
+    });
+});
+```
+
 ## API Operations
 
 ### Read Data (Get)
