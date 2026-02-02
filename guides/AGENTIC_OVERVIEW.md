@@ -336,46 +336,18 @@ ACT:
 
 ## Example: Proactive Weather Agent
 
-Here's a concrete example of an external → Geotab agent:
+**Vibe prompt for AI:**
+```
+Build a Python script that:
+1. Checks weather API (Tomorrow.io) for severe weather in my fleet's area
+2. When alerts found, creates temporary hazard zones in Geotab
+3. Alerts drivers currently in affected areas
+4. Runs on a 30-minute schedule
 
-```python
-# weather_zone_agent.py
-import requests
-from geotab_api import GeotabAPI
-
-def check_weather_and_update_zones():
-    # 1. MONITOR: Check weather for fleet operating area
-    weather = requests.get(
-        "https://api.tomorrow.io/v4/weather/forecast",
-        params={"location": "Austin,TX", "apikey": WEATHER_API_KEY}
-    ).json()
-
-    # 2. DETECT: Severe weather?
-    alerts = [w for w in weather["alerts"] if w["severity"] == "severe"]
-
-    if alerts:
-        for alert in alerts:
-            # 3. ACT: Create hazard zone in Geotab
-            geotab.add("Zone", {
-                "name": f"WEATHER HAZARD: {alert['event']}",
-                "externalReference": f"weather-{alert['id']}",
-                "points": alert["affected_area"],
-                "zoneTypes": ["ZoneTypeCustomerId"],  # or appropriate type
-                "activeFrom": alert["start"],
-                "activeTo": alert["end"]
-            })
-
-            # 4. ACT: Alert affected drivers
-            vehicles_in_zone = geotab.get("Device", search={
-                "fromDate": now,
-                "zoneId": zone_id
-            })
-
-            for vehicle in vehicles_in_zone:
-                send_driver_alert(vehicle, alert)
+Use the geotab-api-quickstart skill for Geotab connection.
 ```
 
-**Schedule this to run every 30 minutes** and your fleet is automatically warned about incoming weather.
+This pattern works for any external data source → Geotab action.
 
 ---
 
@@ -446,45 +418,18 @@ Customer calls delivery line →
 
 ### Example: Proactive Alert Call Agent
 
-```python
-# critical_fault_caller.py
-from vapi import Vapi
-from geotab_api import GeotabAPI
-
-def check_faults_and_call():
-    # 1. Monitor for critical faults
-    faults = geotab.get("FaultData", search={
-        "fromDate": fifteen_minutes_ago,
-        "severity": "Critical"
-    })
-
-    for fault in faults:
-        # 2. Check if we already called about this fault
-        if already_notified(fault["id"]):
-            continue
-
-        # 3. Make phone call to dispatcher
-        vapi.calls.create(
-            phone_number=DISPATCHER_PHONE,
-            assistant_id=FLEET_ALERT_ASSISTANT,
-            context={
-                "vehicle": fault["device"]["name"],
-                "fault_code": fault["code"],
-                "description": fault["description"],
-                "location": get_vehicle_location(fault["device"]["id"]),
-                "driver": get_driver_name(fault["device"]["id"])
-            }
-        )
-
-        # 4. Mark as notified
-        mark_notified(fault["id"])
+**Vibe prompt for AI:**
 ```
+Build a voice agent using Vapi that:
+1. Monitors Geotab for critical fault codes
+2. When found, calls the dispatcher
+3. Explains the situation (vehicle, fault, location, driver)
+4. Can answer follow-up questions
+5. Offers to dispatch roadside assistance
+6. Logs the call outcome
 
-**The assistant handles the conversation:**
-- Explains the situation to the dispatcher
-- Answers follow-up questions about vehicle/driver
-- Can dispatch roadside assistance if requested
-- Logs the call outcome
+Use geotab-api-quickstart skill for Geotab, Vapi docs for phone calls.
+```
 
 ---
 
