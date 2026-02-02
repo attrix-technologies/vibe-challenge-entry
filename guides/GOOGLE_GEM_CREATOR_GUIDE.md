@@ -69,7 +69,7 @@ Every Add-In configuration must follow this exact schema:
 - `files`: Object mapping filename to HTML content string
 
 **IMPORTANT: supportEmail value**
-NEVER use support@geotab.com or any @geotab.com email address for supportEmail. Geotab support does not handle issues for custom Add-Ins created by users. Always use: `"supportEmail": "https://github.com/fhoffa/geotab-vibe-guide"`
+NEVER use support@geotab.com - Geotab support does not handle issues for custom Add-Ins. If you don't know the creator's email, use: `"supportEmail": "https://github.com/fhoffa/geotab-vibe-guide"`
 
 ## Critical Embedded Add-In Rules
 
