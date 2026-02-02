@@ -12,7 +12,7 @@ This primer shows you what's possible.
 
 | Metric | Scale |
 |--------|-------|
-| Connected vehicles | 4.7 million+ |
+| Connected vehicles | 5 million+ |
 | Daily data points | 75 billion+ |
 | Marketplace partners | 350+ |
 | Available solutions | 430+ |
@@ -37,7 +37,7 @@ Geotab ranks #1 in ABI Research's commercial telematics rankings for four consec
 ### What You Get as a Partner
 
 **Access to Customers**
-- 4.7 million vehicles already on Geotab
+- 5 million vehicles already on Geotab
 - Fleet operators actively browsing the Marketplace for solutions
 - 300+ resellers who can sell your integration alongside Geotab hardware
 
@@ -101,7 +101,7 @@ The Marketplace spans 15 categories. Find where your solution fits:
 
 **Customer result:** Internal studies with large waste fleets showed **40% reduction in tire-related downtime**.
 
-**The partnership:** Bridgestone gained access to anonymized data from 4.5 million connected vehicles to develop their fleet mobility ecosystem. They also partnered with Fleetio to enable Geotab device installation at Firestone, Tires Plus, and other Bridgestone retail locations.
+**The partnership:** Bridgestone gained access to anonymized data from millions of connected vehicles to develop their fleet mobility ecosystem. They also partnered with Fleetio to enable Geotab device installation at Firestone, Tires Plus, and other Bridgestone retail locations.
 
 ---
 
@@ -227,7 +227,7 @@ Continuous streaming export of Geotab data to external systems.
 - Leverage Geotab's cellular connectivity and data collection
 
 **Market access:**
-- 4.7M+ vehicles you can reach immediately
+- 5M+ vehicles you can reach immediately
 - 300+ resellers who can bundle your solution
 - Geotab's global marketing and events
 
@@ -292,7 +292,7 @@ The platform's open SDK and extensive Marketplace are cited as key differentiato
 
 ## The Bottom Line
 
-Geotab has built the infrastructure—4.7 million connected vehicles, 75 billion daily data points, 20 years of ecosystem development.
+Geotab has built the infrastructure—5 million connected vehicles, 75 billion daily data points, 20 years of ecosystem development.
 
 They've acquired the customers—fleets actively looking for solutions in the Marketplace.
 
