@@ -92,6 +92,17 @@ CORRECT:
 WORKS:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
+**CDN CSS via Dynamic Loading**: Load CSS frameworks like Bootstrap by injecting the link via JavaScript (static `<link>` tags get URL-rewritten and break):
+
+<script>
+var link=document.createElement('link');
+link.rel='stylesheet';
+link.href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css';
+document.head.appendChild(link);
+</script>
+
+Then use Bootstrap classes: `<body class='bg-light p-4'><div class='card shadow'>...</div></body>`
+
 3. **JavaScript Must Use ES5**: No arrow functions, const/let, or template literals.
 
 WRONG:

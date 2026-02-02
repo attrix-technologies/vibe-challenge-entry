@@ -109,8 +109,9 @@ body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
 - `menuName`: Can contain spaces and special characters (this is what users see in the menu)
 
 **Embedded Add-In Rules:**
-- `<style>` tags ARE stripped - must use inline `style=""` attributes
-- CDN libraries WORK - can load Chart.js, Leaflet, etc. from Cloudflare/jsDelivr/unpkg
+- `<style>` tags ARE stripped - use inline `style=""` or load CSS dynamically via JS
+- CDN JS libraries WORK - Chart.js, Leaflet, etc. via `<script src="https://cdn...">`
+- CDN CSS works via dynamic loading: `var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.../bootstrap.min.css';document.head.appendChild(link);`
 - Must use ES5 JavaScript (no arrow functions, const/let, template literals)
 
 ## API Operations
