@@ -312,17 +312,11 @@ Show vehicle counts in Bootstrap cards with the grid layout.
 **Important for embedded Add-Ins:**
 - `<style>` tags are stripped by MyGeotab
 - Static `<link>` tags get URL-rewritten and break
-- **Solution:** Load CSS dynamically via JavaScript:
-
-```javascript
-// Load Bootstrap CSS dynamically
-var link = document.createElement('link');
-link.rel = 'stylesheet';
-link.href = 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css';
-document.head.appendChild(link);
-```
+- **Solution:** Load CSS dynamically via JavaScript
 
 Tell your AI: "Use Bootstrap with dynamic CSS loading for an embedded Add-In"
+
+The [geotab-addins skill](/skills/geotab-addins/SKILL.md) has the code patterns for dynamic loading.
 
 ---
 
