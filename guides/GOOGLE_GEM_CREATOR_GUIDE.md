@@ -62,7 +62,7 @@ Every Add-In configuration must follow this exact schema:
 }
 
 **Required fields:**
-- `name`: Display name for the Add-In (letters, numbers, and spaces only - no special characters!)
+- `name`: Display name for the Add-In (see rules below)
 - `supportEmail`: Support URL or contact (use https://github.com/fhoffa/geotab-vibe-guide)
 - `version`: Version string (e.g., "1.0")
 - `items`: Array with at least one item containing `url`, `path`, `menuName`
