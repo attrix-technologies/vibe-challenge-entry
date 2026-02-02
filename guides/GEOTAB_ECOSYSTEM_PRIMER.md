@@ -13,11 +13,12 @@ This primer shows you what's possible.
 | Metric | Scale |
 |--------|-------|
 | Connected vehicles | 5 million+ |
-| Daily data points | 75 billion+ |
+| Global customers | 55,000+ |
+| Data points processed daily | 100 billion+ |
 | Marketplace partners | 350+ |
 | Available solutions | 430+ |
-| Countries | 160+ |
-| Global partnerships | 700+ |
+| Countries | 163+ |
+| Continents | All 7 (including Antarctica) |
 | Resellers worldwide | 300+ |
 
 Geotab ranks #1 in ABI Research's commercial telematics rankings for four consecutive years (2022-2025). When your solution integrates with Geotab, you join the largest telematics ecosystem in the world.
@@ -28,17 +29,23 @@ Geotab ranks #1 in ABI Research's commercial telematics rankings for four consec
 
 ### Why Partners Choose Geotab
 
-> "There's a tremendous sense of collaboration between the partners, the resellers, and Geotab that's incredibly unique—and we don't see it anywhere else in the market."
-> — Aaron Howell, Director of Sales, Uptake
-
 > "By working together with Geotab and other Partners, we're able to find out the true needs of the customer, pool our resources together, and exceed expectations."
 > — Caleb Alburn, Account Manager, eSquared Communications Consulting
+
+> "Different fleets have different needs. The beauty of the Marketplace is making sure that every end-user has the best customer experience possible, because they're using the solution that actually solves the unique business challenges that they have."
+> — Max Hillman, CEO, SureCam
+
+> "Everyone in this fleet space has solutions that may cross over, but if we work together, our odds of getting people over that line are much greater."
+> — Kate Coomber, Product Marketing and Business Development, CarIQ
+
+> "Many fleet managers today are utilizing multiple technologies and looking for ways to streamline management, without sacrificing quality. This integration allows fleets to easily leverage two best-in-class fleet technologies together in a seamless interface."
+> — Brandon Nixon, Chairman and CEO, Lytx
 
 ### What You Get as a Partner
 
 **Access to Customers**
 - 5 million vehicles already on Geotab
-- Fleet operators actively browsing the Marketplace for solutions
+- 55,000+ customers actively browsing the Marketplace for solutions
 - 300+ resellers who can sell your integration alongside Geotab hardware
 
 **Shared Data Infrastructure**
@@ -49,10 +56,10 @@ Geotab ranks #1 in ABI Research's commercial telematics rankings for four consec
 **Trust and Credibility**
 - Geotab vets Marketplace solutions at higher tiers
 - Partner badges signal quality to customers
-- 20 years of ecosystem development
+- 20+ years of ecosystem development
 
 **Co-Marketing**
-- Dedicated Partner Exhibitor Hall at Geotab Connect (3,500+ attendees)
+- Dedicated Partner Exhibitor Hall at Geotab Connect
 - Marketplace Stage presentations
 - Joint case studies and press releases
 - Innovation Awards recognition
@@ -65,102 +72,120 @@ The Marketplace spans 15 categories. Find where your solution fits:
 
 | Category | What Customers Need | Example Partners |
 |----------|---------------------|------------------|
-| **Asset & Trailer Tracking** | Track non-powered equipment | Link Labs, CalAmp |
-| **Cameras & ADAS** | Dashcams, AI video, driver monitoring | Lytx, Netradyne, Surfsight |
-| **Compliance** | ELD, HOS, DVIR, IFTA | BigRoad, Transflo |
-| **Connected Sensors** | Temperature, TPMS, fuel level, door status | Bridgestone IntelliTire |
-| **Fleet Management** | Operations, dispatching, utilization | Verizon Connect |
-| **Fuel Management** | Fuel cards, tank monitoring, theft prevention | WEX, Fleetcor |
-| **Hardware Services** | GO device installation and configuration | Pana Pacific |
-| **Insurance** | Usage-based insurance, risk scoring | Various insurers |
-| **Integration & Consulting** | Custom development, implementation | Ecatenate |
-| **Maintenance & Diagnostics** | Predictive maintenance, shop integration | Fleetio, Uptake, Decisiv |
-| **Mobile Workflow** | Forms, proof of delivery, field service | Samsara (competitor) |
-| **Risk Management** | Safety scoring, driver coaching | Applied Driving |
-| **Routing & Dispatch** | Route optimization, scheduling | Prophesy, Welltrax |
-| **Sustainability** | EV management, carbon tracking | Synop |
+| **Asset & Trailer Tracking** | Track non-powered equipment | Link Labs, ORBCOMM, Phillips Connect |
+| **Cameras & ADAS** | Dashcams, AI video, driver monitoring | Lytx Surfsight, Netradyne, Xirgo, Mobileye, SureCam |
+| **Compliance** | ELD, HOS, DVIR, IFTA | Drivewyze, Promiles |
+| **Connected Sensors** | Temperature, TPMS, fuel level, door status | Sensata INSIGHTS |
+| **Fleet Management** | Operations, dispatching, utilization | Elite Extra |
+| **Fuel Management** | Fuel cards, tank monitoring, theft prevention | Fleetcor, Coast Pay |
+| **Hardware Device Management** | GO device installation and configuration | Pana Pacific |
+| **Insurance** | Usage-based insurance, risk scoring | Greater Than |
+| **Integration & Consulting** | Custom development, implementation | eSquared, Gridline |
+| **Maintenance & Diagnostics** | Predictive maintenance, shop integration | Fleetio, CarAdvise |
+| **Mobile Workflow** | Forms, proof of delivery, field service | Whip Around |
+| **Risk Management** | Safety scoring, driver coaching | Smith System, SpeedGauge, Predictive Coach |
+| **Routing & Dispatch** | Route optimization, scheduling | Route4Me |
+| **Sustainability** | EV management, carbon tracking | GoAnalytics |
 | **TMS & Logistics** | Transportation management, freight | Various TMS providers |
 
----
+### Featured Marketplace Solutions
 
-## Partner Success Stories
+These solutions are highlighted on the Marketplace homepage:
 
-### Lytx + Surfsight: Video Safety at Scale
-
-**The integration:** Lytx video telematics and AI-powered dashcams integrated directly into the Geotab platform. The Surfsight AI-12 camera uses machine vision to detect risky driving in real-time.
-
-**Customer result:** 3 Sisters Logistics deployed Geotab GO devices with Lytx Surfsight cameras. Result: **30% reduction in insurance premiums ($45,000/year saved)** by providing their insurer with video evidence and safety data.
-
-**The business model:** Lytx sells cameras and subscriptions through the Geotab Marketplace. Geotab resellers bundle them with GO devices.
-
----
-
-### Bridgestone: Tire Intelligence
-
-**The integration:** Bridgestone's IntelliTire TPMS (tire pressure monitoring system) connects through Geotab's IOX port. Tire data flows directly into MyGeotab.
-
-**Customer result:** Internal studies with large waste fleets showed **40% reduction in tire-related downtime**.
-
-**The partnership:** Bridgestone gained access to anonymized data from millions of connected vehicles to develop their fleet mobility ecosystem. They also partnered with Fleetio to enable Geotab device installation at Firestone, Tires Plus, and other Bridgestone retail locations.
+- **GO Focus Plus** (Geotab) — AI dashcam and video coaching
+- **Lytx Surfsight AI-12** — Premier dash cam with MyGeotab integration
+- **KP2 AI Dashcam** (Xirgo) — Road and driver-facing with ADAS/DSM
+- **CT 1000** (ORBCOMM) — Solar-powered asset tracking (5-star rated)
+- **AirFinder Everywhere** (Link Labs) — SuperTag Plus tracking
+- **GoAnalytics** — Interactive data dashboards (5-star rated)
+- **Xtract** (Xtract360) — Digital incident reporting (5-star rated)
+- **ORIGOInspect** (ORIGO) — Vehicle inspections (5-star rated)
 
 ---
 
-### Fleetio: Maintenance Management
+## Customer Success Stories
 
-**The integration:** Fleetio's fleet maintenance software syncs with Geotab for automated odometer updates, real-time vehicle tracking, and fault code alerts. When Geotab detects a check engine light, Fleetio can automatically create a work order.
+### City of Miami Gardens: $1.1 Million in Vehicle Resales
 
-**The reach:** Fleetio connects to 85,000+ national and independent maintenance shops across the US, automating in-house and external maintenance workflows.
-
-**Why it works:** Fleet managers already use Geotab for telematics. Fleetio adds the maintenance layer without requiring duplicate data entry.
-
----
-
-### Uptake: Predictive Maintenance AI
-
-**The integration:** Uptake's machine learning models analyze engine diagnostic data from Geotab to predict component failures before they happen.
-
-**The value:** Fleets avoid unplanned roadside breakdowns. Maintenance teams know which vehicles need attention and why—before the driver calls in with a problem.
-
-**The ecosystem effect:** Uptake insights can flow into Fleetio to automatically generate work orders. Multiple Marketplace partners working together.
+**The result:**
+- **$60,000+ annually** in operational cost savings
+- **$1.1 million generated** from vehicle resales
+- Reinvestment into newer fleet models
 
 ---
 
-### Decisiv: Service Relationship Management
+### Enterprise Fleet Management: $167 Million EV Opportunity
 
-**The integration:** Decisiv manages the commercial vehicle service ecosystem—connecting fleets, dealers, and service providers. Their platform integrates with Geotab to share vehicle health data with service networks.
+**The analysis:** Geotab conducted one of the largest fleet EV Suitability Assessments ever—analyzing **91,252 vehicles**.
 
-**The scale:** Largest asset service management ecosystem for commercial vehicles in North America.
+**The findings:**
+- **13% of fleet** (≈12,000 vehicles) could economically switch to EVs today
+- **45% of fleet** (≈42,000 vehicles) could switch once electric pickups are available
+- **$33 million** in near-term savings from electrification
+- **$167 million** in total potential savings ($4,056 per vehicle)
+- **1.3 million tons** of CO2 reduction over 4-year service life
+
+**The scale:** Enterprise Fleet Management manages **649,000+ vehicles**.
 
 ---
 
-### Netradyne + White Cap: Safety Transformation
+### White Cap: 97% Reduction in Violations
 
-**The challenge:** White Cap, a construction materials distributor with 600+ vehicles, needed to transform driver safety culture.
+**The challenge:** Construction materials distributor with 600+ vehicles needed to transform driver safety.
 
-**The solution:** Geotab telematics combined with Netradyne AI cameras and driver coaching programs.
+**The solution:** Geotab telematics with Holman (reseller), driver scorecards, proactive coaching, and dashcam integration.
 
 **The results:**
 - **97% reduction** in speeding violations
 - **97% reduction** in seatbelt violations
 - **62% reduction** in aggressive driving
-- **35% reduction** in accident frequency
-
-**The business impact:** Dramatically lower insurance costs, fewer accidents, improved driver retention.
 
 ---
 
-## More Customer ROI Examples
+### King Township: 30% Material Reduction
 
-| Customer | Result | Source |
-|----------|--------|--------|
-| Missouri DOT | 25% reduction in fleet liability claims, **$1M+ saved** | Geotab case study |
-| Nussbaum Trucking | **$300,000 saved** in insurance costs | Geotab case study |
-| California Freight | **59% reduction** in idling costs | Geotab case study |
-| Food Bank of Madrid | 50% decrease in idling, **12% fuel reduction** | Geotab case study |
-| City of Spokane | Hundreds of thousands saved via route optimization | Geotab case study |
-| Orkin | 8.4% idling reduction in 3 months via driver contest | Geotab case study |
+**The result:**
+- **30% reduction** in material usage
+- **25% reduction** in costs
+- Improved safety and service delivery for public works
 
-These results come from the Geotab platform—but they're enabled by partner solutions for cameras, routing, maintenance, and driver coaching.
+---
+
+### Halifax Regional Municipality: ROI in Under 12 Months
+
+**The result:** Working with Northern BI, the municipality recouped their entire capital investment in **less than 12 months**—from reduced kilometers driven alone.
+
+---
+
+### Geotab Vitality Program Results
+
+Across pilot programs:
+- **41% improvement** in safe driving behavior
+- **24% reduction** in collision frequency
+- **15% driving behavior improvement** within 30 days
+- **11.2% reduction** in driver turnover
+
+---
+
+### Swish Maintenance Ltd.
+
+> "Geotab has completely transformed how we manage our fleet. We've improved efficiency, reduced risk, and saved time and money on everything from compliance to rerouting vehicles."
+> — Tony Roque, National Warehouse and Transportation Manager
+
+---
+
+## More Customers Using Geotab
+
+A sample of organizations across industries:
+
+| Industry | Customers |
+|----------|-----------|
+| **Government** | Kentucky Transportation Cabinet, Regina Police Service, Kentville Police, Province of New Brunswick |
+| **Utilities** | ENMAX Power Corporation (500+ vehicles), TELUS (16M customers served) |
+| **Retail** | Giant Tiger |
+| **Logistics** | Plastic Express, Brown Dog Carriers, Savage (1,200 vehicles) |
+| **Construction** | White Cap, JJM Mechanical Group |
+| **Research** | British Antarctic Survey (yes, Antarctica) |
 
 ---
 
@@ -168,14 +193,19 @@ These results come from the Geotab platform—but they're enabled by partner sol
 
 Marketplace partnerships are defined by integration depth and vetting level:
 
-| Tier | Description | Vetting |
-|------|-------------|---------|
-| **Premium** | Seamlessly integrated, native user experience | Exceeds quality standards |
-| **Advanced** | Best-in-class, deep integration | Meets industry quality standards |
-| **Integrated** | Solid integrations extending Geotab | Meets industry quality standards |
-| **SDK** | Uses open platform and SDK | No formal vetting |
+| Tier | Description | Benefits |
+|------|-------------|----------|
+| **Order Now** | Seamless purchase and activation | Highest visibility, streamlined customer experience |
+| **Premier** | Best-in-class, deeply integrated | Premium placement, co-marketing opportunities |
+| **Standard** | Vetted integrations | Quality badge, Marketplace listing |
+| **Basic** | Uses open platform and SDK | Marketplace listing, SDK access |
 
 Higher tiers get better Marketplace placement, trust badges, and closer collaboration with Geotab's partner team.
+
+**Key dates:**
+- Marketplace launched: **2015**
+- Order Now program launched: **2020**
+- First Order Now solution: **Lytx Surfsight**
 
 ---
 
@@ -188,21 +218,21 @@ Custom pages inside MyGeotab. Users access your functionality without leaving th
 
 *Best for:* Dashboards, reporting, workflow tools, video viewers, data visualization
 
-*Examples:* Brigade Electronics video viewer, Fleetio maintenance dashboard
+*Examples:* GoAnalytics dashboards, Xtract incident reporting, ORIGOInspect
 
 ### API Integration
 Pull Geotab data into your system or push data to Geotab. Bi-directional data flow.
 
 *Best for:* Backend systems, mobile apps, enterprise software, TMS/ERP integration
 
-*Examples:* Salesforce integration, QuickBooks sync, custom analytics
+*Examples:* Fleetio maintenance sync, CarIQ fuel data
 
 ### Hardware (IOX)
 Physical devices that connect to Geotab's GO device via the IOX expansion port.
 
 *Best for:* Cameras, temperature sensors, TPMS, driver ID, asset trackers
 
-*Examples:* Lytx Surfsight cameras, Bridgestone IntelliTire, Link Labs BLE trackers
+*Examples:* Lytx Surfsight cameras, ORBCOMM solar trackers, Link Labs BLE tags
 
 ### Data Feeds
 Continuous streaming export of Geotab data to external systems.
@@ -228,6 +258,7 @@ Continuous streaming export of Geotab data to external systems.
 
 **Market access:**
 - 5M+ vehicles you can reach immediately
+- 55,000+ customers browsing the Marketplace
 - 300+ resellers who can bundle your solution
 - Geotab's global marketing and events
 
@@ -249,7 +280,7 @@ The annual partner and customer conference.
 
 - **2024:** Las Vegas, 65+ Marketplace partners with dedicated Exhibitor Hall
 - **2025:** Orlando, Walt Disney World Swan & Dolphin Resort
-- **2026:** Las Vegas, MGM Grand (February 10-12), expecting 3,500+ attendees
+- **2026:** Las Vegas, MGM Grand (February 10-12)
 
 Connect features a Marketplace Stage for partner presentations, Innovation Awards, and direct access to Geotab's largest customers and reseller network.
 
@@ -271,7 +302,7 @@ Winners announced at Geotab Connect each year.
 Geotab leads in third-party analyst rankings:
 
 - **#1 in ABI Research Commercial Telematics** (2022, 2023, 2024, 2025)
-- **#1 in ABI Research Commercial Video Telematics** (ahead of Lytx, Samsara, Solera, PowerFleet)
+- **#1 in ABI Research Commercial Video Telematics** (with 25+ third-party video offerings)
 - **Best Estimated ROI** — G2 Fleet Management category (Summer 2025)
 
 The platform's open SDK and extensive Marketplace are cited as key differentiators versus closed competitors.
@@ -292,9 +323,9 @@ The platform's open SDK and extensive Marketplace are cited as key differentiato
 
 ## The Bottom Line
 
-Geotab has built the infrastructure—5 million connected vehicles, 75 billion daily data points, 20 years of ecosystem development.
+Geotab has built the infrastructure—5 million connected vehicles, 100 billion daily data points, 20+ years of ecosystem development.
 
-They've acquired the customers—fleets actively looking for solutions in the Marketplace.
+They've acquired the customers—55,000+ organizations actively looking for solutions in the Marketplace.
 
 They've created the channel—300+ resellers worldwide who can sell your solution alongside Geotab hardware.
 
