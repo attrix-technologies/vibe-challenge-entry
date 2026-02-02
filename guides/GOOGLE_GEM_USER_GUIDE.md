@@ -158,6 +158,56 @@ Use these colors:
 Show "Loading..." while fetching data, then display the results.
 ```
 
+### Request Charts and Visualizations
+
+The Gem can use **Chart.js** to create interactive charts:
+
+```
+Create a bar chart showing trips per vehicle for the last 7 days.
+```
+
+```
+Build a dashboard with a pie chart of vehicles by type and a line chart of daily trip counts.
+```
+
+```
+Show a doughnut chart breaking down my fleet by vehicle group.
+```
+
+### Request Interactive Maps
+
+Ask for **Leaflet maps** to display vehicle locations:
+
+```
+Create a map showing the current position of all my vehicles with markers.
+```
+
+```
+Build a map Add-In that shows where each vehicle is located.
+When I click a marker, show the vehicle name and current speed.
+```
+
+```
+Display my vehicles on an interactive map. Auto-zoom to fit all markers.
+```
+
+### Use CSS Frameworks
+
+Request **Bootstrap** or other CSS frameworks for professional styling:
+
+```
+Use Bootstrap styling for a clean, professional look.
+```
+
+```
+Create a dashboard using Bootstrap cards and the grid layout.
+Make it responsive so it works on mobile too.
+```
+
+```
+Style the Add-In with Bootstrap. Use the dark theme.
+```
+
 ### Request Clickable Links
 
 Make your Add-In interactive by asking for clickable links that navigate to other MyGeotab pages:
@@ -294,6 +344,18 @@ The styling isn't working. Can you make sure all CSS is inline using style="" at
 - Activity summaries
 - Custom KPI displays
 
+### Charts and Visualizations
+- **Bar charts** - Compare trips, distances, or counts across vehicles
+- **Pie/doughnut charts** - Show fleet composition by type or group
+- **Line charts** - Track trends over time
+- Uses **Chart.js** library from CDN
+
+### Interactive Maps
+- **Vehicle position maps** - Show current location of all vehicles
+- **Clickable markers** - Display vehicle name, speed, status on click
+- **Auto-zoom** - Fit all vehicles in view
+- Uses **Leaflet** library with OpenStreetMap tiles
+
 ### Interactive Features
 - Refresh buttons
 - Simple filters
@@ -307,6 +369,7 @@ The styling isn't working. Can you make sure all CSS is inline using style="" at
 - Gradient backgrounds
 - Color themes
 - Responsive designs
+- **Bootstrap framework** - Professional, mobile-friendly layouts
 
 ---
 
@@ -317,13 +380,13 @@ The styling isn't working. Can you make sure all CSS is inline using style="" at
 | Can Do | Cannot Do |
 |--------|-----------|
 | Display any Geotab data | Connect to external APIs |
-| Create interactive buttons | Use complex frameworks |
+| Use CDN libraries (Chart.js, Leaflet, Bootstrap) | Use React or complex frameworks |
 | Build responsive layouts | Include images (without URLs) |
-| Style with inline CSS | Use external CSS files |
+| Load CSS dynamically via JavaScript | Use static `<link>` or `<style>` tags |
 | Multiple API calls | Real-time streaming updates |
 | Navigate to other MyGeotab pages | Open external websites |
 
-**For advanced Add-Ins** (external APIs, complex interactivity, React frameworks), you'll need external hosting. See the [Building Geotab Add-Ins guide](GEOTAB_ADDINS.md) for hosted options.
+**For advanced Add-Ins** (external APIs, React frameworks, complex state management), you'll need external hosting. See the [Building Geotab Add-Ins guide](GEOTAB_ADDINS.md) for hosted options.
 
 ---
 
