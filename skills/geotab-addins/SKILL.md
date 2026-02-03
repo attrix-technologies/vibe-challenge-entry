@@ -235,7 +235,7 @@ Add-Ins can navigate the parent MyGeotab window to other pages using `window.par
 | Trip history | `#tripsHistory,devices:!({id})` | `#tripsHistory,devices:!(b12)` |
 | Exceptions | `#exceptions2,assetsFilter:!({id})` | `#exceptions2,assetsFilter:!(b3306)` |
 | Live map | `#map,liveVehicleIds:!({id})` | `#map,liveVehicleIds:!(b3230)` |
-| Zone | `#zones,zoneId:{id}` | `#zones,zoneId:b1234` |
+| Zone edit | `#zones,edit:{id}` | `#zones,edit:b2F` |
 
 ### Creating Clickable Vehicle Links
 

@@ -234,7 +234,7 @@ Add-Ins run inside MyGeotab's iframe. To make items clickable and navigate the p
 | Trip history | `#tripsHistory,devices:!({deviceId})` | `#tripsHistory,devices:!(b12)` |
 | Exceptions | `#exceptions2,assetsFilter:!({deviceId})` | `#exceptions2,assetsFilter:!(b3306)` |
 | Map following vehicle | `#map,liveVehicleIds:!({deviceId})` | `#map,liveVehicleIds:!(b3230)` |
-| Zone/Geofence | `#zones,zoneId:{zoneId}` | `#zones,zoneId:b1234` |
+| Zone edit | `#zones,edit:{zoneId}` | `#zones,edit:b2F` |
 
 ### Code Pattern for Clickable Vehicle Names
 
