@@ -237,24 +237,67 @@ Add-Ins can use both the direct API (above) and Geotab Ace for AI-powered querie
 
 ### Calling Ace from Add-Ins
 
-Ace is called through the **same `api` object** - just a different method. No extra setup needed.
+Ace uses the **same API endpoint and credentials** - no separate auth. It follows an async pattern: create chat → send question → poll for results.
 
 ```javascript
-// Ace uses the SAME api object - no separate authentication!
-// Show loading indicator - Ace can take 30+ seconds
-function askAce(question, callback) {
+// Ace uses the SAME api object and credentials!
+// Async pattern: create chat → send prompt → poll for results
+
+function askAce(question, onComplete) {
     showLoading("Thinking...");
 
-    // Same api.call() you use for Get/Set/Add
-    api.call("GetAceAnswer", {
-        question: question
-    }, function(result) {
-        hideLoading();
-        callback(result.answer, result.data);
-    }, function(error) {
-        hideLoading();
-        console.error("Ace error:", error);
-    });
+    // Step 1: Create a chat session
+    api.call("GetAceResults", {
+        serviceName: "dna-planet-orchestration",
+        functionName: "create-chat",
+        functionParameters: {}
+    }, function(chatResult) {
+        var chatId = chatResult.chatId;
+
+        // Step 2: Send the question
+        api.call("GetAceResults", {
+            serviceName: "dna-planet-orchestration",
+            functionName: "send-prompt",
+            functionParameters: {
+                chatId: chatId,
+                prompt: question
+            }
+        }, function(promptResult) {
+            var messageGroupId = promptResult.messageGroupId;
+
+            // Step 3: Poll for results (can take 30-60+ seconds)
+            pollForResults(chatId, messageGroupId, onComplete);
+        }, handleError);
+    }, handleError);
+}
+
+function pollForResults(chatId, messageGroupId, onComplete) {
+    api.call("GetAceResults", {
+        serviceName: "dna-planet-orchestration",
+        functionName: "get-status",
+        functionParameters: {
+            chatId: chatId,
+            messageGroupId: messageGroupId
+        }
+    }, function(status) {
+        if (status.state === "DONE") {
+            hideLoading();
+            onComplete(status.answer, status.data);
+        } else if (status.state === "FAILED") {
+            hideLoading();
+            console.error("Ace query failed");
+        } else {
+            // Still processing - poll again in 3 seconds
+            setTimeout(function() {
+                pollForResults(chatId, messageGroupId, onComplete);
+            }, 3000);
+        }
+    }, handleError);
+}
+
+function handleError(error) {
+    hideLoading();
+    console.error("Ace error:", error);
 }
 
 // Example usage
@@ -263,6 +306,8 @@ askAce("Which vehicles had the most idle time last week?", function(answer, data
     if (data) displayTable(data);
 });
 ```
+
+> **Reference implementation:** See [geotab_ace.py](https://github.com/fhoffa/geotab-ace-mcp-demo/blob/main/geotab_ace.py)
 
 ### Good Ace Questions for Add-Ins
 

@@ -394,34 +394,40 @@ The styling isn't working. Can you make sure all CSS is inline using style="" at
 
 The Gem uses the direct Geotab API, which is great for displaying data. For **complex analytical questions**, you can ask the Gem to integrate with Geotab Ace.
 
-**Key point:** Ace uses the **same API connection** - no separate authentication. Just a different method call.
+**Key point:** Ace uses the **same API endpoint and credentials** - no separate authentication. It follows an async pattern: create chat → send question → poll for results.
 
 **When to mention Ace in your prompts:**
 - Questions requiring AI analysis: "Which drivers need coaching?"
 - Trend analysis: "What's my fuel efficiency trend?"
 - Recommendations: "How can I reduce costs?"
 
-**How Ace is called (same api object):**
+**How Ace works (async pattern):**
 ```javascript
-// Ace uses the SAME api object as regular calls
-// No extra authentication needed!
-api.call("GetAceAnswer", {
-    question: "Which drivers need safety coaching?"
+// Ace uses GetAceResults with 3 steps:
+// 1. Create chat: api.call("GetAceResults", {functionName: "create-chat"...})
+// 2. Send question: api.call("GetAceResults", {functionName: "send-prompt"...})
+// 3. Poll status: api.call("GetAceResults", {functionName: "get-status"...})
+//    until state === "DONE" (can take 30-60+ seconds)
+
+api.call("GetAceResults", {
+    serviceName: "dna-planet-orchestration",
+    functionName: "create-chat",
+    functionParameters: {}
 }, function(result) {
-    // result.answer = AI-generated text response
-    // result.data = optional dataset (if query returns data)
-    displayAnswer(result.answer);
-}, function(error) {
-    console.error("Ace error:", error);
+    var chatId = result.chatId;
+    // Then send-prompt, then poll get-status...
 });
 ```
 
 **Example Ace prompt for the Gem:**
 ```
-Create an Add-In that has a text input where I can type questions
-about my fleet. When submitted, call api.call("GetAceAnswer", {question: userInput})
-and display the response. Include a loading indicator since Ace can take
-30+ seconds to respond.
+Create an Add-In with a text input for fleet questions. When submitted:
+1. Call api.call("GetAceResults", {...functionName: "create-chat"}) to get chatId
+2. Call api.call("GetAceResults", {...functionName: "send-prompt", functionParameters: {chatId, prompt}})
+3. Poll api.call("GetAceResults", {...functionName: "get-status"}) until state is "DONE"
+4. Display the answer. Include a loading spinner - Ace takes 30-60 seconds.
+
+Reference: github.com/fhoffa/geotab-ace-mcp-demo/blob/main/geotab_ace.py
 ```
 
 **Note:** Ace queries take longer (10-60 seconds) but provide AI-powered insights that would otherwise require complex code.
