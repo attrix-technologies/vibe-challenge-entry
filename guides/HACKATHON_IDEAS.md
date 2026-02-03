@@ -855,44 +855,85 @@ for each city boundary."
 
 ---
 
-## 🔌 MCP Enhancement Tier
+## 🔌 MCP Power-Ups: Beyond Official MCP
 
-**Add conversational AI to any project.** Any hackathon idea can be enhanced with an MCP interface. This is an advanced bonus that judges love.
+**Build capabilities the official Geotab MCP won't have.** When official MCP launches, it will likely be read-only with standard queries. Your custom MCP can go further.
 
-### How to Add MCP to Your Project
+### Unique Capabilities to Build
 
-1. **Start with your core project** - Get the basic functionality working first
-2. **Identify conversational use cases** - What questions would users ask?
-3. **Fork the MCP demo** - [geotab-ace-mcp-demo](https://github.com/fhoffa/geotab-ace-mcp-demo)
-4. **Add custom tools** - Expose your project's features as MCP tools
-5. **Demo both interfaces** - Show traditional UI AND conversational access
+| Capability | Why Official Won't Have It | Your Hackathon Project |
+|------------|---------------------------|------------------------|
+| **DuckDB Local Caching** | Official = cloud-only | Cache large datasets locally, run SQL without API calls |
+| **Write Operations** | Official = read-only | Create zones, groups, rules via conversation |
+| **Custom Analysis** | Official = standard queries | Build specialized fleet analytics (carbon, safety scoring) |
+| **Multi-System Integration** | Official = Geotab only | Connect to Slack, ServiceNow, your internal tools |
+| **Privacy Layers** | Official = standard redaction | Custom PII handling for your compliance needs |
+| **Offline Mode** | Official = requires internet | Query cached data when disconnected |
 
-### Example Enhancements
-
-| Base Project | MCP Enhancement |
-|--------------|-----------------|
-| EcoFleet Carbon Tracker | "What's my carbon footprint this month?" via Claude |
-| SafeDrive Coach | "Which drivers need coaching?" with AI-generated recommendations |
-| PredictMaint AI | "When will vehicle X need service?" with natural language |
-| FleetBot for Slack | Add MCP so users can query via Claude Desktop too |
-| RouteGenius Optimizer | "Find the most efficient route for these 10 stops" |
-
-### MCP Bonus Prompt
+### Example: DuckDB-Powered Analysis
 
 ```
-"Take my [project name] and add an MCP interface. Create tools that let
-Claude users ask questions like '[example question]' and get answers
-from my project's data/functionality."
+"Extend the MCP server to cache all trips into DuckDB automatically.
+Add a tool that lets users run complex SQL queries locally, like:
+'SELECT vehicle_id, AVG(fuel_used/distance) as mpg FROM trips
+GROUP BY vehicle_id ORDER BY mpg DESC' - without hitting the API."
 ```
 
-### Why Judges Love MCP Projects
+### Example: Smart Caching Strategy
 
-- Shows cutting-edge AI integration skills
-- Demonstrates understanding of modern AI tooling
-- Makes projects accessible to non-technical users
-- Future-proof: MCP is becoming standard for AI tools
+```
+"Build an MCP tool that pre-fetches and caches commonly-needed data
+(vehicles, drivers, zones) on startup. When Claude asks questions,
+check the local cache first - only hit the API for fresh data like
+trips or current locations."
+```
+
+### Why This Matters
+
+- Official MCP: "How many vehicles do I have?" → API call → answer
+- Your MCP: "Analyze fuel efficiency patterns across all vehicles for the past 6 months" → local DuckDB query → instant complex analysis
 
 > **Guide:** [MCP_SERVER_GUIDE.md](./MCP_SERVER_GUIDE.md) | **Skill:** [geotab-mcp-server](../skills/geotab-mcp-server/SKILL.md)
+
+---
+
+## 🧠 Build Reusable Skills
+
+**Create AI skills others can use.** Skills are packaged knowledge that any AI assistant can leverage. Building a skill is a great hackathon project because it's reusable and demonstrates deep understanding.
+
+### What is a Skill?
+
+A skill is a structured document (SKILL.md) that teaches AI assistants how to accomplish specific tasks. See [skills/](../skills/) for examples.
+
+### High-Value Skills to Build
+
+| Skill | Why It's Needed | Difficulty |
+|-------|-----------------|------------|
+| **geotab-trip-analysis** | Most common use case, no skill exists yet | ⭐⭐ |
+| **geotab-safety-scoring** | Critical for fleet safety, complex calculations | ⭐⭐⭐ |
+| **geotab-predictive-maintenance** | High value, requires ML patterns | ⭐⭐⭐⭐ |
+| **geotab-carbon-tracking** | Growing demand, ESG reporting | ⭐⭐ |
+| **geotab-driver-coaching** | Combines safety + communication | ⭐⭐⭐ |
+
+### Skill Building Prompt
+
+```
+"Create a SKILL.md file for [skill name] that teaches AI assistants how to:
+- [specific capability 1]
+- [specific capability 2]
+
+Include code patterns, common mistakes to avoid, and example use cases.
+Follow the format in skills/geotab-api-quickstart/SKILL.md"
+```
+
+### Why Judges Love Skill Projects
+
+- **Reusable:** Your work helps everyone, not just your project
+- **Deep expertise:** Shows you truly understand the domain
+- **Documentation:** Proves you can communicate technical concepts
+- **Community impact:** Skills become part of the ecosystem
+
+> **See planned skills:** [skills/SKILLS_TODO.md](../skills/SKILLS_TODO.md) | **Skill format:** [CREATING_AGENT_SKILLS.md](./CREATING_AGENT_SKILLS.md)
 
 ---
 
