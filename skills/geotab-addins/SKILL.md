@@ -290,10 +290,19 @@ This is different from regular API calls which return immediately.
 
 **Ace Rate Limits**
 - Ace has rate limits (429 errors) - don't poll too frequently
-- Start polling **5 seconds** after send-prompt (not immediately)
-- Poll every **5-10 seconds** (not 3 seconds)
+- Start polling **5-10 seconds** after send-prompt (not immediately)
+- Poll every **8 seconds** (not 3 seconds)
 - Add exponential backoff on rate limit errors
 - Stop polling after ~2 minutes (query likely failed)
+
+**Ace Response Structure** (when DONE)
+```javascript
+// The answer is in messages, find the one with preview_array
+message_group.messages[id].preview_array  // Data rows [{DeviceName: "Demo-42", Distance_mi: 2221}]
+message_group.messages[id].reasoning      // Ace's explanation of what it did
+message_group.messages[id].query          // The SQL query Ace generated
+message_group.messages[id].columns        // Column names in the data
+```
 
 ```javascript
 // Ace uses the SAME api object and credentials!
@@ -372,9 +381,18 @@ function pollForResults(chatId, messageGroupId, onComplete, attempt, delay) {
 
         if (state === "DONE") {
             hideLoading();
-            // Answer location may vary - check common locations
-            var answer = msgGroup.content || statusObj.answer || data.answer;
-            onComplete(answer, data);
+            // Answer is in the messages object - find the one with data
+            var messages = msgGroup.messages || {};
+            var answerData = null;
+            var reasoning = "";
+            Object.keys(messages).forEach(function(key) {
+                var msg = messages[key];
+                if (msg.preview_array) {
+                    answerData = msg.preview_array;  // The actual data rows
+                    reasoning = msg.reasoning || "";  // Ace's explanation
+                }
+            });
+            onComplete(reasoning, answerData);
         } else if (state === "FAILED") {
             hideLoading();
             console.error("Ace query failed");

@@ -406,12 +406,14 @@ The Gem uses the direct Geotab API, which is great for displaying data. For **co
 
 **The Wait-and-Poll Pattern (important!):**
 Ace is async - you can't just make one call. Tell the Gem:
-1. **Create chat** → get `chatId`
-2. **Send prompt** with the question → get `messageGroupId`
-3. **Poll get-status** every 2-3 seconds until `state === "DONE"`
-4. Display the answer from the final response
+1. **create-chat** → get `chat_id` (underscore, not camelCase)
+2. **send-prompt** with `chat_id` and `prompt` → get `message_group.id`
+3. Wait 10 seconds, then **poll get-message-group** every 8 seconds until `status.status === "DONE"`
+4. Extract answer from `message_group.messages[id].preview_array` (data) and `.reasoning` (explanation)
 
 This is different from regular API calls which return immediately.
+
+> ✅ **Verified:** Ace works from embedded Add-Ins (tested Feb 2026). See skill for working code.
 
 **Important: Ace Data Latency**
 - Ace data runs **behind** real-time API - don't expect the very latest records
@@ -423,8 +425,9 @@ This is different from regular API calls which return immediately.
 ```
 Create an Add-In with a text input where I can ask questions about my fleet.
 Use Geotab Ace API (GetAceResults with serviceName "dna-planet-orchestration")
-to process the question. Follow the async pattern from geotab_ace.py:
-create-chat → send-prompt → poll get-status until DONE.
+to process the question. Follow the async pattern:
+create-chat → send-prompt → wait 10s → poll get-message-group every 8s until DONE.
+The answer is in message_group.messages[id].preview_array (data) and .reasoning (text).
 Include a loading spinner since Ace takes 30-60 seconds.
 ```
 
