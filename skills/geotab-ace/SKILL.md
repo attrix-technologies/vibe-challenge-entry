@@ -334,22 +334,113 @@ if __name__ == '__main__':
 
 Ace has rate limits that can cause 429 errors or empty responses.
 
-**Best practices:**
-- Don't run multiple Ace queries in parallel
-- Add delays between sequential queries (2+ seconds)
-- Implement exponential backoff on errors
+**Key timings:**
+- **Between queries:** 8+ seconds apart minimum
+- **create-chat can fail silently** - returns no `chat_id`
+- Add retry logic: 3 attempts with 3s delay
 
 ```javascript
 // Staggered Ace calls to avoid rate limiting
 askAce(api, question1, function(result1) {
-    // First query done, wait before next
+    // First query done, wait 8s before next
     setTimeout(function() {
         askAce(api, question2, function(result2) {
             // Second query done
         }, onError);
-    }, 2000);  // 2 second delay
+    }, 8000);  // 8 second delay minimum
 }, onError);
+
+// Retry logic for create-chat
+function createChatWithRetry(api, callback, attempt) {
+    attempt = attempt || 0;
+    if (attempt >= 3) {
+        callback(null, 'create-chat failed after 3 attempts');
+        return;
+    }
+    api.call('GetAceResults', {
+        serviceName: 'dna-planet-orchestration',
+        functionName: 'create-chat',
+        functionParameters: {}
+    }, function(r) {
+        var chatId = getAceData(r).chat_id;
+        if (!chatId) {
+            setTimeout(function() {
+                createChatWithRetry(api, callback, attempt + 1);
+            }, 3000);
+        } else {
+            callback(chatId, null);
+        }
+    }, function(e) {
+        setTimeout(function() {
+            createChatWithRetry(api, callback, attempt + 1);
+        }, 3000);
+    });
+}
 ```
+
+## Polling Strategy
+
+Ace needs time to process queries before results are ready.
+
+**Recommended timing:**
+- **First poll:** Wait 8 seconds after `send-prompt`
+- **Subsequent polls:** Every 5 seconds
+- **Max attempts:** ~30 (about 2.5 minutes total)
+- **Check:** `status.status` for `"DONE"` or `"FAILED"`
+
+```javascript
+// Polling with proper timing
+setTimeout(function() {
+    pollAce(api, chatId, mgId, onSuccess, onError, 0);
+}, 8000);  // Wait 8s before first poll
+
+function pollAce(api, chatId, mgId, onSuccess, onError, attempt) {
+    if (attempt > 30) {
+        onError('Timeout');
+        return;
+    }
+    // ... poll logic ...
+    setTimeout(function() {
+        pollAce(api, chatId, mgId, onSuccess, onError, attempt + 1);
+    }, 5000);  // Poll every 5s
+}
+```
+
+## Timestamps
+
+Ace returns timestamps in **UTC** with a specific format:
+
+```javascript
+// Ace timestamp format (no Z suffix!)
+"2026-02-03 22:03:20.665"
+
+// DeviceTimeZoneId is always UTC
+{ "DeviceTimeZoneId": "Etc/UTC" }
+
+// To parse correctly, add 'T' and 'Z':
+var utcDate = new Date(timeStr.replace(' ', 'T') + 'Z');
+```
+
+## Question Phrasing
+
+How you phrase questions affects results:
+
+**Be explicit with dates:**
+```
+❌ "trips last month"           // Interpreted loosely
+✅ "trips from 2026-01-04 to 2026-02-03"  // Explicit bounds
+```
+
+**Ask for limited results:**
+```
+❌ "all vehicles with trips"    // Could return thousands
+✅ "top 10 vehicles by distance" // Limited, fits in preview_array
+```
+
+**Note:** Even with explicit bounds, Ace results may differ from direct API due to:
+- Different data sources (BigQuery vs live)
+- Different aggregation logic
+- "Active" vs "all" device filtering
 
 ## Data Freshness
 
@@ -361,7 +452,8 @@ Ace data runs **behind** real-time API data:
 ## Common Issues
 
 ### "No chat_id in response"
-- Rate limiting - wait and retry
+- Rate limiting - wait and retry (use retry logic above)
+- create-chat can fail silently under load
 - Account doesn't have Ace access
 
 ### Query times out
