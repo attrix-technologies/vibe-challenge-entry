@@ -237,7 +237,17 @@ Add-Ins can use both the direct API (above) and Geotab Ace for AI-powered querie
 
 ### Calling Ace from Add-Ins
 
-Ace uses the **same API endpoint and credentials** - no separate auth. It follows an async pattern: create chat → send question → poll for results.
+Ace uses the **same API endpoint and credentials** - no separate auth.
+
+**The Wait-and-Poll Pattern:**
+Ace queries are async and can take 30-60+ seconds. You can't just make one call and get results. Instead:
+
+1. **Create chat** → get `chatId`
+2. **Send prompt** → get `messageGroupId`
+3. **Poll status** repeatedly (every 2-3 seconds) until `state === "DONE"`
+4. **Get answer** from the final status response
+
+This is different from regular API calls which return immediately.
 
 ```javascript
 // Ace uses the SAME api object and credentials!

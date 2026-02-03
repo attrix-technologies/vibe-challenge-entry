@@ -401,9 +401,17 @@ The Gem uses the direct Geotab API, which is great for displaying data. For **co
 
 **Key things to tell the Gem about Ace:**
 - Ace uses the same API connection (no separate auth)
-- Ace is async: create chat → send question → poll for results
 - Ace takes 30-60 seconds - needs a loading indicator
 - Reference implementation: `github.com/fhoffa/geotab-ace-mcp-demo/blob/main/geotab_ace.py`
+
+**The Wait-and-Poll Pattern (important!):**
+Ace is async - you can't just make one call. Tell the Gem:
+1. **Create chat** → get `chatId`
+2. **Send prompt** with the question → get `messageGroupId`
+3. **Poll get-status** every 2-3 seconds until `state === "DONE"`
+4. Display the answer from the final response
+
+This is different from regular API calls which return immediately.
 
 **Example prompts for Ace Add-Ins:**
 
