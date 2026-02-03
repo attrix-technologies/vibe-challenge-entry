@@ -223,6 +223,60 @@ api.getSession(function(session) {
 });
 ```
 
+## When to Use Geotab Ace vs Direct API
+
+Add-Ins can use both the direct API (above) and Geotab Ace for AI-powered queries.
+
+| Use Direct API | Use Geotab Ace |
+|----------------|----------------|
+| Real-time data (vehicle location) | Complex analysis ("fuel efficiency trend") |
+| Simple lookups (get vehicle by ID) | Natural language questions |
+| Write operations (create zone) | Insights ("which drivers need coaching?") |
+| High-frequency updates | Cross-entity analysis |
+| Response needed in <1 second | OK to wait 10-60 seconds |
+
+### Calling Ace from Add-Ins
+
+```javascript
+// Ace uses same api object but different endpoint
+// Show loading indicator - Ace can take 30+ seconds!
+function askAce(question, callback) {
+    showLoading("Thinking...");
+
+    api.call("GetAceAnswer", {
+        question: question
+    }, function(result) {
+        hideLoading();
+        callback(result.answer, result.data);
+    }, function(error) {
+        hideLoading();
+        console.error("Ace error:", error);
+    });
+}
+
+// Example usage
+askAce("Which vehicles had the most idle time last week?", function(answer, data) {
+    displayInsight(answer);
+    if (data) displayTable(data);
+});
+```
+
+### Good Ace Questions for Add-Ins
+
+- "Which drivers have the best safety scores this month?"
+- "What's the fuel consumption trend for vehicle X?"
+- "Find vehicles that might need maintenance soon"
+- "Compare performance across my fleet regions"
+
+### When NOT to Use Ace
+
+- Displaying current vehicle positions (use DeviceStatusInfo)
+- Showing today's trips (use Get Trip with date filter)
+- Creating/updating entities (use Add/Set)
+- Any UI that needs instant response
+
+> **Full decision guide:** See [ADVANCED_INTEGRATIONS.md](../../guides/ADVANCED_INTEGRATIONS.md#geotab-ace-when-to-use-ai-vs-direct-api)
+
 ## Navigating to MyGeotab Pages
 
 Add-Ins can navigate the parent MyGeotab window to other pages using `window.parent.location.hash`. This makes entity names (vehicles, drivers, zones) clickable.
