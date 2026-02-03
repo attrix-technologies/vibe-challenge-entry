@@ -91,6 +91,30 @@ The `message_group_id` can appear in two places depending on API version:
 var mgId = data.message_group_id || ((data.message_group || {}).id);
 ```
 
+### Row Limits (Important!)
+
+Ace typically returns **only 10 rows** in `preview_array`, even if the query matches more data. For complete results:
+
+1. **The response includes a download link** for the full dataset
+2. **Design questions for small results** - ask "top 5 vehicles" not "all vehicles"
+
+```javascript
+// Response structure with download link
+message_group.messages[id].preview_array    // Up to 10 rows
+message_group.messages[id].download_url     // Link to full CSV/JSON
+message_group.messages[id].total_row_count  // Actual number of matches
+```
+
+**Strategies for large results:**
+
+| Approach | When to Use |
+|----------|-------------|
+| Ask for "top N" or "worst N" | When you only need highlights |
+| Download full results | When you need all data for analysis |
+| Store in DuckDB | When processing large downloads locally |
+
+> **Example:** The [geotab-ace-mcp-demo](https://github.com/fhoffa/geotab-ace-mcp-demo) shows how to handle full downloads and store them in DuckDB for local querying.
+
 ## JavaScript Example (Add-Ins)
 
 ```javascript
