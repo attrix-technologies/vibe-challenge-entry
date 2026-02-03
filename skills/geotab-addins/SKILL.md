@@ -257,179 +257,32 @@ api.getSession(function(session) {
 });
 ```
 
-## When to Use Geotab Ace vs Direct API
+## Using Geotab Ace in Add-Ins
 
-Add-Ins can use both the direct API (above) and Geotab Ace for AI-powered queries. **Ace uses the same API connection** - no separate authentication needed.
+Add-Ins can use Geotab Ace for AI-powered natural language queries. **Ace uses the same API connection** - no separate authentication needed.
 
-### Performance Comparison (Real Test Data)
-
-| Metric | Direct API | Ace AI |
-|--------|-----------|--------|
-| **Response Time** | ~400ms | ~70 seconds |
-| **Speed Ratio** | 1x | **175x slower** |
-| **Best For** | Simple lookups, real-time | Complex analysis, insights |
+| Direct API | Ace AI |
+|-----------|--------|
+| ~400ms response | ~30-90 seconds |
+| Real-time data | 2-24 hours behind |
+| Structured queries | Natural language |
+| Best for: live data, writes | Best for: trends, insights |
 
 > **Try it yourself:** Install [examples/addins/ace-vs-api-comparison.json](../../examples/addins/ace-vs-api-comparison.json) to see the difference live.
 
-| Use Direct API | Use Geotab Ace |
-|----------------|----------------|
-| Real-time data (vehicle location) | Complex analysis ("fuel efficiency trend") |
-| Simple lookups (get vehicle by ID) | Natural language questions |
-| Write operations (create zone) | Insights ("which drivers need coaching?") |
-| High-frequency updates | Cross-entity analysis |
-| Response needed in <1 second | OK to wait 30-90 seconds |
-
-### Calling Ace from Add-Ins
-
-Ace uses the **same API endpoint and credentials** - no separate auth.
-
-**The Wait-and-Poll Pattern:**
-Ace queries are async and can take 30-60+ seconds. You can't just make one call and get results. Instead:
-
-1. **Create chat** → get `chatId`
-2. **Send prompt** → get `messageGroupId`
-3. **Poll status** repeatedly (every 2-3 seconds) until `state === "DONE"`
-4. **Get answer** from the final status response
-
-This is different from regular API calls which return immediately.
-
-**Important: Ace Data Latency**
-- Ace data runs **behind** real-time API data - don't expect the very latest records
-- New demo accounts: wait **~1 day** before Ace has enough data to answer questions
-- For real-time data, use direct API calls instead
-
-**Ace Rate Limits**
-- Ace has rate limits (429 errors) - don't poll too frequently
-- Start polling **5-10 seconds** after send-prompt (not immediately)
-- Poll every **8 seconds** (not 3 seconds)
-- Add exponential backoff on rate limit errors
-- Stop polling after ~2 minutes (query likely failed)
-
-**Ace Response Structure** (when DONE)
-```javascript
-// The answer is in messages, find the one with preview_array
-message_group.messages[id].preview_array  // Data rows [{DeviceName: "Demo-42", Distance_mi: 2221}]
-message_group.messages[id].reasoning      // Ace's explanation of what it did
-message_group.messages[id].query          // The SQL query Ace generated
-message_group.messages[id].columns        // Column names in the data
-```
+### Quick Example
 
 ```javascript
-// Ace uses the SAME api object and credentials!
-// Async pattern: create chat → send prompt → poll for results
-
-// Helper to extract data from Ace response structure
-// Response format: { apiResult: { results: [{ ... }] } }
-function getAceData(response) {
-    if (response && response.apiResult && response.apiResult.results) {
-        return response.apiResult.results[0];
-    }
-    return response; // Fallback if structure differs
-}
-
-function askAce(question, onComplete) {
-    showLoading("Thinking...");
-
-    // Step 1: Create a chat session
-    api.call("GetAceResults", {
-        serviceName: "dna-planet-orchestration",
-        functionName: "create-chat",
-        functionParameters: {}
-    }, function(response) {
-        var data = getAceData(response);
-        var chatId = data.chat_id;  // Note: underscore, not camelCase
-
-        // Step 2: Send the question
-        api.call("GetAceResults", {
-            serviceName: "dna-planet-orchestration",
-            functionName: "send-prompt",
-            functionParameters: {
-                chat_id: chatId,  // Note: underscore in parameter too
-                prompt: question
-            }
-        }, function(response) {
-            var data = getAceData(response);
-            var messageGroupId = data.message_group.id;  // Nested object
-
-            // Step 3: Wait 5s then start polling (don't poll immediately!)
-            setTimeout(function() {
-                pollForResults(chatId, messageGroupId, onComplete, 0, 5000);
-            }, 5000);
-        }, handleError);
-    }, handleError);
-}
-
-function pollForResults(chatId, messageGroupId, onComplete, attempt, delay) {
-    if (attempt > 20) {  // ~2 minutes max
-        hideLoading();
-        console.error("Ace query timed out");
-        return;
-    }
-
-    api.call("GetAceResults", {
-        serviceName: "dna-planet-orchestration",
-        functionName: "get-message-group",  // NOT "get-status"!
-        functionParameters: {
-            chat_id: chatId,
-            message_group_id: messageGroupId
-        }
-    }, function(response) {
-        // Check for rate limit error
-        if (response.errors && response.errors[0] && response.errors[0].code === 429) {
-            console.log("Rate limited, backing off...");
-            var backoff = Math.min(delay * 2, 30000);  // Double delay, max 30s
-            setTimeout(function() {
-                pollForResults(chatId, messageGroupId, onComplete, attempt + 1, backoff);
-            }, backoff);
-            return;
-        }
-
-        var data = getAceData(response);
-        var msgGroup = data.message_group || {};
-        var statusObj = msgGroup.status || {};
-        var state = statusObj.status || "UNKNOWN";  // Double nested: message_group.status.status
-
-        if (state === "DONE") {
-            hideLoading();
-            // Answer is in the messages object - find the one with data
-            var messages = msgGroup.messages || {};
-            var answerData = null;
-            var reasoning = "";
-            Object.keys(messages).forEach(function(key) {
-                var msg = messages[key];
-                if (msg.preview_array) {
-                    answerData = msg.preview_array;  // The actual data rows
-                    reasoning = msg.reasoning || "";  // Ace's explanation
-                }
-            });
-            onComplete(reasoning, answerData);
-        } else if (state === "FAILED") {
-            hideLoading();
-            console.error("Ace query failed");
-        } else {
-            // Still processing - poll again with current delay
-            setTimeout(function() {
-                pollForResults(chatId, messageGroupId, onComplete, attempt + 1, delay);
-            }, delay);
-        }
-    }, handleError);
-}
-
-function handleError(error) {
-    hideLoading();
-    console.error("Ace error:", error);
-}
-
-// Example usage
-askAce("Which vehicles had the most idle time last week?", function(answer, data) {
-    displayInsight(answer);
-    if (data) displayTable(data);
+// Ace uses the SAME api object - no separate auth
+askAce(api, "Which vehicles drove the most last month?", function(result) {
+    console.log("Data:", result.data);       // Array of rows
+    console.log("Reasoning:", result.reasoning); // AI explanation
+}, function(error) {
+    console.error("Error:", error);
 });
 ```
 
-> **Reference implementation:** See [geotab_ace.py](https://github.com/fhoffa/geotab-ace-mcp-demo/blob/main/geotab_ace.py)
-
-### Good Ace Questions for Add-Ins
+### Good Ace Questions
 
 - "Which drivers have the best safety scores this month?"
 - "What's the fuel consumption trend for vehicle X?"
@@ -443,7 +296,7 @@ askAce("Which vehicles had the most idle time last week?", function(answer, data
 - Creating/updating entities (use Add/Set)
 - Any UI that needs instant response
 
-> **Full decision guide:** See [ADVANCED_INTEGRATIONS.md](../../guides/ADVANCED_INTEGRATIONS.md#geotab-ace-when-to-use-ai-vs-direct-api)
+> **Full Ace documentation:** See the [geotab-ace skill](../geotab-ace/SKILL.md) for complete patterns, response parsing, rate limiting, and code examples.
 
 ## Navigating to MyGeotab Pages
 
