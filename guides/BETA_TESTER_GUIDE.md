@@ -144,30 +144,48 @@ sandbox/
 
 ---
 
+## Available Skills
+
+The `skills/` folder contains reusable patterns that teach AI tools how to build Geotab integrations. These are structured knowledge bases your AI assistant can reference.
+
+| Skill | What it teaches | When to use |
+|-------|-----------------|-------------|
+| `geotab-api-quickstart` | API authentication, data fetching, trip analysis | Python scripts, data analysis |
+| `geotab-addins` | Add-In structure, embedded configs, troubleshooting | Building MyGeotab custom pages |
+| `geotab-addin-zenith-styling` | Modern UI components, Zenith design system | Making Add-Ins look professional |
+| `agentic-n8n` | Workflow automation with n8n | Building autonomous systems |
+
+Each skill has a `SKILL.md` file (the main entry point) and a `references/` folder with detailed examples.
+
+---
+
 ## Loading Skills in Your AI Tool
 
 ### Claude Code (CLI)
-The skills are automatically available when you run Claude Code from this repo:
+Skills are automatically available when you run Claude Code from this repo:
 ```bash
 cd geotab-vibe-guide
 claude
 ```
-Claude will read `CLAUDE.md` and have access to all skills.
+Claude reads `CLAUDE.md` and can access all skills. Ask it to use a specific skill:
+> "Use the geotab-addins skill to help me build a vehicle list Add-In"
 
 ### Claude Desktop/Web
-Share the context file at the start of your conversation:
-1. Copy contents of `VIBE_CODING_CONTEXT.md`
-2. Paste into your first message
-3. Or upload the file directly
+1. Start with `VIBE_CODING_CONTEXT.md` (paste or upload)
+2. For specific tasks, also share the relevant skill file:
+   - Building Add-Ins? Upload `skills/geotab-addins/SKILL.md`
+   - Styling? Upload `skills/geotab-addin-zenith-styling/SKILL.md`
+   - Python API work? Upload `skills/geotab-api-quickstart/SKILL.md`
 
 ### Cursor / Windsurf / Other IDEs
 1. Open the `geotab-vibe-guide` folder as your project
-2. The AI will have access to all files
-3. Point it to `VIBE_CODING_CONTEXT.md` for quick context
+2. The AI has access to all files automatically
+3. Reference skills explicitly: "Look at skills/geotab-addins and help me..."
 
 ### ChatGPT / Other Tools
-1. Upload or paste `VIBE_CODING_CONTEXT.md`
-2. Optionally upload specific guide files you're working with
+1. Upload `VIBE_CODING_CONTEXT.md` for general context
+2. Upload specific `SKILL.md` files for the task at hand
+3. For complex tasks, upload the skill's `references/` files too
 
 ---
 
@@ -196,8 +214,8 @@ If you spot a typo or have a fix:
 
 ### Option 3: Direct Message
 Reach out to **Felipe Hoffa**:
-- **Geotab internal**: DM on Slack or Teams
-- **External**: [LinkedIn](https://www.linkedin.com/in/felipehoffa/)
+- **Geotab employees**: DM at work
+- **External**: [LinkedIn](https://www.linkedin.com/in/hoffa/)
 
 ### What We're Looking For
 
