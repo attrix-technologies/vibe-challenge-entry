@@ -620,9 +620,7 @@ Once it works, you can optionally upgrade to **Zenith** (Geotab's official desig
 
 **→ [Transform Add-In Design with Zenith](TRANSFORM_ADDIN_ZENITH.md)** - when you're ready for the polished look
 
-**Compare both approaches:**
-- [Vanilla version](https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager/vehicle-manager.html)
-- [Zenith version](https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager-zenith/dist/vehicle-manager.html)
+**Compare both approaches:** See [screenshots in the Zenith guide](TRANSFORM_ADDIN_ZENITH.md#working-example)
 
 ---
 

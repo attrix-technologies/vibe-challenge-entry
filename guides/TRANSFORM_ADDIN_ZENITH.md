@@ -125,12 +125,11 @@ Tell AI: "Add source maps to webpack config for debugging"
 
 Compare the results:
 
-| Version | URL |
-|---------|-----|
-| **Vanilla** | `https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager/vehicle-manager.html` |
-| **Zenith** | `https://fhoffa.github.io/geotab-vibe-guide/examples/addins/vehicle-manager-zenith/dist/vehicle-manager.html` |
-
-Source code: [vehicle-manager](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager) vs [vehicle-manager-zenith](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager-zenith)
+| Vanilla | Zenith |
+|---------|--------|
+| ![Vanilla](../examples/addins/vehicle-manager/fleet-statistics.vanilla.png) | ![Zenith](../examples/addins/vehicle-manager-zenith/fleet-statistics.zenith.png) |
+| Custom styling with purple gradient | Matches MyGeotab's native look |
+| [Source](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager) | [Source](https://github.com/fhoffa/geotab-vibe-guide/tree/main/examples/addins/vehicle-manager-zenith) |
 
 Same functionality. The Zenith version looks more polished but took longer to build and debug.
 

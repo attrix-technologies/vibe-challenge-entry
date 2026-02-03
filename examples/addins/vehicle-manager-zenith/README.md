@@ -2,6 +2,8 @@
 
 A MyGeotab Add-In using React and the Geotab Zenith design system.
 
+![Screenshot](fleet-statistics.zenith.png)
+
 ## Features
 
 - Lists all vehicles with Zenith Table component
