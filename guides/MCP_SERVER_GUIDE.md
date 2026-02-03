@@ -191,40 +191,7 @@ Once configured, Claude has access to these tools:
 
 ---
 
-## When to Use Ace vs Direct API
-
-Understanding when to use Geotab Ace versus the direct API is crucial for building efficient applications.
-
-### Use Geotab Ace When:
-
-| Scenario | Example Question | Why Ace |
-|----------|------------------|---------|
-| **Complex aggregations** | "What's my fleet's average fuel efficiency trend over 6 months?" | Would require multiple API calls + calculations |
-| **Natural language insights** | "Which drivers need coaching?" | AI-powered analysis |
-| **Pattern recognition** | "What are my fleet's most common stop locations?" | Complex analysis |
-| **Recommendations** | "How can I reduce fuel costs?" | AI-generated suggestions |
-| **Cross-entity analysis** | "Compare driver safety scores with trip distances" | Joins multiple data types |
-
-### Use Direct API When:
-
-| Scenario | Example | Why Direct API |
-|----------|---------|----------------|
-| **Real-time data** | Current vehicle location | Sub-second response needed |
-| **Simple lookups** | "Get vehicle by ID" | Faster, deterministic |
-| **Write operations** | Create zone, update device | Ace is read-only |
-| **High-frequency polling** | Live tracking dashboard | Ace has latency |
-| **Exact data needs** | "All trips from device X on date Y" | Precise, no AI interpretation |
-
-### Response Time Expectations
-
-| Query Type | Ace | Direct API |
-|------------|-----|------------|
-| Simple lookup | 10-30 seconds | <1 second |
-| Aggregation (1 week) | 20-45 seconds | 2-5 seconds (with code) |
-| Complex analysis | 30-90 seconds | N/A (would need custom code) |
-| Trend analysis | 45-120 seconds | N/A (would need ML) |
-
-**Rule of thumb:** If you need the answer in under 5 seconds, use direct API. If you need AI-powered insights or would otherwise need to write complex analysis code, use Ace.
+> **When to use Ace vs Direct API:** See [ADVANCED_INTEGRATIONS.md](./ADVANCED_INTEGRATIONS.md#geotab-ace-when-to-use-ai-vs-direct-api) for guidance on when to use Ace (complex analysis, insights) vs direct API (real-time data, writes).
 
 ---
 
