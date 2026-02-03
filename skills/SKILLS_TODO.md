@@ -261,6 +261,50 @@ Build Model Context Protocol servers for conversational fleet access.
 
 ---
 
+### 💡 geotab-fuel-theft-detection
+**Priority:** HIGH - Direct cost savings
+
+Detect fuel theft through data pattern analysis.
+
+**What it should teach:**
+- Analyzing fuel level data (StatusData with fuel diagnostics)
+- Detecting sudden drops without corresponding distance
+- Cross-referencing FuelTransaction locations with vehicle GPS
+- Identifying unusual refueling patterns (time, location, amount)
+- Calculating expected vs actual consumption rates
+- Alert thresholds and false positive reduction
+
+**Use Cases:**
+- "Detect potential fuel theft incidents"
+- "Flag suspicious fuel transactions"
+- "Calculate fuel loss over time"
+
+**Estimated Effort:** 4-5 hours
+
+---
+
+### 💡 geotab-parking-optimization
+**Priority:** MEDIUM - Operational efficiency
+
+Find optimal parking spots from historical fleet data.
+
+**What it should teach:**
+- Analyzing LogRecord stop patterns
+- Clustering common stop locations
+- Time-of-day and day-of-week patterns
+- Scoring locations (frequency, duration, safety)
+- Integration with Zone data
+- Route-based parking recommendations
+
+**Use Cases:**
+- "Find best parking spots for delivery routes"
+- "Identify common stop patterns"
+- "Recommend parking based on historical success"
+
+**Estimated Effort:** 4-5 hours
+
+---
+
 ### 💡 geotab-hos-compliance
 **Priority:** LOW-MEDIUM - Regulatory requirement
 

@@ -857,41 +857,72 @@ for each city boundary."
 
 ## 🔌 MCP Power-Ups: Beyond Official MCP
 
-**Build capabilities the official Geotab MCP won't have.** When official MCP launches, it will likely be read-only with standard queries. Your custom MCP can go further.
+**Build capabilities the official Geotab MCP won't have.** The official MCP endpoint will have API + Ace access, but runs in the cloud. Your custom MCP runs locally with unique advantages.
+
+### Current State
+
+| MCP Option | What It Has | What It Lacks |
+|------------|-------------|---------------|
+| **Official (coming)** | API + Ace, cloud-hosted | Local processing, custom tools |
+| **Felipe's demo** | Ace queries, DuckDB caching | Direct API calls (you can add!) |
+| **Your hackathon project** | Whatever you build! | Nothing - sky's the limit |
 
 ### Unique Capabilities to Build
 
-| Capability | Why Official Won't Have It | Your Hackathon Project |
-|------------|---------------------------|------------------------|
-| **DuckDB Local Caching** | Official = cloud-only | Cache large datasets locally, run SQL without API calls |
-| **Write Operations** | Official = read-only | Create zones, groups, rules via conversation |
-| **Custom Analysis** | Official = standard queries | Build specialized fleet analytics (carbon, safety scoring) |
-| **Multi-System Integration** | Official = Geotab only | Connect to Slack, ServiceNow, your internal tools |
-| **Privacy Layers** | Official = standard redaction | Custom PII handling for your compliance needs |
-| **Offline Mode** | Official = requires internet | Query cached data when disconnected |
+| Capability | Why Build It | Hackathon Project |
+|------------|--------------|-------------------|
+| **Direct API + Ace** | Felipe's demo is Ace-only | Add direct API calls for real-time data |
+| **DuckDB Local Caching** | Official = cloud-only | Cache datasets locally, run SQL offline |
+| **Write Operations** | Create zones, groups, rules via conversation | "Create a geofence around this address" |
+| **MCP Composability** | Combine multiple MCP servers | Geotab + Google Maps + Slack working together |
+| **Custom Analysis** | Build specialized analytics | Carbon tracking, safety scoring, route optimization |
+| **Offline Mode** | Query cached data without internet | Field workers with spotty connectivity |
 
-### Example: DuckDB-Powered Analysis
+### MCP Composability: The Real Power
 
-```
-"Extend the MCP server to cache all trips into DuckDB automatically.
-Add a tool that lets users run complex SQL queries locally, like:
-'SELECT vehicle_id, AVG(fuel_used/distance) as mpg FROM trips
-GROUP BY vehicle_id ORDER BY mpg DESC' - without hitting the API."
-```
-
-### Example: Smart Caching Strategy
+MCP isn't just about one server - it's about **multiple MCP servers working together**. Claude can use tools from different servers in the same conversation:
 
 ```
-"Build an MCP tool that pre-fetches and caches commonly-needed data
-(vehicles, drivers, zones) on startup. When Claude asks questions,
-check the local cache first - only hit the API for fresh data like
-trips or current locations."
+You: "Find my 5 vehicles with most idle time last week,
+      then find the nearest charging stations to their usual locations,
+      and post a summary to Slack."
+
+Claude uses:
+  → Geotab MCP: Query idle time data
+  → Google Maps MCP: Find charging stations
+  → Slack MCP: Post the summary
+```
+
+**Hackathon idea:** Build a Geotab MCP that's designed to work alongside other MCPs. Expose clean tools that compose well.
+
+### Example: Add Direct API to Felipe's Demo
+
+```
+"Fork geotab-ace-mcp-demo and add direct API tools alongside Ace:
+- geotab_get_vehicle_location(vehicle_id) → real-time position (<1s)
+- geotab_get_trips(vehicle_id, date) → trip list
+- geotab_create_zone(name, lat, lon, radius) → write operation
+
+Keep Ace for complex questions, use direct API for real-time + writes."
+```
+
+### Example: Multi-MCP Workflow
+
+```
+"Build a fleet operations assistant that combines:
+1. Geotab MCP for fleet data
+2. Weather API MCP for conditions
+3. Calendar MCP for scheduling
+
+Enable queries like: 'Which vehicles are near areas with
+severe weather warnings? Reschedule their deliveries.'"
 ```
 
 ### Why This Matters
 
-- Official MCP: "How many vehicles do I have?" → API call → answer
-- Your MCP: "Analyze fuel efficiency patterns across all vehicles for the past 6 months" → local DuckDB query → instant complex analysis
+- Official MCP: Great for standard queries, but one-size-fits-all
+- Your MCP: Local processing, custom tools, works with other MCPs
+- Composability: The whole is greater than the sum of parts
 
 > **Guide:** [MCP_SERVER_GUIDE.md](./MCP_SERVER_GUIDE.md) | **Skill:** [geotab-mcp-server](../skills/geotab-mcp-server/SKILL.md)
 
@@ -911,9 +942,31 @@ A skill is a structured document (SKILL.md) that teaches AI assistants how to ac
 |-------|-----------------|------------|
 | **geotab-trip-analysis** | Most common use case, no skill exists yet | ⭐⭐ |
 | **geotab-safety-scoring** | Critical for fleet safety, complex calculations | ⭐⭐⭐ |
+| **geotab-fuel-theft-detection** | Real money savings, pattern detection | ⭐⭐⭐ |
+| **geotab-parking-optimization** | Find best spots from historical data | ⭐⭐⭐ |
 | **geotab-predictive-maintenance** | High value, requires ML patterns | ⭐⭐⭐⭐ |
 | **geotab-carbon-tracking** | Growing demand, ESG reporting | ⭐⭐ |
 | **geotab-driver-coaching** | Combines safety + communication | ⭐⭐⭐ |
+
+### Specialized Skill Ideas
+
+**Fuel Theft Detection:**
+```
+"Create a skill that detects fuel theft by analyzing:
+- Sudden fuel level drops without corresponding distance
+- Fuel transactions that don't match vehicle location
+- Unusual refueling patterns (time, location, amount)
+- Comparison against expected consumption rates"
+```
+
+**Parking Spot Optimization:**
+```
+"Create a skill that finds optimal parking from historical data:
+- Analyze where vehicles commonly stop and for how long
+- Identify patterns by time of day, day of week
+- Score locations by availability, safety, proximity to destinations
+- Recommend best parking spots for delivery routes"
+```
 
 ### Skill Building Prompt
 

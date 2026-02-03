@@ -28,14 +28,24 @@ Claude: *queries your actual fleet data* "Your fleet averaged 8.2 MPG last week.
 
 ## Why Build Your Own MCP Server?
 
+### Current Landscape
+
+| MCP Option | Capabilities | Limitations |
+|------------|--------------|-------------|
+| **Official Geotab (coming)** | API + Ace, cloud-hosted | No local processing, standard tools only |
+| **Felipe's demo** | Ace queries, DuckDB caching | Ace-only (no direct API calls yet) |
+| **Your custom MCP** | Whatever you need | You build it |
+
+### Reasons to Build Custom
+
 | Reason | Details |
 |--------|---------|
 | **Available Now** | Official Geotab MCP is coming, but you can start today |
-| **More Powerful** | Custom MCP can include features official won't have |
-| **Tailored** | Add tools specific to your workflow |
+| **Local Processing** | DuckDB caching, offline analysis - official is cloud-only |
+| **Direct API + Ace** | Felipe's demo is Ace-only - add direct API for real-time + writes |
+| **Composability** | Design tools that work with other MCPs (Maps, Slack, Calendar) |
 | **Multi-Account** | Query multiple Geotab databases in one conversation |
-| **Privacy Control** | Automatic redaction of sensitive driver information |
-| **Smart Caching** | DuckDB integration for efficient large dataset analysis |
+| **Write Operations** | Create zones, groups, rules via conversation |
 
 ---
 
@@ -379,12 +389,59 @@ The MCP server automatically redacts sensitive driver information by default. Th
 
 ---
 
+## MCP Composability
+
+One of MCP's most powerful features is **composability** - multiple MCP servers working together in the same conversation.
+
+### Example: Multi-MCP Workflow
+
+```
+You: "Find vehicles with high idle time last week,
+      check weather at their locations,
+      and post a summary to Slack."
+
+Claude uses:
+  → Geotab MCP: Query idle time data
+  → Weather MCP: Get conditions at locations
+  → Slack MCP: Post the summary
+```
+
+### Designing for Composability
+
+When building your Geotab MCP, design tools that work well with others:
+
+```python
+@server.tool()
+async def get_vehicle_locations() -> str:
+    """
+    Get current locations for all vehicles.
+    Returns: List of {vehicle_id, name, lat, lon}
+
+    Composable: Output format works with mapping MCPs.
+    """
+    # Return clean data other MCPs can use
+    return json.dumps([
+        {"vehicle_id": v.id, "name": v.name, "lat": v.lat, "lon": v.lon}
+        for v in vehicles
+    ])
+```
+
+### Popular MCPs to Combine With
+
+- **Google Maps MCP** - Route optimization, place search
+- **Slack MCP** - Post alerts and reports
+- **Calendar MCP** - Schedule maintenance, deliveries
+- **Weather MCP** - Check conditions for routes
+- **Database MCPs** - Store and query historical data
+
+---
+
 ## What's Next?
 
 Once you have the basic MCP server running:
 
-1. **Try different queries** - Explore what Ace can answer
-2. **Add custom tools** - Extend functionality for your workflow
+1. **Add direct API calls** - Felipe's demo is Ace-only; add real-time data + writes
+2. **Try composability** - Install other MCPs and combine with Geotab
 3. **Multi-account setup** - Connect all your Geotab databases
 4. **Build integrations** - Connect MCP responses to Slack, email, dashboards
 
