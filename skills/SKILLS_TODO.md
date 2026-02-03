@@ -252,28 +252,12 @@ Analyze electric vehicle data (battery health, charging, range).
 
 ---
 
-### 💡 geotab-mcp-server
-**Priority:** MEDIUM - Cutting edge integration
-
-Build Model Context Protocol servers for Geotab.
-
-**What it should teach:**
-- MCP specification basics
-- Creating Geotab MCP tools
-- Multi-account support
-- Read and write operations
-- Caching strategies with DuckDB
-- Security and privacy considerations
-
-**Use Cases:**
-- "Build a conversational fleet interface"
-- "Create Geotab tools for AI assistants"
-- "Enable natural language fleet control"
-
-**Resources:**
-- Fork from: https://github.com/fhoffa/geotab-ace-mcp-demo
-
-**Estimated Effort:** 6-8 hours
+### ✅ geotab-mcp-server
+Build Model Context Protocol servers for conversational fleet access.
+- **Location:** `skills/geotab-mcp-server/SKILL.md`
+- **Description:** Build and extend MCP servers for Claude Desktop integration
+- **Use Cases:** Conversational fleet queries, custom tools, multi-account access
+- **Resources:** [MCP Guide](../guides/MCP_SERVER_GUIDE.md), [Demo Repo](https://github.com/fhoffa/geotab-ace-mcp-demo)
 
 ---
 

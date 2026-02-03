@@ -390,6 +390,29 @@ The styling isn't working. Can you make sure all CSS is inline using style="" at
 
 ---
 
+## Using Geotab Ace for Complex Questions
+
+The Gem uses the direct Geotab API, which is great for displaying data. For **complex analytical questions**, you can ask the Gem to integrate with Geotab Ace.
+
+**When to mention Ace in your prompts:**
+- Questions requiring AI analysis: "Which drivers need coaching?"
+- Trend analysis: "What's my fuel efficiency trend?"
+- Recommendations: "How can I reduce costs?"
+
+**Example Ace prompt:**
+```
+Create an Add-In that has a text input where I can type questions
+about my fleet. Send the question to Geotab Ace API and display
+the response. Include a loading indicator since Ace can take
+30+ seconds to respond.
+```
+
+**Note:** Ace queries take longer (10-60 seconds) but provide AI-powered insights that would otherwise require complex code.
+
+> **Learn more:** [When to use Ace vs API](./ADVANCED_INTEGRATIONS.md#geotab-ace-when-to-use-ai-vs-direct-api)
+
+---
+
 ## Quick Reference: Common Data Types
 
 When describing what data you want, use these terms:

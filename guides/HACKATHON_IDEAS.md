@@ -583,6 +583,14 @@ using GPT-4."
 ### Idea 8.3: Fleet MCP Server - Conversational Fleet Control
 **Concept:** Build a Model Context Protocol (MCP) server that lets AI assistants interact with Geotab fleets conversationally, with write-back capabilities.
 
+> **Start here:** [MCP Server Guide](./MCP_SERVER_GUIDE.md) | **Video Demo:** [YouTube](https://www.youtube.com/watch?v=-eID1rXS1p8)
+
+**Why Build Your Own MCP?**
+- Official Geotab MCP is coming, but you can start today
+- Custom MCP can include features official won't have
+- Great way to learn MCP architecture
+- Tailored to your specific workflow needs
+
 **Key Features:**
 - Natural language queries processed without writing code
 - Multi-account fleet access in single conversations
@@ -599,6 +607,12 @@ using GPT-4."
 
 **Difficulty:** ⭐⭐⭐⭐ Advanced
 
+**Prerequisites:**
+- Python 3.10+
+- uv package manager
+- Claude Desktop
+- Familiarity with async Python
+
 **Vibe Prompts to Start:**
 ```
 "Fork the geotab-ace-mcp-demo repository and add write capabilities:
@@ -612,6 +626,9 @@ with appropriate conditions and actions."
 "Build an MCP server tool that automatically creates geofences based on
 common stop locations: 'Find all locations where vehicles stop for more
 than 30 minutes and create zones around them'."
+
+"Add a Slack integration tool to the MCP server that posts fleet alerts
+to a channel when Claude detects anomalies in the data."
 ```
 
 **Bonus Features:**
@@ -620,9 +637,11 @@ than 30 minutes and create zones around them'."
 - Audit logging of all changes made via AI
 - Integration with Slack, Discord, or MS Teams
 - Rollback capability ("undo my last change")
+- Voice integration (combine with FleetVoice idea)
 
 **Resources:**
 - [geotab-ace-mcp-demo](https://github.com/fhoffa/geotab-ace-mcp-demo)
+- [MCP Server Guide](./MCP_SERVER_GUIDE.md)
 - [MCP Specification](https://modelcontextprotocol.io/)
 
 ---
@@ -833,6 +852,47 @@ for each city boundary."
 - ✅ Test with real Geotab demo data
 - ✅ Have a backup plan if live demo fails
 - ✅ Show your personality and passion
+
+---
+
+## 🔌 MCP Enhancement Tier
+
+**Add conversational AI to any project.** Any hackathon idea can be enhanced with an MCP interface. This is an advanced bonus that judges love.
+
+### How to Add MCP to Your Project
+
+1. **Start with your core project** - Get the basic functionality working first
+2. **Identify conversational use cases** - What questions would users ask?
+3. **Fork the MCP demo** - [geotab-ace-mcp-demo](https://github.com/fhoffa/geotab-ace-mcp-demo)
+4. **Add custom tools** - Expose your project's features as MCP tools
+5. **Demo both interfaces** - Show traditional UI AND conversational access
+
+### Example Enhancements
+
+| Base Project | MCP Enhancement |
+|--------------|-----------------|
+| EcoFleet Carbon Tracker | "What's my carbon footprint this month?" via Claude |
+| SafeDrive Coach | "Which drivers need coaching?" with AI-generated recommendations |
+| PredictMaint AI | "When will vehicle X need service?" with natural language |
+| FleetBot for Slack | Add MCP so users can query via Claude Desktop too |
+| RouteGenius Optimizer | "Find the most efficient route for these 10 stops" |
+
+### MCP Bonus Prompt
+
+```
+"Take my [project name] and add an MCP interface. Create tools that let
+Claude users ask questions like '[example question]' and get answers
+from my project's data/functionality."
+```
+
+### Why Judges Love MCP Projects
+
+- Shows cutting-edge AI integration skills
+- Demonstrates understanding of modern AI tooling
+- Makes projects accessible to non-technical users
+- Future-proof: MCP is becoming standard for AI tools
+
+> **Guide:** [MCP_SERVER_GUIDE.md](./MCP_SERVER_GUIDE.md) | **Skill:** [geotab-mcp-server](../skills/geotab-mcp-server/SKILL.md)
 
 ---
 
