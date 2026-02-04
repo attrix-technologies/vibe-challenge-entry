@@ -4,6 +4,21 @@
 
 Geotab is the world's leading fleet management and telematics platform, tracking **more than 5 million vehicles** across the globe in real-time. It provides comprehensive data about vehicles, drivers, and fleet operations, turning raw telematics data into actionable insights that help businesses optimize their operations.
 
+## The Marketplace: Your Distribution Channel
+
+Beyond the API, Geotab has built the **largest telematics ecosystem in the world**:
+
+| Metric | Scale |
+|--------|-------|
+| Solutions available | 430+ |
+| Customers browsing | 100,000 |
+| Vehicles you can reach | 5 million+ |
+| Countries | 163+ |
+
+Developers like you have built solutions that now reach thousands of fleets. GoAnalytics started as simple dashboards. LifeSaver Mobile started because two dads worried about their teenagers driving. Your hackathon project could be next.
+
+**→ [Read the Ecosystem Primer](./guides/GEOTAB_ECOSYSTEM_PRIMER.md)** — See who started small and how to get your solution in front of 100,000 customers.
+
 ## Who Uses Geotab?
 
 **Fleet Managers** are the primary users of Geotab - professionals responsible for overseeing vehicle fleets of all sizes, from small delivery companies with 5 vehicles to massive enterprises managing thousands of trucks, buses, construction equipment, and service vehicles.
@@ -83,15 +98,13 @@ Reducing environmental impact and carbon footprint:
 
 ### 6. **Expandability**
 Extending platform capabilities through integrations:
-- Third-party application marketplace
-- Custom API integrations
-- Hardware add-on compatibility
-- Open platform architecture
-- SDK for custom development
-- **Geotab Marketplace**: Distribute solutions to over 50,000 customers ([marketplace.geotab.com](https://marketplace.geotab.com/))
+- **[Geotab Marketplace](https://marketplace.geotab.com/)**: 430+ solutions from 350+ partners serving 100,000 customers
 - **Add-ins**: Embed your application directly inside MyGeotab ([Developer Docs](https://developers.geotab.com/myGeotab/addIns/developingAddIns/))
-  - *Note: Add-ins are key for production but have limitations on demo databases.*
-- **Third-party integrations**: Connect with other business systems and tools
+- Custom API integrations with open platform architecture
+- Hardware add-on compatibility via IOX expansion port
+- SDK for custom development
+
+**→ [Ecosystem Primer](./guides/GEOTAB_ECOSYSTEM_PRIMER.md)**: See how developers like you started small and now reach thousands of fleets.
 
 ## Choosing Your Focus
 
@@ -222,9 +235,9 @@ The best Geotab applications create **actionable intelligence** that makes fleet
 
 - **[INSTANT_START_WITH_CLAUDE.md](./guides/INSTANT_START_WITH_CLAUDE.md)**: Get your first API call working in 60 seconds
 - **[HACKATHON_IDEAS.md](./guides/HACKATHON_IDEAS.md)**: Browse 20+ project ideas organized by pillar
+- **[GEOTAB_ECOSYSTEM_PRIMER.md](./guides/GEOTAB_ECOSYSTEM_PRIMER.md)**: Partner success stories and how to join the Marketplace
 - **[ADVANCED_INTEGRATIONS.md](./guides/ADVANCED_INTEGRATIONS.md)**: Explore MCP, voice interfaces, and AI-powered features
 - **[GEOTAB_API_REFERENCE.md](./guides/GEOTAB_API_REFERENCE.md)**: Quick API reference card
-- **[CLAUDE_PROMPTS.md](./guides/CLAUDE_PROMPTS.md)**: AI prompts for common tasks
 
 ---
 
