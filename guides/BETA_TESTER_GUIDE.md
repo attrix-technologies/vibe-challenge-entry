@@ -41,6 +41,9 @@ If you don't have a Geotab account yet:
 2. Fill in your details (takes ~2 minutes)
 3. You'll get instant access to a demo database with sample vehicles and data
 
+> [!NOTE]
+> **Geotab employees:** Use a personal Gmail or other external email address to create your demo account. Internal Geotab accounts may have different permissions that could affect these tutorials.
+
 Save your credentials - you'll need them for the tutorials.
 
 ### Step 3: Set Up Your Environment
