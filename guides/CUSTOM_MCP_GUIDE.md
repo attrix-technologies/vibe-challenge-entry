@@ -364,7 +364,7 @@ The MCP server automatically redacts sensitive driver information by default. Th
 
 ## MCP Composability
 
-One of MCP's most powerful features is **composability** - multiple MCP servers working together in the same conversation.
+Multiple MCP servers can work together in the same conversation.
 
 ### Example: Multi-MCP Workflow
 

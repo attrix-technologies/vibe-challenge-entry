@@ -880,9 +880,9 @@ for each city boundary."
 | **Custom Frameworks** | Your analysis patterns | Safety scoring algorithms, route optimization |
 | **Offline Mode** | Query cached data without internet | Field workers with spotty connectivity |
 
-### MCP Composability: The Real Power
+### MCP Composability
 
-**Multiple MCP servers can work together** in the same conversation. Claude uses tools from different servers seamlessly:
+**Multiple MCP servers can work together** in the same conversation:
 
 ```
 You: "Find my 5 vehicles with most idle time last week,
