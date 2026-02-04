@@ -30,6 +30,33 @@ Geotab Ace is an AI-powered query interface that lets you ask natural language q
 - You need specific records by ID
 - Speed is critical
 
+### API Optimization: Trips-First Pattern
+
+For aggregations like "top vehicles by distance", don't query devices then trips per device:
+
+```javascript
+// ❌ Slow: 5000+ API calls (one per device)
+api.call('Get', { typeName: 'Device' }, function(devices) {
+    devices.forEach(function(d) {
+        api.call('Get', { typeName: 'Trip', search: { deviceSearch: { id: d.id } } }, ...);
+    });
+});
+
+// ✅ Fast: 1 API call, aggregate in memory
+api.call('Get', {
+    typeName: 'Trip',
+    search: { fromDate: yesterday, toDate: today },
+    resultsLimit: 50000
+}, function(trips) {
+    var byDevice = {};
+    trips.forEach(function(t) {
+        if (!byDevice[t.device.id]) byDevice[t.device.id] = 0;
+        byDevice[t.device.id] += t.distance || 0;
+    });
+    // Sort and get top N
+});
+```
+
 ### Use Ace When:
 - You want trend analysis ("Which vehicles drove most last month?")
 - You need complex aggregations across multiple data types

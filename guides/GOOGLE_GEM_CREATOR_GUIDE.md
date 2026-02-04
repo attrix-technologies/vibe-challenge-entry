@@ -262,6 +262,28 @@ api.call("Get", {
 
 **IMPORTANT:** Distance from the API (`trip.distance`) is in **kilometers**. Convert: `km * 0.621371 = miles`
 
+### Trips-First Pattern (Optimization)
+
+For aggregations like "top vehicles by distance", get trips first and aggregate in memory:
+
+```javascript
+// ❌ Slow: Query each device individually (5000+ calls!)
+// ✅ Fast: Get all trips, aggregate by device (1 call)
+api.call("Get", {
+    typeName: "Trip",
+    search: { fromDate: yesterday, toDate: today },
+    resultsLimit: 50000
+}, function(trips) {
+    var byDevice = {};
+    trips.forEach(function(t) {
+        var id = t.device.id;
+        if (!byDevice[id]) byDevice[id] = 0;
+        byDevice[id] += t.distance || 0;
+    });
+    // Sort Object.keys(byDevice) by distance to get top N
+});
+```
+
 ## Geotab Ace (AI-Powered Analysis)
 
 Ace is Geotab's AI that answers complex fleet questions in natural language. It works from Add-Ins but requires async polling.
