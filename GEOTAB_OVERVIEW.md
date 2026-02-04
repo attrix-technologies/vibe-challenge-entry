@@ -4,20 +4,20 @@
 
 Geotab is the world's leading fleet management and telematics platform, tracking **more than 5 million vehicles** across the globe in real-time. It provides comprehensive data about vehicles, drivers, and fleet operations, turning raw telematics data into actionable insights that help businesses optimize their operations.
 
-## The Marketplace: Where Solutions Become Products
+## The Marketplace: Your Distribution Channel
 
 Beyond the API, Geotab has built the **largest telematics ecosystem in the world**:
 
 | Metric | Scale |
 |--------|-------|
-| Marketplace partners | 350+ |
-| Available solutions | 430+ |
-| Global customers | 55,000+ |
+| Solutions available | 430+ |
+| Customers browsing | 55,000+ |
+| Vehicles you can reach | 5 million+ |
 | Countries | 163+ |
 
-Companies like Lytx, Fleetio, and Link Labs have built profitable businesses by integrating with Geotab. Your hackathon project could become a real product in the Marketplace.
+Developers like you have built solutions that now reach thousands of fleets. GoAnalytics started as simple dashboards. LifeSaver Mobile started because two dads worried about their teenagers driving. Your hackathon project could be next.
 
-**→ [Read the Ecosystem Primer](./guides/GEOTAB_ECOSYSTEM_PRIMER.md)** — Partner success stories, solution categories, and how to join.
+**→ [Read the Ecosystem Primer](./guides/GEOTAB_ECOSYSTEM_PRIMER.md)** — See who started small and how to get your solution in front of 55,000+ customers.
 
 ## Who Uses Geotab?
 
@@ -104,7 +104,7 @@ Extending platform capabilities through integrations:
 - Hardware add-on compatibility via IOX expansion port
 - SDK for custom development
 
-**→ [Ecosystem Primer](./guides/GEOTAB_ECOSYSTEM_PRIMER.md)**: See how partners like GoAnalytics, LifeSaver Mobile, and Whip Around started small and grew into Marketplace solutions.
+**→ [Ecosystem Primer](./guides/GEOTAB_ECOSYSTEM_PRIMER.md)**: See how developers like you started small and now reach thousands of fleets.
 
 ## Choosing Your Focus
 

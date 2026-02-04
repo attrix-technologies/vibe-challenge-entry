@@ -1,8 +1,8 @@
-# The Geotab Ecosystem: A Primer for Partners
+# The Geotab Ecosystem: A Primer for Hackathon Participants
 
 **What if your hackathon project could reach 5 million vehicles?**
 
-The Geotab Marketplace is where fleet solutions become real products. Over 350 companies have built profitable businesses here—from dashcam startups to enterprise maintenance platforms. Your prototype today could be in the Marketplace tomorrow.
+The Geotab Marketplace is where fleet solutions find real users. Over 350 companies distribute their products here—reaching 55,000+ customers without building their own sales team. Your prototype today could be in front of fleet managers tomorrow.
 
 This primer shows you what's possible.
 
@@ -10,7 +10,7 @@ This primer shows you what's possible.
 
 ## They Started Small Too
 
-These partners began with simple ideas. Now they're in the Marketplace.
+These developers began with simple ideas. Now they're reaching millions of vehicles.
 
 ### GoAnalytics: From Reseller to Order Now Partner
 
@@ -265,7 +265,7 @@ These organizations won at Geotab Connect 2025:
 
 ---
 
-## What Partners Say
+## What Developers Say
 
 > "Different fleets have different needs. The beauty of the Marketplace is making sure that every end-user has the best customer experience possible."
 > — **Max Hillman, CEO, SureCam**
@@ -294,7 +294,7 @@ Your solution could reach these organizations:
 
 ---
 
-## Results Partners Have Achieved
+## Results Customers Have Achieved
 
 | Customer | Result |
 |----------|--------|
@@ -323,21 +323,21 @@ Across pilot programs with gamified driver coaching:
 
 ---
 
-## The Business Model
+## The Distribution Opportunity
 
-### How Partners Make Money
+### What You Get
+
+- **5M+ vehicles** you can reach immediately
+- **55,000+ customers** browsing the Marketplace for solutions
+- **300+ resellers** who can bundle and sell your solution
+- **Built-in trust** — customers already use Geotab, your Add-In is one click away
+
+### How Marketplace Solutions Make Money
 
 - **Subscriptions** — Monthly/annual fees for your software
 - **Hardware sales** — For camera or sensor integrations
 - **Services** — Implementation, consulting, support
 - **Upsells** — Premium features, additional users
-
-### What Geotab Provides
-
-- **5M+ vehicles** you can reach immediately
-- **55,000+ customers** browsing the Marketplace
-- **300+ resellers** who can bundle your solution
-- **Co-marketing** at events like Geotab Connect
 
 ---
 

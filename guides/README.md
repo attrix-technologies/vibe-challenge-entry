@@ -13,7 +13,7 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 | **Want automated monitoring/alerts** | [AGENTIC_OVERVIEW.md](./AGENTIC_OVERVIEW.md) |
 | **At a hackathon** | [HACKATHON_IDEAS.md](./HACKATHON_IDEAS.md) |
 | **Teaching a workshop** | [slides/README.md](../slides/README.md) |
-| **Business exploring Geotab ecosystem** | [GEOTAB_ECOSYSTEM_PRIMER.md](./GEOTAB_ECOSYSTEM_PRIMER.md) |
+| **Want to distribute your solution** | [GEOTAB_ECOSYSTEM_PRIMER.md](./GEOTAB_ECOSYSTEM_PRIMER.md) |
 
 ---
 
@@ -48,9 +48,9 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 - **[AGENTIC_OVERVIEW.md](./AGENTIC_OVERVIEW.md)** - What are agentic systems? When do you need one? Framework comparison.
 - **[AGENTIC_QUICKSTART_N8N.md](./AGENTIC_QUICKSTART_N8N.md)** - Build your first fleet monitoring agent with n8n (visual, no code).
 
-### Building for Business
+### Distributing Your Solution
 
-- **[GEOTAB_ECOSYSTEM_PRIMER.md](./GEOTAB_ECOSYSTEM_PRIMER.md)** - Discover the world of Geotab integrations: partner success stories, solution categories, and business opportunities.
+- **[GEOTAB_ECOSYSTEM_PRIMER.md](./GEOTAB_ECOSYSTEM_PRIMER.md)** - How to get your solution in front of 55,000+ customers. Success stories from developers who started small.
 
 ### Advanced Topics
 
