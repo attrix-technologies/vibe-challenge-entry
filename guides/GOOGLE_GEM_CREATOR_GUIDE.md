@@ -208,17 +208,75 @@ api.call("Set", {
     entity: { id: deviceId, name: "New Name" }
 }, successCallback, errorCallback);
 
-### Common Type Names
+### Common Type Names (Quick Reference)
 - Device (vehicles)
-- User (users and drivers)
-- Trip
+- User (users and drivers - use `isDriver: true` for drivers only)
+- Trip (completed journeys)
 - Zone (geofences)
 - LogRecord (GPS points)
 - ExceptionEvent (rule violations)
-- Group
-- Rule
-- FuelTransaction
-- StatusData
+- Group (organizational hierarchy)
+- Rule (exception rules)
+- FuelTransaction (fuel card data)
+- StatusData (sensor readings)
+- DeviceStatusInfo (current vehicle state)
+- FaultData (engine fault codes)
+- DriverChange (driver login events)
+- Audit (system activity log)
+- Diagnostic (sensor definitions)
+
+### All Supported Entity Types (34 Total)
+
+**Core Assets (Writable):**
+- `Device` - Vehicles/assets
+- `User` - Users and drivers
+- `Group` - Organizational hierarchy
+
+**Geofencing (Writable):**
+- `Zone` - Geofences/locations
+- `Route` - Planned routes
+
+**Rules & Alerts:**
+- `Rule` - Exception rules (writable)
+- `Condition` - Rule conditions (writable)
+- `ExceptionEvent` - Rule violations (read-only)
+- `DistributionList` - Notification recipients (writable)
+
+**Diagnostics & Faults (Read-Only):**
+- `Diagnostic` - Sensor definitions
+- `Controller` - ECU definitions
+- `FaultData` - Engine fault codes
+- `FailureMode` - Fault failure modes
+- `FlashCode` - Legacy diagnostic codes
+
+**Telematics Data (Read-Only):**
+- `LogRecord` - GPS breadcrumbs
+- `StatusData` - Sensor readings
+- `Trip` - Completed journeys
+- `DeviceStatusInfo` - Current vehicle state
+
+**Compliance/HOS:**
+- `DVIRLog` - Vehicle inspections (writable)
+- `DutyStatusLog` - HOS records (limited write)
+- `DutyStatusAvailability` - Available time (read-only)
+- `DutyStatusViolation` - HOS violations (read-only)
+- `DriverChange` - Driver ID events (read-only)
+
+**Fuel:**
+- `FuelTransaction` - Fuel card data (writable)
+- `FuelUsed` - Consumption (read-only)
+- `FillUp` - Fill events (read-only)
+- `FuelTaxDetail` - IFTA records (read-only)
+
+**Custom Data (Writable):**
+- `CustomData` - Custom storage
+- `AddInData` - Per-Add-In storage
+
+**System:**
+- `Audit` - Activity log (read-only)
+- `BinaryPayload` - Raw data (read-only)
+- `DebugData` - Debug info (read-only)
+- `DeviceShare` - Shared access (writable)
 
 ### Advanced Get Parameters
 
