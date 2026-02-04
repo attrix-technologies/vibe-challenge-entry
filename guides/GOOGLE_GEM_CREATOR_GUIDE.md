@@ -615,6 +615,38 @@ var dist = row[cols[1]];    // Second column = value
 "I analyzed trip data for the current month and ranked vehicles by total distance traveled..."
 ```
 
+### Getting Full Results via CSV Download
+
+The `preview_array` only returns 10 rows. For full datasets, use `signed_urls` from the response - these are **CORS-approved** and can be fetched directly from Add-Ins:
+
+```javascript
+// In your pollForResults success handler, after status === "DONE":
+var csvUrl = null;
+Object.keys(messages).forEach(function(key) {
+    var msg = messages[key];
+    if (msg.signed_urls && msg.signed_urls.length > 0) {
+        csvUrl = msg.signed_urls[0];  // URL to full CSV data
+    }
+});
+
+if (csvUrl) {
+    fetch(csvUrl)
+        .then(function(response) { return response.text(); })
+        .then(function(csvText) {
+            // Parse CSV (first row is headers)
+            var rows = csvText.split('\n');
+            var headers = rows[0].split(',');
+            console.log('Full data: ' + (rows.length - 1) + ' rows');
+            // Process all rows, not just 10!
+        })
+        .catch(function(err) {
+            console.error('CSV fetch failed:', err);
+        });
+}
+```
+
+**Why this matters:** Ace queries like "Get 100 recent GPS logs" will only show 10 in `preview_array`, but the CSV URL contains all 100+ results.
+
 ### Critical Ace Mistakes to Avoid
 
 | Mistake | Problem | Solution |

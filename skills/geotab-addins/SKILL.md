@@ -341,7 +341,20 @@ askAce(api, "Which vehicles drove the most last month?", function(result) {
 - Creating/updating entities (use Add/Set)
 - Any UI that needs instant response
 
-> **Full Ace documentation:** See the [geotab-ace skill](../geotab-ace/SKILL.md) for complete patterns, response parsing, rate limiting, and code examples.
+### Getting Full Results (More Than 10 Rows)
+
+Ace's `preview_array` only returns 10 rows. For full data, use `signed_urls` from the response - **CORS-approved** for direct fetch from Add-Ins:
+
+```javascript
+// Extract CSV URL from Ace response messages
+if (msg.signed_urls) {
+    fetch(msg.signed_urls[0])
+        .then(function(r) { return r.text(); })
+        .then(function(csv) { /* parse all rows */ });
+}
+```
+
+> **Full Ace documentation:** See the [geotab-ace skill](../geotab-ace/SKILL.md) for complete patterns, CSV parsing, rate limiting, and code examples.
 
 ## Navigation & Integrations
 
