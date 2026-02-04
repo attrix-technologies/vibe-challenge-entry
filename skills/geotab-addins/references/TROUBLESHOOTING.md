@@ -11,6 +11,106 @@ When an Add-In doesn't work:
 5. **Check configuration** - valid JSON? Correct URL?
 6. **Hard refresh** - Clear cache with Ctrl+Shift+R
 
+## On-Screen Debug Console
+
+When browser DevTools are inconvenient (mobile testing, quick iterations), add a visible console directly in your Add-In:
+
+```javascript
+// Add this to your Add-In for visible debug output
+function setupDebugConsole() {
+    var debugDiv = document.createElement("div");
+    debugDiv.id = "debug-console";
+    debugDiv.style.cssText = "position:fixed;bottom:0;left:0;right:0;max-height:200px;" +
+        "overflow-y:auto;background:#1a1a1a;color:#00ff00;font-family:monospace;" +
+        "font-size:12px;padding:10px;z-index:9999;border-top:2px solid #333;";
+    document.body.appendChild(debugDiv);
+
+    // Override console.log to also display on screen
+    var originalLog = console.log;
+    console.log = function() {
+        var args = Array.prototype.slice.call(arguments);
+        var message = args.map(function(arg) {
+            return typeof arg === "object" ? JSON.stringify(arg) : String(arg);
+        }).join(" ");
+
+        var line = document.createElement("div");
+        line.textContent = "[" + new Date().toLocaleTimeString() + "] " + message;
+        debugDiv.appendChild(line);
+        debugDiv.scrollTop = debugDiv.scrollHeight;
+
+        originalLog.apply(console, arguments);
+    };
+
+    console.log("Debug console initialized");
+}
+
+// Call in initialize:
+initialize: function(api, state, callback) {
+    setupDebugConsole();
+    console.log("Add-In starting...");
+    // ... rest of your code
+}
+```
+
+### Debug Console Features
+
+- Shows timestamped log messages
+- Auto-scrolls to latest
+- Objects displayed as JSON
+- Visible even without DevTools open
+- Useful for mobile testing
+
+### Quick Debug Pattern
+
+For temporary debugging during development:
+
+```javascript
+// Simple inline debug - add anywhere
+function debug(msg) {
+    var d = document.getElementById("debug") || (function() {
+        var div = document.createElement("div");
+        div.id = "debug";
+        div.style.cssText = "position:fixed;bottom:10px;right:10px;background:#000;color:#0f0;" +
+            "padding:10px;font-family:monospace;font-size:11px;max-width:400px;max-height:300px;" +
+            "overflow:auto;z-index:9999;border-radius:4px;";
+        document.body.appendChild(div);
+        return div;
+    })();
+    d.innerHTML += msg + "<br>";
+    d.scrollTop = d.scrollHeight;
+}
+
+// Usage throughout your code
+debug("Loaded " + devices.length + " devices");
+debug("API response: " + JSON.stringify(result).substring(0, 100));
+```
+
+### Debugging API Calls
+
+Wrap API calls to see what's happening:
+
+```javascript
+function debugApiCall(api, method, params, onSuccess, onError) {
+    console.log("API CALL: " + method + " with params:", params);
+
+    api.call(method, params,
+        function(result) {
+            console.log("API SUCCESS: " + method + " returned:", result);
+            if (onSuccess) onSuccess(result);
+        },
+        function(error) {
+            console.log("API ERROR: " + method + " failed:", error);
+            if (onError) onError(error);
+        }
+    );
+}
+
+// Usage
+debugApiCall(api, "Get", { typeName: "Device" }, function(devices) {
+    // handle devices
+});
+```
+
 ## Common Mistakes
 
 ### 1. Forgetting to Call callback()
