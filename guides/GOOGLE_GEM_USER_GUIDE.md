@@ -57,6 +57,8 @@ Make me an add-in
 
 The Gem will output a JSON configuration block. Select and copy the entire JSON (from the opening `{` to the closing `}`).
 
+> **Wait for complete generation:** The Gem streams its response as it generates. Wait until the JSON output is fully complete before copying. If you copy too early, you'll get incomplete JSON that won't work. Look for the closing `}` and make sure the Gem has stopped generating.
+
 ### Step 4: Install in MyGeotab
 
 1. Log into **MyGeotab**
