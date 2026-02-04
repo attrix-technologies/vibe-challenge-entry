@@ -278,6 +278,93 @@ api.call("Set", {
 - `DebugData` - Debug info (read-only)
 - `DeviceShare` - Shared access (writable)
 
+### Persistent Storage (AddInData)
+
+Add-Ins can store custom JSON data that persists across sessions using `AddInData`. Great for user settings, saved filters, or cached data.
+
+**Step 1: Generate a unique AddInId** (run once in browser console):
+```javascript
+function generateAddInId() {
+    var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return btoa(guid).replace(/=/g, '').substring(0, 22);
+}
+console.log(generateAddInId());  // e.g., "a2C4ABQuLFkepPVf6-4OKAQ"
+```
+
+**Step 2: Save data:**
+```javascript
+var MY_ADDIN_ID = "yourGeneratedId";
+
+api.call("Add", {
+    typeName: "AddInData",
+    entity: {
+        addInId: MY_ADDIN_ID,
+        groups: [{ id: "GroupCompanyId" }],
+        details: {
+            userSettings: { theme: "dark", pageSize: 25 },
+            lastUpdated: new Date().toISOString()
+        }
+    }
+}, function(newId) {
+    console.log("Saved:", newId);
+}, errorCallback);
+```
+
+**Step 3: Retrieve data:**
+```javascript
+api.call("Get", {
+    typeName: "AddInData",
+    search: { addInId: MY_ADDIN_ID }
+}, function(results) {
+    if (results.length > 0) {
+        var settings = results[0].details;
+        console.log("Theme:", settings.userSettings.theme);
+    }
+}, errorCallback);
+```
+
+**Step 4: Update data** (requires the record id):
+```javascript
+api.call("Set", {
+    typeName: "AddInData",
+    entity: {
+        id: existingRecordId,
+        addInId: MY_ADDIN_ID,
+        groups: [{ id: "GroupCompanyId" }],
+        details: { userSettings: { theme: "light", pageSize: 50 } }
+    }
+}, successCallback, errorCallback);
+```
+
+**Step 5: Delete data:**
+```javascript
+api.call("Remove", {
+    typeName: "AddInData",
+    entity: { id: recordId }
+}, successCallback, errorCallback);
+```
+
+**Query with filters** (object path notation):
+```javascript
+api.call("Get", {
+    typeName: "AddInData",
+    search: {
+        addInId: MY_ADDIN_ID,
+        selectClause: "userSettings.theme",
+        whereClause: "userSettings.pageSize > 20"
+    }
+}, callback, errorCallback);
+```
+
+**Limitations:**
+- 10,000 character limit per record
+- No AND/OR in whereClause
+- Case-sensitive matching
+- Property names cannot start with "geotab"
+
 ### Advanced Get Parameters
 
 The `Get` method supports additional parameters for efficient queries:
