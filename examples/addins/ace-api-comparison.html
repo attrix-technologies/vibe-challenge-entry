@@ -424,7 +424,7 @@
                         } else if (diffMs > 0) {
                             compBox.innerHTML = '<strong class="text-warning">Ace is ' + diffStr + ' behind API (BigQuery lag)</strong>';
                         } else {
-                            compBox.innerHTML = '<strong class="text-warning">API is ' + diffStr + ' behind Ace (different timezones in fleet)</strong>';
+                            compBox.innerHTML = '<strong class="text-warning">API missed newer trips (5000 limit or date range)</strong>';
                         }
                     }
                 } else {
