@@ -126,7 +126,16 @@ new Date(timeStr.replace(' ', 'T') + 'Z')
 ✅ "What are the top 3 vehicles by distance? Return columns: device_name, miles"
 ```
 
-This ensures consistent column names in the response, making parsing reliable.
+This helps but Ace doesn't always honor requested names. Common fields Ace uses:
+- `DeviceName` (not `device_name`) - from BigQuery tables
+- `Trip_End_Time_UTC` (not `trip_end_time`)
+- `miles` (usually honored when requested)
+
+**Always check multiple variants** in your parsing code:
+```javascript
+var name = row.device_name || row.DeviceName || 'Unknown';
+var time = row.trip_end_time || row.Trip_End_Time_UTC || 'Unknown';
+```
 
 **Specify timezone for timestamps:**
 ```

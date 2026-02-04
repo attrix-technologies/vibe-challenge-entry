@@ -432,10 +432,17 @@ askAce(api, "What are my top 3 vehicles by distance this month? Return columns: 
 
 ### Ace Query Best Practices
 
-**Specify column names:** Ace uses different names each time. Be explicit:
+**Specify column names:** Ace doesn't always honor them, but it helps:
 ```
 ❌ "top 3 vehicles by distance"
 ✅ "top 3 vehicles by distance? Return columns: device_name, miles"
+```
+
+**Handle column name variants:** Ace uses BigQuery column names that may differ:
+```javascript
+// Always check multiple variants
+var name = row.device_name || row.DeviceName || 'Unknown';
+var time = row.trip_end_time || row.Trip_End_Time_UTC || 'Unknown';
 ```
 
 **Specify timezone for timestamps:**
