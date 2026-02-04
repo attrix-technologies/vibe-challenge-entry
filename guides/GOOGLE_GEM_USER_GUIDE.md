@@ -81,7 +81,8 @@ Your Add-In doesn't have to be perfect on the first try. Come back to the Gem to
 - **Add features:** "Add a button that exports this data to CSV"
 
 **Debugging tips:**
-- Ask for more console output: "Add console.log statements so I can see what's happening in the browser console"
+- Ask for console output: "Add console.log statements so I can see what's happening in the browser console"
+- Ask for on-screen debug info: "Show debug output directly on the Add-In page so I can see what data is being loaded"
 - Share MyGeotab URLs with the Gem: If you want your Add-In to link to specific pages (like a vehicle's detail page or trip history), copy the URL from your browser when you're on that page and share it. The Gem can use this to understand the URL structure and generate correct links.
 
 > **New Add-In vs. editing existing:** When the Gem generates JSON with a different `name` field, you'll need to create a new Add-In in MyGeotab. If you want to update your existing Add-In instead, tell the Gem: "Keep the same Add-In name so I can edit my existing one." This lets you paste the new JSON over your existing Add-In's configuration, but you may need to hard refresh (`Ctrl+Shift+R`) multiple times to see changes.
