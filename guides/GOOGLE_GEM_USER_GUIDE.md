@@ -71,6 +71,17 @@ The Gem will output a JSON configuration block. Select and copy the entire JSON 
 8. **Hard refresh** the page: `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
 9. Look for your new menu item in the **left sidebar**
 
+### Step 5: Iterate and Improve
+
+Your Add-In doesn't have to be perfect on the first try. Come back to the Gem to:
+
+- **Debug issues:** "The Add-In shows an error. Here's what happens: [describe the problem]"
+- **Request changes:** "Can you add a search box to filter the vehicle list?"
+- **Adjust styling:** "Make the header green instead of blue"
+- **Add features:** "Add a button that exports this data to CSV"
+
+> **New Add-In vs. editing existing:** When the Gem generates JSON with a different `name` field, you'll need to create a new Add-In in MyGeotab. If you want to update your existing Add-In instead, tell the Gem: "Keep the same Add-In name so I can edit my existing one." This lets you paste the new JSON over your existing Add-In's configuration, but you may need to hard refresh (`Ctrl+Shift+R`) multiple times to see changes.
+
 ---
 
 ## Example Prompts
