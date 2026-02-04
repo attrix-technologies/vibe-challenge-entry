@@ -48,6 +48,17 @@ Ace queries are **asynchronous** and require three steps:
 
 All calls use `GetAceResults` with `serviceName: 'dna-planet-orchestration'`.
 
+**CRITICAL: `customerData: true`** - Every GetAceResults call MUST include `customerData: true` or Ace will return empty data:
+
+```javascript
+api.call('GetAceResults', {
+    serviceName: 'dna-planet-orchestration',
+    functionName: 'create-chat',
+    customerData: true,  // REQUIRED! Without this, Ace returns no data
+    functionParameters: {}
+}, successCallback, errorCallback);
+```
+
 ### Response Structure
 
 ```javascript
@@ -136,6 +147,7 @@ new Date(timeStr.replace(' ', 'T') + 'Z')
 
 | Issue | Cause & Fix |
 |-------|-------------|
+| Empty data / preview_array | Missing `customerData: true` in GetAceResults call - add it! |
 | No chat_id | Ace not enabled (Admin → Beta Features), or rate limited - retry |
 | Query times out | Complex queries take 60-90s - simplify or increase timeout |
 | Empty data array | Question too vague, no data for period, or new account |

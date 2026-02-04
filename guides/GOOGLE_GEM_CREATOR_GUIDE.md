@@ -250,6 +250,8 @@ Ace is Geotab's AI that answers complex fleet questions in natural language. It 
 
 ### Complete Ace Implementation
 
+**CRITICAL: `customerData: true`** - Every GetAceResults call MUST include this parameter or Ace returns empty data!
+
 ```javascript
 // Helper to extract data from Ace response
 function getAceData(response) {
@@ -264,6 +266,7 @@ function askAce(api, question, onComplete, onError) {
     api.call("GetAceResults", {
         serviceName: "dna-planet-orchestration",
         functionName: "create-chat",
+        customerData: true,  // REQUIRED!
         functionParameters: {}
     }, function(response) {
         var data = getAceData(response);
@@ -277,6 +280,7 @@ function askAce(api, question, onComplete, onError) {
         api.call("GetAceResults", {
             serviceName: "dna-planet-orchestration",
             functionName: "send-prompt",
+            customerData: true,  // REQUIRED!
             functionParameters: {
                 chat_id: chatId,
                 prompt: question
@@ -304,6 +308,7 @@ function pollForResults(api, chatId, messageGroupId, onComplete, onError) {
     api.call("GetAceResults", {
         serviceName: "dna-planet-orchestration",
         functionName: "get-message-group",  // NOT "get-status"!
+        customerData: true,  // REQUIRED!
         functionParameters: {
             chat_id: chatId,
             message_group_id: messageGroupId
@@ -380,6 +385,7 @@ askAce(api, "What are my top 3 vehicles by distance this month?",
 
 | Mistake | Problem | Solution |
 |---------|---------|----------|
+| Missing `customerData: true` | Empty data returned | Add to ALL GetAceResults calls |
 | Using `get-status` | 404 errors | Use `get-message-group` |
 | Using `chatId` | Undefined values | Use `chat_id` (underscore) |
 | Polling immediately | Rate limits (429) | Wait 10s before first poll |
