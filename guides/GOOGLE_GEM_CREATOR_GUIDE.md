@@ -243,6 +243,46 @@ api.call("Set", {
 - Audit (system activity log)
 - Diagnostic (sensor definitions)
 
+### Querying StatusData with Diagnostic IDs
+
+StatusData contains detailed sensor readings, but you need the **correct Diagnostic ID** to get specific measurements. There are 65,000+ diagnostic types - knowing the right ID unlocks detailed vehicle telemetry.
+
+**How to discover Diagnostic IDs:**
+1. In MyGeotab, go to **Engine & Maintenance → Engine Measurements**
+2. Select the measurement you want (e.g., "Cranking Voltage")
+3. Check the URL - it shows the Diagnostic ID: `#engineMeasurements,diagnostics:!(DiagnosticCrankingVoltageId)`
+
+**Example: Get Cranking Voltage for a Vehicle**
+```javascript
+var fromDate = new Date();
+fromDate.setDate(fromDate.getDate() - 7);  // Last 7 days
+
+api.call('Get', {
+    typeName: 'StatusData',
+    search: {
+        diagnosticSearch: { id: 'DiagnosticCrankingVoltageId' },
+        deviceSearch: { id: deviceId },
+        fromDate: fromDate.toISOString(),
+        toDate: new Date().toISOString()
+    }
+}, function(readings) {
+    readings.forEach(function(r) {
+        console.log('Voltage: ' + r.data + ' at ' + r.dateTime);
+    });
+}, errorCallback);
+```
+
+**Common Diagnostic IDs:**
+| Measurement | Diagnostic ID |
+|-------------|---------------|
+| Cranking Voltage | `DiagnosticCrankingVoltageId` |
+| Odometer | `DiagnosticOdometerAdjustmentId` |
+| Fuel Level | `DiagnosticFuelLevelId` |
+| Engine Hours | `DiagnosticEngineHoursAdjustmentId` |
+| Battery Voltage | `DiagnosticBatteryTemperatureId` |
+
+**⚠️ Common Mistake:** Similar-sounding IDs may not work. For example, `DiagnosticEngineCrankingVoltageId` returns no data, but `DiagnosticCrankingVoltageId` works. Always verify in Engine Measurements first.
+
 ### All Supported Entity Types (34 Total)
 
 **Core Assets (Writable):**
