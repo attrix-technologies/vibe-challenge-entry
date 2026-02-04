@@ -41,6 +41,7 @@ This tutorial teaches the pattern—once you understand it, you can build any wo
 ## Prerequisites
 
 1. **Geotab credentials** — [Create a free demo account](https://my.geotab.com/registration.html) if you don't have one
+   > **Important:** Click **"Create a Demo Database"** (not "I'm a New Customer") to get pre-populated sample data.
 2. **n8n account** — Free cloud account (we'll create this)
 3. **Alert destination** (pick one):
    - Slack workspace (need permission to create webhooks)

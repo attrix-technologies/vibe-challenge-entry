@@ -8,6 +8,7 @@ Complete reference guide for participants and instructors.
 
 ### Getting Started
 - **Create Demo Account**: https://my.geotab.com/registration.html
+  > **Important:** Click **"Create a Demo Database"** (not "I'm a New Customer") to get pre-populated sample data.
 - **MyGeotab Login**: https://my.geotab.com/
 - **Geotab Developer Portal**: https://geotab.github.io/sdk/
 

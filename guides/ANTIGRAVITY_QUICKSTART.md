@@ -8,6 +8,7 @@ This guide teaches you how to build an interactive Geotab fleet dashboard withou
 
 1.  **Google Antigravity IDE** installed. [Download it here](https://antigravity.google/).
 2.  A **Geotab Demo Account**. [Get one here](https://my.geotab.com/registration.html) if you haven't already.
+    > **Important:** Click **"Create a Demo Database"** (not "I'm a New Customer") to get pre-populated sample data.
 
 > **New to Antigravity?** Check out the [Getting Started Codelab](https://codelabs.developers.google.com/getting-started-google-antigravity) for a deep dive.
 

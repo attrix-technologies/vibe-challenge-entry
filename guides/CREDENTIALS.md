@@ -8,10 +8,11 @@ You need to create a `.env` file in the repository root with your Geotab API cre
 
 If you don't have a Geotab account yet:
 1. Go to https://my.geotab.com/registration.html
-2. Fill out the form to create a free demo account
-3. Check your email for confirmation
-4. Log in to MyGeotab
-5. Note your credentials:
+2. **Click "Create a Demo Database"** (not "I'm a New Customer") — this gives you pre-populated sample data
+3. Fill out the form to complete registration
+4. Check your email for confirmation
+5. Log in to MyGeotab
+6. Note your credentials:
    - **Database name** (shown in URL: my.geotab.com/login.html?database=YOUR_DATABASE)
    - **Username** (your email address)
    - **Password** (what you chose during registration)

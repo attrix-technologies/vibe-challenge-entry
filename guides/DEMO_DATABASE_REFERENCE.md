@@ -14,7 +14,7 @@ Complete reference for the data available in Geotab demo databases. Use this whe
 
 ## What is a Demo Database?
 
-Demo databases are fully functional Geotab environments with simulated fleet data. When you [create a free demo account](https://my.geotab.com/registration.html), you configure:
+Demo databases are fully functional Geotab environments with simulated fleet data. When you [create a free demo account](https://my.geotab.com/registration.html) (click **"Create a Demo Database"**, not "I'm a New Customer"), you configure:
 
 | Option | Choices |
 |--------|---------|

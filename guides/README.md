@@ -64,4 +64,4 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 ## Quick Links
 
 - [Main Vibe Coding Guide](../VIBE_CODING_CONTEXT.md) - The primary reference for vibe coding with Geotab
-- [Create a demo account](https://my.geotab.com/registration.html) - Get started with a free test database
+- [Create a demo account](https://my.geotab.com/registration.html) - Get started with a free test database (click **"Create a Demo Database"**, not "I'm a New Customer")

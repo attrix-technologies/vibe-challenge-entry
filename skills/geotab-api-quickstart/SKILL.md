@@ -27,7 +27,7 @@ Password: your_password
 Server: my.geotab.com (or regional server)
 ```
 
-**Get credentials:** [Create a free demo account](https://my.geotab.com/registration.html)
+**Get credentials:** [Create a free demo account](https://my.geotab.com/registration.html) (click **"Create a Demo Database"**, not "I'm a New Customer")
 
 ### Python Setup
 

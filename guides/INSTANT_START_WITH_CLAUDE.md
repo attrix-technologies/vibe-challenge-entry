@@ -25,7 +25,7 @@ Before Claude can connect to the Geotab API, you need to allow network egress to
 **NEVER share your production Geotab account credentials with Claude or any AI tool.**
 
 **ONLY use this guide with:**
-- ✅ Demo accounts (create free at https://my.geotab.com/registration.html)
+- ✅ Demo accounts (create free at https://my.geotab.com/registration.html — click **"Create a Demo Database"**, not "I'm a New Customer")
 - ✅ Test/sandbox databases specifically created for development
 - ✅ Disposable credentials that you can immediately delete after
 
@@ -264,6 +264,7 @@ While sharing credentials with Claude for learning purposes can work:
 - ❌ **NEVER** share credentials that have access to real company data
 
 **Create a demo account:** https://my.geotab.com/registration.html (takes 2 minutes)
+> **Important:** Click **"Create a Demo Database"** (not "I'm a New Customer") to get pre-populated sample data.
 
 ## Common Questions
 
@@ -271,7 +272,7 @@ While sharing credentials with Claude for learning purposes can work:
 A: Not for the instant start! Claude explores the API for you in real-time. You only need Python when you want to run the code locally.
 
 **Q: What if I don't have credentials yet?**
-A: Create a free demo account at https://my.geotab.com/registration.html (takes 2 minutes)
+A: Create a free demo account at https://my.geotab.com/registration.html (takes 2 minutes). Click **"Create a Demo Database"** (not "I'm a New Customer") to get pre-populated sample data.
 
 **Q: Can I use this for Node.js instead of Python?**
 A: Yes! Just ask Claude: "Give me the code in JavaScript/Node.js instead"

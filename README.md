@@ -7,6 +7,7 @@ This repository is a "Vibe Coding" starter kit. You don't need to be an expert c
 ## Before You Start
 
 1. **Get credentials:** [Create a free demo database](https://my.geotab.com/registration.html) (takes 2 minutes)
+   > **Important:** On the registration page, click **"Create a Demo Database"** (not "I'm a New Customer"). This gives you pre-populated sample data to work with.
 2. **New to coding?** Read the [**Beginner's Glossary**](./guides/BEGINNER_GLOSSARY.md) first
 
 ## Choose Your Path
