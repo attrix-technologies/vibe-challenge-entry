@@ -297,9 +297,10 @@ Ace is Geotab's AI that answers complex fleet questions in natural language. It 
 | Metric | Direct API | Ace AI |
 |--------|-----------|--------|
 | **Speed** | ~200-500ms | ~12-60 seconds |
-| **Data freshness** | Real-time | 2-24 hours behind |
+| **Data freshness** | Real-time | ~20 min to hours behind |
 | **Result limit** | 5000 per call | 10 in preview_array |
 | **Device filter** | All devices | Only IsTracked=TRUE |
+| **Date handling** | UTC | Device local timezone |
 
 | Use Ace For | Use Direct API For |
 |-------------|-------------------|

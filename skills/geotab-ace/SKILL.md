@@ -20,8 +20,8 @@ Geotab Ace is an AI-powered query interface that lets you ask natural language q
 | Metric | Direct API | Ace AI |
 |--------|-----------|--------|
 | **Speed** | 300-500ms | 30-90 seconds |
-| **Data freshness** | Real-time | 2-24 hours behind |
-| **Query type** | Structured (Get/Set) | Natural language |
+| **Data freshness** | Real-time | ~20 min to hours behind |
+| **Date handling** | UTC | Device local timezone |
 | **Best for** | Live data, writes, simple lookups | Trends, insights, complex aggregations |
 
 ### Use Direct API When:
@@ -185,9 +185,9 @@ By default, Ace may return times in device-local timezone. Specify UTC for consi
 ```
 
 **Note:** Ace results may differ from direct API due to:
+- **Timezone:** Ace uses `Local_Date` (device timezone), API uses UTC. A "yesterday" query can return completely different date ranges!
 - Different data sources (BigQuery vs live)
-- Different aggregation logic
-- "Active" vs "all" device filtering
+- "Active" vs "all" device filtering (Ace filters `IsTracked=TRUE`)
 
 ## Why Counts Differ: API vs Ace
 
@@ -218,9 +218,9 @@ Ace queries these pre-built tables (from actual SQL we've observed):
 
 ## Data Freshness
 
-- Typical lag: 2-24 hours behind real-time
+- Typical lag: **~20 minutes to a few hours** behind real-time (can be fresher than expected!)
 - New demo accounts: wait ~1 day before Ace has data
-- Don't use Ace for "what's happening right now" queries
+- For "right now" queries, use direct API instead
 
 ## Common Issues
 
