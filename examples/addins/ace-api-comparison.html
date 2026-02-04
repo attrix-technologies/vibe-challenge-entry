@@ -416,10 +416,31 @@
                     document.getElementById('t2-ace-result').innerHTML =
                         '<small>' + name + '</small><br><span class="text-warning fw-bold">' + timeStr + tzNote + '</span>';
 
-                    // Show note about timezone comparison
+                    // Calculate actual lag between API and Ace timestamps
                     var compBox = document.getElementById('t2-comparison');
                     compBox.classList.remove('d-none');
-                    compBox.innerHTML = '<strong class="text-info">Note: Ace returns device-local time, API returns UTC. Ace data lags 2-24h behind real-time.</strong>';
+
+                    // Try to parse Ace timestamp and compare with API
+                    var aceTime = null;
+                    try {
+                        // Handle formats like "2026-02-04 07:22:29.191 UTC"
+                        var cleanTime = timeStr.replace(' UTC', 'Z').replace(' ', 'T');
+                        aceTime = new Date(cleanTime);
+                    } catch (e) { }
+
+                    if (aceTime && test2ApiTimestamp && !isNaN(aceTime.getTime())) {
+                        var lagMs = test2ApiTimestamp.getTime() - aceTime.getTime();
+                        var lagMin = Math.round(Math.abs(lagMs) / 60000);
+                        var lagStr = lagMin < 60 ? lagMin + ' minutes' : Math.round(lagMin / 60 * 10) / 10 + ' hours';
+
+                        if (lagMs > 0) {
+                            compBox.innerHTML = '<strong class="text-info">Measured lag: API is ' + lagStr + ' ahead of Ace</strong>';
+                        } else {
+                            compBox.innerHTML = '<strong class="text-info">Note: Different devices returned. Ace timestamp is newer (different trip).</strong>';
+                        }
+                    } else {
+                        compBox.innerHTML = '<strong class="text-info">Note: Could not compare timestamps (different formats or devices)</strong>';
+                    }
                 } else {
                     document.getElementById('t2-ace-result').innerHTML = '<small>No table data (see debug)</small>';
                 }
