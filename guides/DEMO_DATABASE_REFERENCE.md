@@ -259,8 +259,6 @@ Engine and sensor telemetry readings.
 | Diagnostic ID | Name | Unit | Sample Values |
 |--------------|------|------|---------------|
 | `DiagnosticOdometerId` | Odometer | meters | 99,446,800 |
-| `DiagnosticSpeedId` | GPS Vehicle Speed | km/h | 0 - 120 |
-| `DiagnosticPostedRoadSpeedId` | Posted Road Speed Limit | km/h | 50, 80, 100 |
 | `DiagnosticEngineSpeedId` | Engine RPM | RPM | 713.5, 880, 1289.25 |
 | `DiagnosticFuelLevelId` | Fuel Level | % | 54.89 - 92.93 |
 | `DiagnosticDeviceTotalFuelId` | Total Fuel Used | liters | 23,196.49 |
@@ -271,6 +269,17 @@ Engine and sensor telemetry readings.
 | `DiagnosticAccelerationSideToSideId` | Lateral Accel | m/s² | -4.42 to 3.73 |
 | `DiagnosticAccelerationUpDownId` | Vertical Accel | m/s² | 5.04 to 15.08 |
 | `DiagnosticEngineDataActiveId` | Engine Active | boolean | 0 or 1 |
+
+**Speed Diagnostics (Real Vehicles Only):**
+
+The following diagnostics are available with real Geotab devices but may not be present in demo databases:
+
+| Diagnostic ID | Name | Unit | Notes |
+|--------------|------|------|-------|
+| `DiagnosticSpeedId` | GPS Vehicle Speed | km/h | Primary speed source |
+| `DiagnosticPostedRoadSpeedId` | Posted Road Speed Limit | km/h | Requires map data coverage |
+
+These are essential for building speeding dashboards and safety Add-Ins. See the [troubleshooting guide](/skills/geotab-addins/references/TROUBLESHOOTING.md#working-with-speed-data-and-exceptionevents) for patterns.
 
 **Sample Record:**
 
