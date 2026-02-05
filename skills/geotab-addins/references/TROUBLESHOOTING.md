@@ -219,10 +219,23 @@ Math.round(ex.details.maxSpeed)
 (ex.details && ex.details.maxSpeed) || 0
 ```
 
-**Unverified patterns** (see [SPEED_DATA.md](/skills/geotab-api-quickstart/references/SPEED_DATA.md) for details):
-- Diagnostic ID naming (`DiagnosticPostedRoadSpeedId` vs `DiagnosticPostedSpeedId`)
-- Time window buffering for StatusData queries
-- Posted speed limit showing 0 on unmapped roads
+**Demo database limitations (CONFIRMED):**
+- `DiagnosticSpeedId` and `DiagnosticPostedRoadSpeedId` return 0 results
+- Use `DiagnosticEngineRoadSpeedId` as alternative speed source
+- ExceptionEvents have no `details` object in demo databases
+
+**Wrong diagnostic ID (CONFIRMED):**
+```javascript
+// ❌ Wrong - doesn't exist
+diagnosticSearch: { id: "DiagnosticPostedSpeedId" }
+
+// ✅ Correct
+diagnosticSearch: { id: "DiagnosticPostedRoadSpeedId" }
+```
+
+**Unverified patterns** (see [SPEED_DATA.md](/skills/geotab-api-quickstart/references/SPEED_DATA.md)):
+- Time window buffering for StatusData queries (30-second buffer)
+- StatusData fallback when `details` is missing
 
 ---
 

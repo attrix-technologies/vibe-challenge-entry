@@ -2,7 +2,9 @@
 
 Speed data in Geotab comes from multiple sources and requires specific patterns for reliable results.
 
-## Confirmed: ExceptionEvent.details May Be Undefined
+## Confirmed Patterns
+
+### ExceptionEvent.details May Be Undefined
 
 When building speeding dashboards, developers often access `ex.details.maxSpeed` directly. This **will crash** if `details` is undefined.
 
@@ -22,35 +24,53 @@ var speedLimit = (ex.details && ex.details.speedLimit) || 0;
 
 This pattern is confirmed from a real debugging session where `Cannot read properties of undefined (reading 'maxSpeed')` crashed an Add-In.
 
+### Speed Diagnostic IDs (Verified)
+
+| Diagnostic ID | Description | Unit | Demo DB | Real Vehicles |
+|--------------|-------------|------|---------|---------------|
+| `DiagnosticEngineRoadSpeedId` | Engine-reported road speed | km/h | ✅ Yes | Yes |
+| `DiagnosticEngineSpeedId` | Engine RPM | RPM | ✅ Yes | Yes |
+| `DiagnosticSpeedId` | GPS-based vehicle speed | km/h | ❌ No | Yes |
+| `DiagnosticPostedRoadSpeedId` | Posted road speed limit | km/h | ❌ No | Yes (where map data exists) |
+
+**Verified from demo database testing:**
+- `DiagnosticEngineRoadSpeedId` returns ECM-reported speed (0, 3, 6, 23, 24 km/h observed)
+- `DiagnosticSpeedId` and `DiagnosticPostedRoadSpeedId` return 0 results in demo databases
+- For demo database testing, use `DiagnosticEngineRoadSpeedId` as alternative speed source
+
+**Common Mistake:** Using `DiagnosticPostedSpeedId` (doesn't exist) instead of `DiagnosticPostedRoadSpeedId`.
+
+### Demo Database Limitations (Verified)
+
+ExceptionEvents in demo databases have these characteristics:
+- Speeding events exist for `RulePostedSpeedingId`
+- Have `NoDiagnosticId` (not linked to a specific diagnostic)
+- Have no `details` object (no `maxSpeed`/`speedLimit` pre-calculated)
+- All show `UnknownDriverId`
+- Synthetic-looking (identical durations)
+
+This means speeding dashboards that rely on `ex.details.maxSpeed` will show 0 or crash in demo databases.
+
 ---
 
 # Unverified Experiments
 
-> **Note:** The patterns below are unverified experiments that future versions of this guide should confirm. They are based on Geotab API conventions and debugging hypotheses, but have not been validated with actual debug output.
-
-## Speed Diagnostic IDs
-
-| Diagnostic ID | Description | Unit | Notes |
-|--------------|-------------|------|-------|
-| `DiagnosticSpeedId` | GPS-based vehicle speed | km/h | Primary speed source |
-| `DiagnosticPostedRoadSpeedId` | Posted road speed limit | km/h | Requires map data coverage |
-| `DiagnosticEngineRoadSpeedId` | Engine-reported road speed | km/h | From vehicle CAN bus |
-| `DiagnosticEngineSpeedId` | Engine RPM | RPM | Not vehicle speed! |
-
-**Hypothesized Mistake:** Using `DiagnosticPostedSpeedId` (may not exist) instead of `DiagnosticPostedRoadSpeedId`. Needs verification.
+> **Note:** The patterns below are unverified experiments that future versions of this guide should confirm with real vehicle data.
 
 ## Fetching Speed Data for an Exception Event
 
 When building speeding dashboards, you may need to correlate speed data with ExceptionEvents.
 
-### The Problem (Hypothesized)
+### The Problem
 
 ExceptionEvents for speeding rules may have a `details` object with `maxSpeed` and `speedLimit`, but:
-- It's not always populated (especially for recent events)
+- It's not always populated (confirmed in demo databases)
 - Some rule types don't include it
 - Databases with limited map data may lack speed limits
 
 ### Proposed Solution: Query StatusData with Time Buffer
+
+**Note:** This approach is theoretically sound but has not been tested with real vehicle data.
 
 ```python
 from datetime import datetime, timedelta
@@ -166,43 +186,15 @@ function fetchSpeedData(api, ex, callback) {
 }
 ```
 
-## ExceptionEvent.details Object (Hypothesized Fields)
+## Why Posted Speed Limit Shows 0 or N/A
 
-For speeding rules (e.g., `RulePostedSpeedingId`), the `details` object may contain pre-calculated values:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `maxSpeed` | float | Maximum speed during violation (km/h) |
-| `speedLimit` | float | Posted speed limit at location (km/h) |
-
-**Note:** The defensive coding pattern for accessing these fields is in the confirmed section above. The fallback to StatusData below is unverified:
-
-```python
-# Unverified fallback pattern - fall back to StatusData if details missing
-if not max_speed:
-    data = get_speed_data_for_exception(api, exception)
-    max_speed = data['max_speed']
-    speed_limit = data['speed_limit']
-```
-
-## Why Posted Speed Limit Shows 0 or N/A (Hypothesized)
-
-`DiagnosticPostedRoadSpeedId` may return 0 when:
+`DiagnosticPostedRoadSpeedId` returns 0 when:
 - Road segment lacks posted speed data in Geotab's map database
 - Vehicle is on private property, rural roads, or unmapped areas
 - Map data coverage varies by region
+- **Demo databases don't have this diagnostic at all**
 
 **Suggested practice:** Display "N/A" instead of 0, or fall back to the rule's configured threshold.
-
-## Data Availability (Hypothesized)
-
-| Diagnostic | Demo Database | Real Vehicles |
-|------------|---------------|---------------|
-| `DiagnosticSpeedId` | Limited | Yes |
-| `DiagnosticPostedRoadSpeedId` | Limited | Yes (where map data exists) |
-| `DiagnosticEngineRoadSpeedId` | Yes | Yes |
-
-Speed diagnostics may require real Geotab devices. Demo databases have simulated data that may not include all diagnostic types.
 
 ## Complete Example: Speeding Report (Unverified)
 
