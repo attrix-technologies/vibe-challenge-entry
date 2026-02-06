@@ -387,6 +387,8 @@ if (msg.signed_urls) {
 
 ## Button Add-Ins
 
+> **TODO:** Button Add-In patterns below are based on the official sdk-addin-samples but haven't been tested on a demo database yet. Verify the config and state object structure work as documented.
+
 Button Add-Ins attach to **existing MyGeotab pages** (like the vehicle detail page) instead of creating new pages. They appear as action buttons alongside built-in controls.
 
 ### Button vs. Page Configuration

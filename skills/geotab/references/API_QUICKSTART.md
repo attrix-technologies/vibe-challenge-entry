@@ -264,6 +264,8 @@ for reading in status_data:
 
 ## Historical GPS Data (LogRecord)
 
+> **TODO:** LogRecord query patterns below haven't been tested on a demo database yet. Verify that demo databases generate enough LogRecord data for meaningful results.
+
 LogRecords are GPS breadcrumbs — latitude, longitude, speed, and timestamp for every recorded position. Use them for route reconstruction, heat maps, and geofence analysis.
 
 ### Query Pattern

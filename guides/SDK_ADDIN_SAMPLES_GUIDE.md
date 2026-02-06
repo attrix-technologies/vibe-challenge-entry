@@ -4,6 +4,8 @@
 
 The [Geotab/sdk-addin-samples](https://github.com/Geotab/sdk-addin-samples) repository is the official collection of MyGeotab Add-In examples maintained by Geotab. Each sample is a working Add-In you can install right now and study to learn real patterns.
 
+> **TODO:** We haven't yet confirmed that all 7 samples work correctly on the free demo database. If you run into issues with a specific sample, it may require data that the demo database doesn't have (e.g., IOX devices, start-stop vehicles). Please report what works and what doesn't!
+
 ---
 
 ## Install All 7 Samples at Once
