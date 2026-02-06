@@ -990,12 +990,7 @@ Here's your Geotab Add-In configuration:
 }
 ```
 
-**To install:**
-1. Go to MyGeotab: Administration → System → System Settings → Add-Ins
-2. Enable "Allow unverified Add-Ins" → Yes
-3. Click "New Add-In" → "Configuration" tab
-4. Paste the JSON above and Save
-5. Look for "Fleet Counter" in the left sidebar
+Then include the installation instructions from the "Installation Instructions to Include" section above.
 ```
 
 ---
