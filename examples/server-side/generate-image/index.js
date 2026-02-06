@@ -1,3 +1,7 @@
+// Secured Image Generation Cloud Function
+// Walkthrough: ../../guides/annotated-examples/GENERATE_IMAGE_ANNOTATED.md
+// Security guide: ../../guides/SECURE_ADDIN_BACKEND.md
+
 const functions = require('@google-cloud/functions-framework');
 
 // ============================================
