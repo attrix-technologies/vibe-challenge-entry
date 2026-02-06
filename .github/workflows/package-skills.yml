@@ -37,7 +37,18 @@ jobs:
           name: geotab-skills
           path: dist/geotab-skills.zip
 
-      - name: Attach to release
+      - name: Update latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Create or update the "latest" release so the download link always works
+          gh release create latest \
+            --title "Latest Skills" \
+            --notes "Auto-updated on every push to main. Download the zip to get all Geotab agent skills." \
+            --prerelease 2>/dev/null || true
+          gh release upload latest dist/geotab-skills.zip --clobber
+
+      - name: Attach to tagged release
         if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
