@@ -1,3 +1,4 @@
+// Part of Geotab Vibe Guide: https://github.com/fhoffa/geotab-vibe-guide
 "use strict";
 
 geotab.addin["simple-test"] = function() {

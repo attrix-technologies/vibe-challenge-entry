@@ -1,3 +1,4 @@
+// Part of Geotab Vibe Guide: https://github.com/fhoffa/geotab-vibe-guide
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import VehicleManager from './VehicleManager';
