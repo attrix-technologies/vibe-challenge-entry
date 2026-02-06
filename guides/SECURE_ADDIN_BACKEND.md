@@ -418,7 +418,8 @@ Reference: guides/SECURE_ADDIN_BACKEND.md
 
 ## Further Reading
 
-- [Using Add-Ins Session Id to Authenticate with API](https://helpdesk.geotab.com/hc/en-us/community/posts/214460043-Using-Add-Ins-Session-Id-to-Authenticate-with-API)
-- [Better practices for the MyGeotab API](https://www.geotab.com/blog/better-practices-mygeotab-api/)
-- [Geotab API Reference](https://geotab.github.io/sdk/software/api/reference/)
-- [Geotab Add-In Developer Guide](https://developers.geotab.com/myGeotab/addIns/developingAddIns/)
+- [Developing Add-Ins](https://developers.geotab.com/myGeotab/addIns/developingAddIns/) — Official Add-In developer guide
+- [API Concepts (Authentication & Sessions)](https://developers.geotab.com/myGeotab/guides/concepts/index.html) — How sessions and credentials work
+- [Credentials Object Reference](https://developers.geotab.com/myGeotab/apiReference/objects/Credentials/) — Structure of database, userName, sessionId
+- [Using the API in JavaScript](https://developers.geotab.com/myGeotab/guides/codeBase/usingInJavascript/) — JavaScript SDK and session management
+- [Better Practices for the MyGeotab API](https://www.geotab.com/blog/better-practices-mygeotab-api/) — Session reuse, caching, rate limits
