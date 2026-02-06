@@ -262,6 +262,91 @@ for reading in status_data:
 
 **Common Mistake:** Similar-sounding IDs may not work. For example, `DiagnosticEngineCrankingVoltageId` returns no data, but `DiagnosticCrankingVoltageId` works. Always verify in Engine Measurements first.
 
+## Historical GPS Data (LogRecord)
+
+LogRecords are GPS breadcrumbs — latitude, longitude, speed, and timestamp for every recorded position. Use them for route visualization, heat maps, geofence analysis, and historical location queries.
+
+### Get GPS History for a Vehicle
+
+```python
+from datetime import datetime, timedelta
+
+# Get a device ID first
+devices = api.get('Device', search={'name': 'Truck-101'})
+device_id = devices[0]['id']
+
+# Fetch GPS breadcrumbs from last 24 hours
+records = api.get('LogRecord',
+    deviceSearch={'id': device_id},
+    fromDate=datetime.now() - timedelta(hours=24),
+    toDate=datetime.now()
+)
+
+for r in records[:5]:
+    print(f"  {r['dateTime']}: ({r['latitude']}, {r['longitude']}) speed={r.get('speed', 0)} km/h")
+```
+
+### Get GPS Data for All Vehicles (Date Range Required)
+
+```python
+# ALWAYS use a date range — LogRecord without dates fetches everything
+records = api.get('LogRecord',
+    fromDate=datetime.now() - timedelta(hours=1),
+    toDate=datetime.now()
+)
+
+print(f"Fleet generated {len(records)} GPS points in the last hour")
+```
+
+### LogRecord Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `latitude` | float | GPS latitude |
+| `longitude` | float | GPS longitude |
+| `speed` | float | Speed in km/h |
+| `dateTime` | string | ISO 8601 timestamp |
+| `device` | object | `{ "id": "..." }` reference |
+
+### Common Patterns
+
+```python
+# Route reconstruction: get ordered GPS points for a trip
+records = api.get('LogRecord',
+    deviceSearch={'id': device_id},
+    fromDate=trip['start'],
+    toDate=trip['stop']
+)
+route = [(r['longitude'], r['latitude']) for r in records]
+
+# Heat map data: get all fleet positions for a time period
+records = api.get('LogRecord',
+    fromDate=datetime.now() - timedelta(days=7),
+    toDate=datetime.now(),
+    resultsLimit=5000  # cap for performance
+)
+points = [(r['latitude'], r['longitude']) for r in records if r.get('latitude')]
+```
+
+### Common Mistake: No Date Filter
+
+```python
+# WRONG — will try to fetch millions of records
+records = api.get('LogRecord')
+
+# WRONG — too large a window for the whole fleet
+records = api.get('LogRecord',
+    fromDate=datetime.now() - timedelta(days=365)
+)
+
+# CORRECT — narrow date range, or combine with device filter
+records = api.get('LogRecord',
+    deviceSearch={'id': device_id},
+    fromDate=datetime.now() - timedelta(days=7),
+    toDate=datetime.now()
+)
+```
+
 ## Filtering and Searching
 
 ### Filter by Date Range
