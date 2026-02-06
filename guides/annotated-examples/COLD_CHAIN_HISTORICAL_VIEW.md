@@ -1,423 +1,139 @@
 # Annotated Example: Cold Chain Historical View
 
-**A temperature monitoring Add-In with charts, PDF export, and Excel export — broken down line by line.**
+**A temperature monitoring Add-In — what it does, why it works, and how to prompt for something like it.**
 
-This Add-In lets fleet managers select vehicles, pick a date range, and see historical temperature data plotted against setpoints. It's a real-world example of what you can build with the Geotab API and a handful of CDN libraries.
+This Add-In lets fleet managers select vehicles, pick a date range, and see historical temperature data plotted against setpoints. It was built with AI-assisted "vibe coding" and shows patterns you'll want to reuse.
 
-> **Try it:** The full [configuration.json](cold-chain-configuration.json) is ready to paste into MyGeotab.
+> **Try it yourself:** Paste [cold-chain-configuration.json](cold-chain-configuration.json) into MyGeotab.
 > Go to Administration → System Settings → Add-Ins → New Add-In → Configuration tab.
 
 ---
 
-## What It Does
+## The Problem It Solves
 
-A fleet manager running refrigerated trucks needs to prove the cargo stayed cold. This Add-In answers: **"What were the temperatures in my trucks yesterday?"**
+A fleet manager running refrigerated trucks needs to prove the cargo stayed cold. Regulators, customers, and insurance all want proof. This Add-In answers one question: **"What were the temperatures in my trucks yesterday?"**
 
-- Select one or more vehicles
-- Choose a time range (defaults to yesterday)
-- See temperature charts (actual vs. setpoint)
-- Export to PDF (with charts and data tables) or Excel (one sheet per vehicle)
-
----
-
-## Architecture at a Glance
-
-```
-┌─────────────────────────────────────────┐
-│           MyGeotab Platform              │
-│                                          │
-│  ┌────────────────────────────────────┐  │
-│  │     Cold Chain Historical View     │  │
-│  │                                    │  │
-│  │  [Vehicle Selector] [Date Range]   │  │
-│  │  [Plot] [Export PDF] [Export Excel] │  │
-│  │                                    │  │
-│  │  ┌──────────────────────────────┐  │  │
-│  │  │  Chart.js Temperature Graph  │  │  │
-│  │  │  (one per selected vehicle)  │  │  │
-│  │  └──────────────────────────────┘  │  │
-│  └────────────────────────────────────┘  │
-│                                          │
-│  api.multiCall() ←→ Geotab API          │
-└─────────────────────────────────────────┘
-```
-
-**Everything runs client-side.** No backend, no database — just the MyGeotab API, a few CDN libraries, and the browser.
+It gives you:
+- A vehicle selector (multi-select for comparing trucks)
+- A date range picker (defaults to yesterday — because compliance reviews happen after the fact)
+- Temperature charts showing actual readings vs. the setpoint target
+- PDF export with charts and data tables for compliance binders
+- Excel export with one sheet per vehicle for further analysis
 
 ---
 
-## The Configuration Wrapper
+## The Prompt That Built It
 
-```json
-{
-  "name": "Cold Chain Historical View",
-  "supportEmail": "https://github.com/fhoffa/geotab-vibe-guide",
-  "version": "2.1",
-  "items": [{
-    "url": "coldchain.html",
-    "path": "ActivityLink",
-    "menuName": {
-      "en": "Cold Chain Historical View"
-    }
-  }],
-  "files": {
-    "coldchain.html": "<!DOCTYPE html>..."
-  }
-}
+Here's a prompt that would generate something very close to this Add-In:
+
+```
+Use the geotab-addins skill.
+
+Create an embedded Geotab Add-In called "Cold Chain Historical View" that:
+
+1. Shows a multi-select dropdown of all vehicles in the fleet
+2. Has date range pickers defaulting to yesterday (full day)
+3. When the user clicks "Plot Selection", fetches temperature data
+   (both cargo/air temperature and setpoint) for each selected vehicle
+4. Displays a Chart.js line chart per vehicle showing actual temp
+   (red, filled) vs. setpoint (black, dashed) over time
+5. Has a "Export PDF" button that generates a report with the chart
+   images and a data table per vehicle
+6. Has a "Export Excel" button that creates an .xlsx file with one
+   worksheet per vehicle
+
+IMPORTANT:
+- Don't hardcode diagnostic IDs — search for diagnostics containing
+  "Temperature" and filter client-side for zone 1 cargo/air and setpoint
+- Use api.multiCall to batch API requests
+- Pin all CDN library versions
+- Use StatusData for temperature readings
 ```
 
-**Key takeaways:**
-
-| Field | What It Means |
-|-------|--------------|
-| `"url": "coldchain.html"` | References a filename defined in `files` — this makes it an **embedded** Add-In (no external hosting) |
-| `"path": "ActivityLink"` | Appears in MyGeotab's main left-hand navigation menu |
-| `"files"` | Contains the entire HTML/JS app as a single string — MyGeotab serves it directly |
-| `"version": "2.1"` | Useful for tracking changes; MyGeotab doesn't enforce versioning but it's good practice |
-
-**Embedded vs. External:** This Add-In uses the embedded approach — everything lives inside the JSON. This means zero hosting, but the trade-off is that the entire app must fit in one HTML string. For larger apps, consider [external hosting](../GEOTAB_ADDINS.md#two-ways-to-deploy).
+That's it. The rest is details the AI fills in. But there are interesting decisions in *how* this Add-In was built that are worth understanding so you can guide the AI better.
 
 ---
 
-## CDN Libraries
+## Key Decisions Worth Understanding
 
-```html
-<script src='https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'></script>
-```
+### 1. Embedded deployment (no hosting needed)
 
-| Library | Purpose | Why It's Here |
-|---------|---------|---------------|
-| **Chart.js 3.9.1** | Line charts | Plots temperature over time |
-| **Moment.js 2.29.4** | Date formatting | Formats timestamps for chart axes |
-| **chartjs-adapter-moment** | Bridge | Lets Chart.js use Moment for its time scale |
-| **jsPDF 2.5.1** | PDF generation | Creates downloadable PDF reports |
-| **jspdf-autotable** | PDF tables | Adds formatted data tables to the PDF |
-| **SheetJS (xlsx) 0.18.5** | Excel export | Creates `.xlsx` files client-side |
+This Add-In uses the **embedded** approach — the entire HTML/JS app lives inside the `"files"` block of the configuration JSON. No GitHub Pages, no server.
 
-**Pattern: Pin your versions.** Every library uses a specific version number (`@3.9.1`, not `@latest`). This prevents your Add-In from breaking when libraries release updates. Always do this.
+**Where to see it:** Look at the top-level structure of [cold-chain-configuration.json](cold-chain-configuration.json) — the `"files"` key contains the full `coldchain.html` as a single string.
 
----
+**When to ask for this in your prompt:** Say "Create an **embedded** Geotab Add-In" when you want zero hosting. Say "Create an **externally hosted** Add-In" when the code is too large for a single string. See [Two Ways to Deploy](../GEOTAB_ADDINS.md#two-ways-to-deploy) for the trade-offs.
 
-## The Add-In Lifecycle
+### 2. Diagnostic discovery instead of hardcoded IDs
 
-```javascript
-geotab.addin['cold-chain-monitor'] = function() {
-    // State shared across lifecycle methods
-    var chartInstances = [];
-    var reportData = [];
-    var diagActualId = null;
-    var diagSetId = null;
+Different Geotab databases have different diagnostic IDs for temperature sensors. This Add-In searches for diagnostics with "Temperature" in the name, then filters client-side for "zone 1" + "cargo" or "set".
 
-    return {
-        initialize: function(api, state, callback) {
-            // Called once when Add-In loads
-            // Set up the UI, fetch initial data
-            callback();  // MUST call this or MyGeotab hangs
-        },
-        focus: function(api, state) {
-            // Called every time user navigates TO this page
-        },
-        blur: function(api, state) {
-            // Called every time user navigates AWAY
-        }
-    };
-};
-```
+**Where to see it:** In the `initialize` function — look for the `multiCall` that fetches `Diagnostic` with `search: { name: '%Temperature%' }`, followed by the `for` loop that checks `indexOf('set')` and `indexOf('cargo')`.
 
-**Critical rules:**
-1. **Always call `callback()`** in `initialize` — MyGeotab waits for it
-2. **Use `var`, not `const`/`let`** — MyGeotab's environment requires ES5
-3. **The outer function is a factory** — it returns the lifecycle object and closes over shared state
+**Why this matters for your prompts:** If you're building any sensor-based Add-In (temperature, fuel, tire pressure), always tell the AI: *"Don't hardcode diagnostic IDs — search by name pattern and filter client-side."* This makes your Add-In portable across databases.
 
-The shared variables (`chartInstances`, `reportData`, `diagActualId`, `diagSetId`) persist across all three lifecycle methods because they're in the closure scope.
+### 3. `multiCall` for batching
 
----
+The Add-In uses `api.multiCall` in two places:
+- **On load:** Fetches all devices AND all temperature diagnostics in a single API round-trip
+- **Per vehicle:** Fetches both actual temperature AND setpoint data together
 
-## Step 1: Initialization — Setting Defaults and Fetching Data
+**Where to see it:** Search for `api.multiCall` in the configuration — there are two instances. The first is in `initialize` (devices + diagnostics). The second is inside the `btnLoad` click handler (StatusData for each vehicle).
 
-### Date Range Defaults
+**Why this matters for your prompts:** Always tell the AI: *"Use `api.multiCall` to batch API calls."* A common mistake is making separate `api.call` requests that could be combined.
 
-```javascript
-var now = new Date();
-var yest = new Date();
-yest.setDate(now.getDate() - 1);
-yest.setHours(0, 0, 0, 0);       // Yesterday 00:00:00
-var yestEnd = new Date();
-yestEnd.setDate(now.getDate() - 1);
-yestEnd.setHours(23, 59, 59, 999); // Yesterday 23:59:59
+### 4. `StatusData` for sensor readings
 
-document.getElementById('fromDate').value = formatDT(yest);
-document.getElementById('toDate').value = formatDT(yestEnd);
-```
+All telematics sensor data in Geotab lives in `StatusData` — temperature, fuel level, tire pressure, battery voltage. The search always follows the same shape: filter by device, diagnostic, and time range.
 
-**Why yesterday?** Cold chain compliance is usually reviewed after the fact. Setting the default to "all of yesterday" means the user gets useful data with zero clicks.
+**Where to see it:** Look for `typeName: 'StatusData'` in the click handler. The search includes `deviceSearch`, `diagnosticSearch`, `fromDate`, and `toDate`.
 
-### Fetching Devices and Diagnostics in One Call
+**Why this matters for your prompts:** When asking the AI for sensor data, be specific: *"Use StatusData with deviceSearch and diagnosticSearch filters."* This prevents the AI from inventing wrong approaches.
 
-```javascript
-api.multiCall([
-    ['Get', { typeName: 'Device' }],
-    ['Get', { typeName: 'Diagnostic', search: { name: '%Temperature%' } }]
-], function(res) {
-    var devs = res[0], diags = res[1];
-    // ...
-});
-```
+### 5. One dynamic chart per vehicle
 
-**Pattern: `api.multiCall` for batching.** Instead of two separate API calls, this sends both in a single HTTP request. The Geotab API processes them together and returns results in the same order. This is faster and reduces network overhead.
+Instead of cramming all vehicles into one chart (messy), the Add-In creates a separate `<canvas>` and Chart.js instance per selected vehicle. Each chart shows that vehicle's actual temperature (red filled area) vs. its setpoint (black dashed line).
 
-**The `%` wildcard** in `{ name: '%Temperature%' }` is a SQL-style LIKE search — it finds all diagnostics with "Temperature" anywhere in the name.
+**Where to see it:** Inside the `btnLoad` click handler — a `forEach` loop over selected vehicle IDs. Each iteration creates a new `<div>` with a `<canvas>`, then instantiates a `new Chart()`.
 
-### Diagnostic Discovery
+**Why this matters for your prompts:** When you want per-item visualizations, tell the AI: *"Create one chart per vehicle, dynamically added to the page."* This scales better than trying to overlay 10 vehicles on one chart.
 
-```javascript
-for (var i = 0; i < diags.length; i++) {
-    var n = diags[i].name.toLowerCase();
-    if (n.indexOf('set') > -1 && n.indexOf('zone 1') > -1)
-        diagSetId = diags[i].id;
-    if ((n.indexOf('cargo') > -1 || n.indexOf('air') > -1) && n.indexOf('zone 1') > -1)
-        diagActualId = diags[i].id;
-}
-```
+### 6. Client-side PDF and Excel export
 
-**Why not hardcode diagnostic IDs?** Because they vary across databases. Different telematics devices (Geotab GO devices, third-party integrations) report temperature under different diagnostic names. This code searches for patterns:
+Both exports happen entirely in the browser using CDN libraries — no server needed. The PDF captures chart canvases as PNG images and adds data tables. The Excel file creates one worksheet per vehicle.
 
-- **Setpoint**: Contains "set" AND "zone 1" (e.g., "Reefer Set Temperature Zone 1")
-- **Actual temperature**: Contains "cargo" or "air" AND "zone 1" (e.g., "Reefer Cargo Temperature Zone 1")
+**Where to see it:** Look for `btnExport` (PDF using jsPDF + autoTable) and `btnExcel` (Excel using SheetJS/xlsx).
 
-This is a pragmatic approach — it works for most reefer configurations without requiring manual setup.
+**Why this matters for your prompts:** Client-side export is the only option for Add-Ins since you can't run backend code. When asking for export features, specify: *"Use jsPDF for PDF export and SheetJS for Excel export, loaded from CDN."*
 
-### Populating the Vehicle Dropdown
+### 7. Version-pinned CDN libraries
 
-```javascript
-var sel = document.getElementById('devSelect');
-devs.sort(function(a, b) { return a.name.localeCompare(b.name); });
-devs.forEach(function(d) {
-    var o = document.createElement('option');
-    o.value = d.id;
-    o.innerHTML = d.name;
-    sel.appendChild(o);
-});
-```
+Every `<script>` tag uses a specific version (`chart.js@3.9.1`, not `chart.js@latest`). This prevents the Add-In from breaking when libraries release updates.
 
-Alphabetical sorting makes it easy to find vehicles in large fleets. The `<select multiple>` lets users Ctrl+Click to select several vehicles at once.
+**Where to see it:** The `<head>` section — six `<script>` tags, all with pinned versions.
 
----
-
-## Step 2: Loading Temperature Data
-
-When the user clicks "Plot Selection":
-
-```javascript
-var fr = new Date(document.getElementById('fromDate').value).toISOString();
-var to = new Date(document.getElementById('toDate').value).toISOString();
-
-var calls = [];
-if (diagActualId)
-    calls.push(['Get', { typeName: 'StatusData', search: {
-        deviceSearch: { id: id },
-        diagnosticSearch: { id: diagActualId },
-        fromDate: fr, toDate: to
-    }}]);
-if (diagSetId)
-    calls.push(['Get', { typeName: 'StatusData', search: {
-        deviceSearch: { id: id },
-        diagnosticSearch: { id: diagSetId },
-        fromDate: fr, toDate: to
-    }}]);
-
-api.multiCall(calls, function(res) { /* ... */ });
-```
-
-**Pattern: `StatusData` with filters.** `StatusData` is the Geotab type for sensor readings. The search narrows results by:
-- `deviceSearch` — which vehicle
-- `diagnosticSearch` — which sensor (actual temp vs. setpoint)
-- `fromDate` / `toDate` — time range
-
-This runs **once per selected vehicle**, each as its own `multiCall`. The calls happen in a `forEach` loop, so they fire in parallel.
-
----
-
-## Step 3: Charting with Chart.js
-
-```javascript
-var c = new Chart(ctx, {
-    type: 'line',
-    data: {
-        datasets: [{
-            label: 'Cargo Temperature',
-            data: act.map(function(p) {
-                return { x: moment(p.dateTime).toDate(), y: p.data };
-            }),
-            borderColor: '#ff4757',           // Red line
-            backgroundColor: 'rgba(255,71,87,0.1)',  // Light red fill
-            fill: true,
-            borderWidth: 2
-        }, {
-            label: 'Setpoint',
-            data: set.map(function(p) {
-                return { x: moment(p.dateTime).toDate(), y: p.data };
-            }),
-            borderColor: '#2f3542',           // Dark line
-            borderDash: [5, 5],               // Dashed
-            borderWidth: 2
-        }]
-    },
-    options: {
-        animation: false,
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: { type: 'time', time: { unit: 'hour', displayFormats: { hour: 'HH:mm' } } }
-        }
-    }
-});
-```
-
-**Design choices explained:**
-
-| Choice | Why |
-|--------|-----|
-| Red filled area for actual temp | Immediately visible; fill shows "weight" of temperature over time |
-| Dashed black line for setpoint | Visually distinct from actuals; reads as a "target" or "limit" |
-| `animation: false` | Performance — rendering multiple charts simultaneously with animation causes jank |
-| `maintainAspectRatio: false` | Charts fill their container width, important for responsive layouts |
-| Time axis with `HH:mm` format | Cold chain data is usually within a single day; hours:minutes is the right granularity |
-
-**Pattern: One chart per vehicle.** Each selected vehicle gets its own `<canvas>` dynamically created and appended to `#chartArea`. This scales naturally — select 1 vehicle, get 1 chart; select 5, get 5.
-
----
-
-## Step 4: PDF Export
-
-```javascript
-var doc = new jspdf.jsPDF('p', 'mm', 'a4');
-doc.setFontSize(18);
-doc.text('Cold Chain Historical Report', 14, 15);
-
-chartInstances.forEach(function(ci, i) {
-    if (i > 0) doc.addPage();
-    var can = document.getElementById(ci.canvasId);
-    var img = can.toDataURL('image/png', 1.0);
-    doc.setFontSize(14);
-    doc.text('Vehicle: ' + ci.name, 14, 25);
-    doc.addImage(img, 'PNG', 10, 30, 190, 90);
-
-    // Data table below the chart
-    var rows = [];
-    var data = reportData.find(function(r) { return r.name === ci.name; });
-    data.actuals.forEach(function(r) {
-        rows.push([moment(r.dateTime).format('YYYY-MM-DD HH:mm'), r.data.toFixed(1)]);
-    });
-    doc.autoTable({
-        head: [['Time (24h)', 'Cargo Temp (°C)']],
-        body: rows.slice(0, 100),
-        startY: 125,
-        theme: 'striped',
-        headStyles: { fillColor: [44, 62, 80] }
-    });
-});
-doc.save('ColdChain_Historical_Report.pdf');
-```
-
-**How this works:**
-1. Creates an A4 PDF document
-2. For each vehicle: adds a new page, captures the chart canvas as a PNG image, embeds it
-3. Builds a data table below the chart image using `autoTable`
-4. Saves to the user's download folder
-
-**Note:** `rows.slice(0, 100)` caps the table at 100 rows to avoid multi-page table overflow. For complete data, the Excel export has no such limit.
-
----
-
-## Step 5: Excel Export
-
-```javascript
-var wb = XLSX.utils.book_new();
-reportData.forEach(function(d) {
-    var data = [];
-    d.actuals.forEach(function(r) {
-        data.push({
-            'Timestamp': moment(r.dateTime).format('YYYY-MM-DD HH:mm'),
-            'Cargo Temperature (°C)': r.data.toFixed(1)
-        });
-    });
-    var ws = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(wb, ws, d.name.substring(0, 31));
-});
-XLSX.writeFile(wb, 'Fleet_ColdChain_Data.xlsx');
-```
-
-**Pattern:** SheetJS (`xlsx` library) creates real `.xlsx` files entirely in the browser. Each vehicle becomes a separate worksheet tab. The `substring(0, 31)` trims the sheet name — Excel has a 31-character limit on tab names.
-
----
-
-## Patterns You Can Reuse
-
-### 1. Diagnostic Discovery
-Search for diagnostics by name pattern instead of hardcoding IDs. This makes your Add-In portable across databases.
-
-```javascript
-api.call('Get', {
-    typeName: 'Diagnostic',
-    search: { name: '%YourSensorKeyword%' }
-}, function(diags) { /* filter client-side */ });
-```
-
-### 2. multiCall Batching
-Always batch independent API calls into a single `multiCall`. It reduces latency and is kinder to the API.
-
-```javascript
-api.multiCall([
-    ['Get', { typeName: 'Device' }],
-    ['Get', { typeName: 'User' }]
-], function(results) {
-    var devices = results[0];
-    var users = results[1];
-});
-```
-
-### 3. StatusData for Sensor Readings
-Any telematics sensor (temperature, fuel level, tire pressure, battery voltage) stores data as `StatusData`. The search pattern is always the same:
-
-```javascript
-['Get', { typeName: 'StatusData', search: {
-    deviceSearch: { id: vehicleId },
-    diagnosticSearch: { id: sensorDiagnosticId },
-    fromDate: startISO,
-    toDate: endISO
-}}]
-```
-
-### 4. Client-Side Exports
-Both jsPDF and SheetJS work entirely in the browser — no server needed. This is ideal for Add-Ins since you can't run backend code.
-
-### 5. Dynamic Chart Creation
-Create chart containers dynamically for variable-length results. Store references to clean up later if needed.
+**Why this matters for your prompts:** AI tools sometimes generate `@latest` CDN links. Always tell the AI: *"Pin all CDN library versions."*
 
 ---
 
 ## Things to Watch Out For
 
-| Issue | Impact | How to Fix |
-|-------|--------|-----------|
-| No error callbacks on `api.multiCall` | Failures are silent — user sees "Loading..." forever | Add error callbacks: `api.multiCall(calls, onSuccess, onError)` |
-| Hardcoded to Zone 1 | Multi-zone reefer trucks only show the first zone | Search for all zones and let the user pick, or chart all zones |
-| No loading indicators per vehicle | User doesn't know which vehicles are still loading | Add a spinner or progress counter |
-| PDF table capped at 100 rows | Long date ranges lose data in PDF | Paginate the table or note the limitation in the UI |
-| Temperature assumed to be °C | Could be wrong depending on the database locale settings | Check user preferences or add a unit toggle |
-| All devices fetched (no group filter) | Slow on large fleets with thousands of vehicles | Filter by group: `{ typeName: 'Device', search: { groups: [{ id: groupId }] } }` |
+This is a solid Add-In, but it has a few limitations worth knowing about — either to fix or to avoid in your own builds:
+
+| Issue | What Happens | What to Ask For Instead |
+|-------|-------------|------------------------|
+| No error callbacks on API calls | If the API fails, user sees "Loading..." forever | *"Add error callbacks to all api.multiCall calls with a user-visible error message"* |
+| Hardcoded to Zone 1 only | Multi-zone reefer trucks only show the first zone | *"Search for all temperature zones and let the user select which zone to display"* |
+| No loading spinner per vehicle | User can't tell which vehicles have loaded | *"Add a loading indicator for each vehicle that disappears when its data loads"* |
+| PDF table capped at 100 rows | Long date ranges lose data in the PDF | *"Paginate the PDF data table across multiple pages if it exceeds one page"* |
+| Temperature assumed °C | Could be wrong for some databases | *"Detect the user's unit preference or add a °C/°F toggle"* |
+| All devices fetched (no group filter) | Slow on large fleets | *"Filter the device list by group so only relevant vehicles appear"* |
 
 ---
 
-## Make It Your Own
+## Prompts to Extend This Add-In
 
-Copy-paste these prompts into Claude or another AI assistant to extend this Add-In:
+Copy-paste these into Claude or another AI tool. Give it the [configuration.json](cold-chain-configuration.json) as context.
 
 **Add alert thresholds:**
 ```
@@ -429,18 +145,29 @@ Use the geotab-addins skill for correct patterns.
 
 **Add multi-zone support:**
 ```
-Modify this Cold Chain Add-In to support multiple reefer zones (Zone 1, Zone 2, Zone 3).
-Search for all temperature diagnostics, group them by zone, and show each zone
-as a separate line on the chart. Use different colors per zone.
+Modify this Cold Chain Add-In to support multiple reefer zones
+(Zone 1, Zone 2, Zone 3). Search for all temperature diagnostics,
+group them by zone, and show each zone as a separate line on the chart.
+Use different colors per zone.
 Use the geotab-addins skill for correct patterns.
 ```
 
 **Add a map view:**
 ```
-Extend this Cold Chain Add-In with a Leaflet map that shows the vehicle's route
-for the selected time period, with markers colored by temperature
-(green = in range, red = out of range). Use LogRecord data for GPS positions
+Extend this Cold Chain Add-In with a Leaflet map showing the vehicle's
+route for the selected time period. Color the route markers by temperature
+(green = in range, red = out of range). Use LogRecord for GPS positions
 and correlate with the StatusData timestamps.
+Use the geotab-addins skill for correct patterns.
+```
+
+**Fix the error handling:**
+```
+Improve this Cold Chain Add-In's error handling:
+- Add error callbacks to all api.multiCall calls
+- Show a user-friendly message if no temperature diagnostics are found
+- Add a loading spinner per vehicle while data loads
+- Handle the case where a vehicle has no temperature data
 Use the geotab-addins skill for correct patterns.
 ```
 
@@ -448,5 +175,7 @@ Use the geotab-addins skill for correct patterns.
 
 ## Full Configuration
 
-The complete `configuration.json` ready to paste into MyGeotab is available at:
+The complete configuration ready to paste into MyGeotab:
 [cold-chain-configuration.json](cold-chain-configuration.json)
+
+For more on how Add-Ins work, see the [Building Add-Ins guide](../GEOTAB_ADDINS.md).
