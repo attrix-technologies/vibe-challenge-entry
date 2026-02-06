@@ -14,38 +14,47 @@ These skills follow the open [Agent Skills](https://agentskills.io) format — e
 
 ## How to Use These Skills
 
-### Option 1: Clone This Repo (Recommended for Hackathons)
+### Option 1: Claude Code Plugin (Recommended)
+
+Install all Geotab skills in Claude Code with two commands:
+
+```
+/plugin marketplace add fhoffa/geotab-vibe-guide
+/plugin install geotab-skills@geotab-vibe-guide
+```
+
+That's it. Claude Code now has access to Geotab API patterns, Add-In development, n8n automation, and MCP server building.
+
+### Option 2: Claude.ai Upload
+
+On paid Claude.ai plans, upload a skill's `SKILL.md` file directly via the UI. See [Using skills in Claude](https://support.claude.com/en/articles/12512180-using-skills-in-claude).
+
+### Option 3: Clone This Repo
 
 ```bash
 git clone https://github.com/fhoffa/geotab-vibe-guide.git
 ```
 
-Then point your AI tool at the skills you need:
-
-**Claude Code** — reference skills directly in your project's `CLAUDE.md`:
+Then reference skills in your project's `CLAUDE.md`:
 ```markdown
 For Geotab API development, follow the instructions in:
 /path/to/geotab-vibe-guide/skills/geotab/SKILL.md
 ```
 
-**Other agents** — add the skill metadata to your system prompt. The `skills-ref` reference library can generate the XML block:
-```bash
-pip install -e path/to/skills-ref
-skills-ref to-prompt ./skills/geotab ./skills/agentic-n8n
-```
-
-### Option 2: Copy Individual Skills
+### Option 4: Copy Individual Skills
 
 Each skill is self-contained in its folder. Copy just the folder you need:
 
 ```bash
-# Copy a single skill into your project
 cp -r skills/geotab /your-project/.skills/geotab
 ```
 
-### Option 3: Claude.ai Upload
+### For Other Agents
 
-On paid Claude.ai plans, upload a skill's `SKILL.md` file directly via the UI. See [Using skills in Claude](https://support.claude.com/en/articles/12512180-using-skills-in-claude).
+Use the [`skills-ref`](https://github.com/agentskills/agentskills/tree/main/skills-ref) CLI to generate `<available_skills>` XML for system prompts:
+```bash
+skills-ref to-prompt ./skills/geotab ./skills/agentic-n8n ./skills/geotab-custom-mcp
+```
 
 ## Validating Skills
 

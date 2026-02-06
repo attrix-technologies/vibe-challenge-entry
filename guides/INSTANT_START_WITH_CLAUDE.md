@@ -38,7 +38,26 @@ Before Claude can connect to the Geotab API, you need to allow network egress to
 
 **For learning and hackathons:** Create a separate demo account or ask your IT team for test environment credentials specifically for this purpose.
 
-## Step 1: Share Your Credentials (10 seconds)
+## Step 1: Give Claude the Geotab Skill (10 seconds)
+
+Before asking questions, give Claude the knowledge to work with the Geotab API. Pick the method that matches your setup:
+
+**Claude.ai** — Upload the skill file as a project resource:
+1. Open your Claude project settings
+2. Upload [`skills/geotab/SKILL.md`](../skills/geotab/SKILL.md) from this repo
+3. Claude now knows the Geotab API patterns, entity types, and best practices
+
+**Claude Code** — Install via the plugin marketplace:
+```
+/plugin marketplace add fhoffa/geotab-vibe-guide
+/plugin install geotab-skills@geotab-vibe-guide
+```
+
+**Quick alternative** — Copy-paste the [VIBE_CODING_CONTEXT.md](../VIBE_CODING_CONTEXT.md) (~400 tokens) into your first message for a lightweight context boost.
+
+> **Why this matters:** Without the skill, Claude will guess at API patterns and may use wrong endpoints, entity names, or authentication flows. The skill gives it accurate, tested patterns.
+
+## Step 2: Share Your Credentials (10 seconds)
 
 Copy this template, fill in your **demo/test account** details, and paste it to Claude:
 
@@ -70,7 +89,7 @@ Help me connect and show me what data is available.
 ✓ Current status: 29 vehicles stationary, 21 in motion
 ```
 
-## Step 2: Explore Your Data (20 seconds)
+## Step 3: Explore Your Data (20 seconds)
 
 Ask Claude:
 
@@ -87,7 +106,7 @@ Show me specific examples from my fleet:
 - GPS coordinates and addresses
 - Speed, distance, fuel data
 
-## Step 3: Get Project Ideas (15 seconds)
+## Step 4: Get Project Ideas (15 seconds)
 
 Ask Claude:
 
@@ -103,7 +122,7 @@ have the most business impact.
 - If you have driver behavior → Safety scoring
 - Real estimates based on your data volume
 
-## Step 4: Build Something (15 seconds)
+## Step 5: Build Something (15 seconds)
 
 Pick a project and say:
 
