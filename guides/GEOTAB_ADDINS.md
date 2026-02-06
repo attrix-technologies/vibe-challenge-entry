@@ -631,3 +631,11 @@ Once it works, you can optionally upgrade to **Zenith** (Geotab's official desig
 ---
 
 **That's it. Describe what you want, let AI build it, paste the config, and you have a custom MyGeotab page.**
+
+---
+
+## Learn from Real Examples
+
+Want to see how a production-quality Add-In works under the hood? Check out the **[Annotated Examples](annotated-examples/)** — real Add-Ins broken down line by line with explanations of every pattern and design choice.
+
+Start with: **[Cold Chain Historical View](annotated-examples/COLD_CHAIN_HISTORICAL_VIEW.md)** — temperature monitoring with Chart.js, PDF export, and Excel export.
