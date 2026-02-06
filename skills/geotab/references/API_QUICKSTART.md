@@ -515,6 +515,18 @@ zone = api.add('Zone', {
 print(f"Created zone: {zone}")
 ```
 
+### Batch Operations (multi_call)
+
+```python
+# Multiple operations in one request — works for reads, writes, or mixed
+results = api.multi_call([
+    ('Add', dict(typeName='Zone', entity={'name': 'Site A', 'points': [...]})),
+    ('Add', dict(typeName='Zone', entity={'name': 'Site B', 'points': [...]})),
+    ('Add', dict(typeName='Zone', entity={'name': 'Site C', 'points': [...]})),
+])
+# results = [id_a, id_b, id_c]
+```
+
 ### Update a Device Name
 
 ```python

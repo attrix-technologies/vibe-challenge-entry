@@ -247,23 +247,12 @@ api.call("Remove", {
 
 ### Multiple Calls (MultiCall)
 ```javascript
-// Batch reads
 api.multiCall([
     ["Get", { typeName: "Device" }],
     ["Get", { typeName: "User", search: { isDriver: true } }]
 ], function(results) {
     var devices = results[0];
     var drivers = results[1];
-});
-
-// Batch writes (e.g., create multiple zones at once)
-var calls = zones.map(function(z) {
-    return ["Add", { typeName: "Zone", entity: z }];
-});
-api.multiCall(calls, function(ids) {
-    console.log("Created " + ids.length + " zones");
-}, function(error) {
-    console.error("Batch failed:", error);
 });
 ```
 
