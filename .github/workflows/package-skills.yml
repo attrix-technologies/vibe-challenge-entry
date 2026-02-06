@@ -1,0 +1,57 @@
+name: Package Skills
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - '.claude-plugin/**'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build skills zip
+        run: |
+          mkdir -p dist
+          # Include skill folders and the plugin manifest
+          zip -r dist/geotab-skills.zip \
+            skills/geotab/ \
+            skills/agentic-n8n/ \
+            skills/geotab-custom-mcp/ \
+            skills/README.md \
+            .claude-plugin/ \
+            -x '*.DS_Store'
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: geotab-skills
+          path: dist/geotab-skills.zip
+
+      - name: Update latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Create or update the "latest" release so the download link always works
+          gh release create latest \
+            --title "Latest Skills" \
+            --notes "Auto-updated on every push to main. Download the zip to get all Geotab agent skills." \
+            --prerelease 2>/dev/null || true
+          gh release upload latest dist/geotab-skills.zip --clobber
+
+      - name: Attach to tagged release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            dist/geotab-skills.zip --clobber

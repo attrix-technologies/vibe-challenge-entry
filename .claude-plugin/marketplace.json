@@ -1,0 +1,24 @@
+{
+  "name": "geotab-vibe-guide",
+  "owner": {
+    "name": "Felipe Hoffa",
+    "email": "fhoffa@gmail.com"
+  },
+  "metadata": {
+    "description": "Agent skills for building fleet management applications with the Geotab API",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "geotab-skills",
+      "description": "Complete Geotab fleet management development skills — Python API, MyGeotab Add-Ins, Zenith styling, Ace AI queries, n8n automation, and MCP server building",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/geotab",
+        "./skills/agentic-n8n",
+        "./skills/geotab-custom-mcp"
+      ]
+    }
+  ]
+}
