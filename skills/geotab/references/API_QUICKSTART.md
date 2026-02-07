@@ -262,6 +262,38 @@ for reading in status_data:
 
 **Common Mistake:** Similar-sounding IDs may not work. For example, `DiagnosticEngineCrankingVoltageId` returns no data, but `DiagnosticCrankingVoltageId` works. Always verify in Engine Measurements first.
 
+## Historical GPS Data (LogRecord)
+
+> **TODO:** LogRecord query patterns below haven't been tested on a demo database yet. Verify that demo databases generate enough LogRecord data for meaningful results.
+
+LogRecords are GPS breadcrumbs — latitude, longitude, speed, and timestamp for every recorded position. Use them for route reconstruction, heat maps, and geofence analysis.
+
+### Query Pattern
+
+```python
+from datetime import datetime, timedelta
+
+# GPS history for one vehicle (last 24h)
+records = api.get('LogRecord',
+    deviceSearch={'id': device_id},
+    fromDate=datetime.now() - timedelta(hours=24),
+    toDate=datetime.now()
+)
+# Each record: latitude, longitude, speed (km/h), dateTime, device.id
+```
+
+**Critical:** Always include `fromDate`/`toDate`. LogRecord without date filters attempts to fetch millions of records. For fleet-wide queries, keep the window narrow (hours, not days).
+
+### LogRecord Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `latitude` | float | GPS latitude |
+| `longitude` | float | GPS longitude |
+| `speed` | float | Speed in km/h |
+| `dateTime` | string | ISO 8601 timestamp |
+| `device` | object | `{ "id": "..." }` reference |
+
 ## Filtering and Searching
 
 ### Filter by Date Range
@@ -481,6 +513,18 @@ zone = api.add('Zone', {
     'activeTo': '2099-12-31T00:00:00Z'
 })
 print(f"Created zone: {zone}")
+```
+
+### Batch Operations (multi_call)
+
+```python
+# Multiple operations in one request — works for reads, writes, or mixed
+results = api.multi_call([
+    ('Add', dict(typeName='Zone', entity={'name': 'Site A', 'points': [...]})),
+    ('Add', dict(typeName='Zone', entity={'name': 'Site B', 'points': [...]})),
+    ('Add', dict(typeName='Zone', entity={'name': 'Site C', 'points': [...]})),
+])
+# results = [id_a, id_b, id_c]
 ```
 
 ### Update a Device Name

@@ -85,6 +85,8 @@ can reduce stops or take better paths."
 ### Idea 1.3: IdleKiller Challenge
 **Concept:** Gamified idle time reduction platform with driver challenges and leaderboards.
 
+**Head start:** The [Storage API sample](./SDK_ADDIN_SAMPLES_GUIDE.md#6-storage-api-sample--persistent-data-without-a-database) shows how to persist data (like leaderboard scores) inside MyGeotab without an external database.
+
 **Key Features:**
 - Track idle time per driver and vehicle
 - Set team and individual goals
@@ -156,6 +158,8 @@ based on their specific behaviors."
 
 ### Idea 2.2: PredictMaint AI
 **Concept:** Predictive maintenance system that alerts before breakdowns happen.
+
+**Head start:** Study the [Start-Stop Savings sample](./SDK_ADDIN_SAMPLES_GUIDE.md#4-start-stop-savings--diagnostic-data-and-roi-calculations) — it shows how to query diagnostics and calculate derived metrics.
 
 **Key Features:**
 - Monitor engine fault codes
@@ -442,6 +446,8 @@ entities (Device, Trip, etc.) and async/await for API calls."
 ### Idea 5.3: MyGeotab Custom Add-In
 **Concept:** Build a custom add-in that extends the MyGeotab interface.
 
+**Head start:** Install the [7 official Add-In samples](./SDK_ADDIN_SAMPLES_GUIDE.md) in your demo database. Pick the one closest to your idea and modify it.
+
 **Key Features:**
 - Embedded in MyGeotab UI
 - Access to Geotab API from frontend
@@ -473,6 +479,7 @@ and fuel efficiency trends with interactive charts."
 
 ### Mini Idea 1: Trip Heatmap
 Generate a heatmap showing where your fleet spends the most time.
+**Head start:** Install the [official Heat Map sample](./SDK_ADDIN_SAMPLES_GUIDE.md#1-heat-map--map-visualization-with-third-party-libraries) — it already does this. Modify it to add filters or different data layers.
 **Prompt:** "Create a web map using Leaflet.js and heatmap.js that visualizes GPS density from Geotab LogRecords."
 
 ### Mini Idea 2: Fuel Price Alert
@@ -489,6 +496,7 @@ Visual calendar showing upcoming maintenance.
 
 ### Mini Idea 5: Geofence Manager
 Simple UI to create and manage geofences.
+**Head start:** Study the [Import KML Zones sample](./SDK_ADDIN_SAMPLES_GUIDE.md#3-import-kml-zones--file-upload-and-write-operations) to see how zones are created via the API.
 **Prompt:** "Create a map interface where users can draw geofences (polygons) and save them to Geotab using the Zone API."
 
 ---
@@ -781,6 +789,8 @@ to the prediction."
 
 ### Idea 8.7: GeofenceGPT - Natural Language Geofence Creation
 **Concept:** Create and manage geofences using plain English instead of drawing on maps.
+
+**Head start:** The [Import KML Zones sample](./SDK_ADDIN_SAMPLES_GUIDE.md#3-import-kml-zones--file-upload-and-write-operations) shows zone creation via the API. Replace file parsing with natural language parsing.
 
 **Key Features:**
 - "Create a 500-meter zone around all customer sites"

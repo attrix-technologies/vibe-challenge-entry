@@ -385,6 +385,92 @@ if (msg.signed_urls) {
 
 > **Full Ace documentation:** See [ACE_API.md](ACE_API.md) for complete patterns, CSV parsing, rate limiting, and code examples.
 
+## Button Add-Ins
+
+> **TODO:** Button Add-In patterns below are based on the official sdk-addin-samples but haven't been tested on a demo database yet. Verify the config and state object structure work as documented.
+
+Button Add-Ins attach to **existing MyGeotab pages** (like the vehicle detail page) instead of creating new pages. They appear as action buttons alongside built-in controls.
+
+### Button vs. Page Configuration
+
+| Property | Page Add-In | Button Add-In |
+|----------|------------|---------------|
+| Content reference | `"url": "page.html"` | `"click": "script.js"` |
+| Label | `"menuName": { "en": "..." }` | `"buttonName": { "en": "..." }` |
+| Placement | `"path": "ActivityLink/"` | `"page": "device"` |
+
+### Button Configuration
+
+```json
+{
+  "name": "My Button Add-In",
+  "supportEmail": "https://github.com/your-repo",
+  "version": "1.0.0",
+  "items": [{
+    "page": "device",
+    "click": "https://yourusername.github.io/repo/myButton.js",
+    "buttonName": {
+      "en": "My Action",
+      "fr": "Mon Action"
+    },
+    "icon": "https://yourusername.github.io/repo/icon.svg"
+  }]
+}
+```
+
+**Valid `page` values:** `"device"` (vehicle detail page). Buttons appear as action icons on that page.
+
+### Button Script Pattern
+
+The JS file referenced by `"click"` receives the current page state. Use it to read the selected entity and act on it:
+
+```javascript
+// myButton.js - runs when the button is clicked
+geotab.addin["myButton"] = function() {
+    return {
+        initialize: function(api, state, callback) {
+            // state contains the page context
+            // state.device.id = currently selected vehicle ID
+            callback();
+        },
+        focus: function(api, state) {
+            var deviceId = state.device.id;
+
+            // Option 1: Navigate to another page with context
+            window.parent.location.hash = "tripsHistory,devices:!(" + deviceId + ")";
+
+            // Option 2: Fetch data and show a popup
+            api.call("Get", {
+                typeName: "Trip",
+                search: {
+                    deviceSearch: { id: deviceId },
+                    fromDate: new Date(Date.now() - 7 * 86400000).toISOString(),
+                    toDate: new Date().toISOString()
+                }
+            }, function(trips) {
+                alert("This vehicle had " + trips.length + " trips in the last 7 days");
+            });
+        },
+        blur: function() {}
+    };
+};
+```
+
+### Localization
+
+Button Add-Ins support multilingual labels. Include translations in the config:
+
+```json
+"buttonName": {
+    "en": "Engine Data Profile",
+    "fr": "Profil des données-moteur",
+    "es": "Perfil de datos de motor",
+    "ja": "エンジンデータプロフィール"
+}
+```
+
+MyGeotab automatically displays the label matching the user's language setting.
+
 ## Navigation & Integrations
 
 ### MyGeotab Navigation
