@@ -2,7 +2,7 @@
 
 **Real-world Geotab Add-Ins, broken down so you can learn from them.**
 
-This folder contains detailed walkthroughs of production-quality Add-Ins. Each guide takes a working Add-In apart piece by piece, explaining what it does, why it works that way, and what patterns you can reuse in your own projects.
+This folder contains detailed walkthroughs of working Add-Ins. Each guide takes an Add-In apart piece by piece, explaining what it does, why it works that way, and what patterns you can reuse in your own projects.
 
 ## Available Examples
 
