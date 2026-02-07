@@ -129,15 +129,15 @@ sandbox/
 - Was the context file helpful?
 - What would you add or change?
 
-### Path C: Python Examples (30-60 min)
-**Test the step-by-step examples:**
-1. Start with `examples/python/01_authentication/TASK.md`
-2. Use your preferred AI tool to complete the task
-3. Move through 02, 03, etc.
+### Path C: Python Dashboard Workflow (30-60 min)
+**Test a guide-driven Python flow:**
+1. Start with `guides/ANTIGRAVITY_QUICKSTART.md`
+2. Use your preferred AI tool to build a first dashboard
+3. Reference `guides/API_REFERENCE_FOR_AI.md` for API patterns as needed
 
 **Questions to consider:**
-- Is the difficulty progression right?
-- Are the vibe prompts effective?
+- Is the flow from setup to dashboard clear?
+- Are the prompts effective for iteration?
 - Did you get stuck anywhere?
 
 ### Path D: Add-In Development (30 min)
@@ -297,7 +297,7 @@ Your feedback directly shapes what hackathon participants will experience. Thank
 | Quick AI Context | `VIBE_CODING_CONTEXT.md` |
 | Beginner Glossary | `guides/BEGINNER_GLOSSARY.md` |
 | All Guides | `guides/README.md` |
-| Python Examples | `examples/python/` |
+| Python Dashboard Guide | `guides/ANTIGRAVITY_QUICKSTART.md` |
 | Add-In Examples | `examples/addins/` |
 | Hackathon Ideas | `guides/HACKATHON_IDEAS.md` |
 | Create Demo Account | https://my.geotab.com/registration.html |

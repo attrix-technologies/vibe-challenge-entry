@@ -25,6 +25,8 @@ Quick navigation to the right resource for your needs.
 
 | Situation | Use This | Tokens | Why |
 |-----------|----------|--------|-----|
+| Repo orientation (best first step) | [AGENT_SUMMARY.md](./AGENT_SUMMARY.md) | ~250 | Canonical map of entry points and rules |
+| Choosing implementation skill | [skills/README.md](./skills/README.md) | ~600 | Pick the right skill and loading strategy |
 | Starting/Coding session | [VIBE_CODING_CONTEXT.md](./VIBE_CODING_CONTEXT.md) | ~400 | Session context & reference |
 | Looking up API details | [GEOTAB_API_REFERENCE.md](./guides/GEOTAB_API_REFERENCE.md) | ~300 | One-page API card |
 | Need full examples | [API_REFERENCE_FOR_AI.md](./guides/API_REFERENCE_FOR_AI.md) | ~800 | Complete API patterns for AI tools |
@@ -74,8 +76,10 @@ Are you a human or AI tool?
 
 If you need to minimize context size:
 
-1. **Always load**: VIBE_CODING_CONTEXT.md (~400 tokens) - Essential patterns & reference
-2. **Don't load**: API_REFERENCE_FOR_AI.md, CREDENTIALS.md - Retrieve specific sections only if needed
+1. **Always load**: AGENT_SUMMARY.md (~250 tokens) - Canonical orientation
+2. **Choose skill early**: skills/README.md (~600 tokens) - Route to correct `skills/*/SKILL.md`
+3. **Then load**: VIBE_CODING_CONTEXT.md (~400 tokens) - Essential patterns & reference
+4. **Don't load fully**: API_REFERENCE_FOR_AI.md, CREDENTIALS.md - Retrieve specific sections only if needed
 
 ## How Instructors Use These
 
