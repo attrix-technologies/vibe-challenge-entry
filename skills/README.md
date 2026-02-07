@@ -29,17 +29,9 @@ That's it. Claude Code now has access to Geotab API patterns, Add-In development
 
 On paid Claude.ai plans, upload skill files to your project via the UI. See [Using skills in Claude](https://support.claude.com/en/articles/12512180-using-skills-in-claude).
 
-**Important:** The `geotab` skill has a `references/` subfolder with 13 supporting files. Upload `SKILL.md` **and** the reference files — otherwise Claude sees navigation links it can't follow. The easiest way is to [download the zip](#option-3-download-the-zip) first, then upload the contents.
+**Important:** The `geotab` skill has a `references/` subfolder with 13 supporting files. Upload `SKILL.md` **and** the reference files — otherwise Claude sees navigation links it can't follow. The easiest way is to clone the repo (see below) and upload the contents of `skills/geotab/`.
 
-### Option 3: Download the Zip
-
-Grab just the skills (no need to clone the whole repo):
-
-**[Download geotab-skills.zip](https://github.com/fhoffa/geotab-vibe-guide/releases/download/latest/geotab-skills.zip)**
-
-Unzip and point your agent at the skill folders.
-
-### Option 4: Clone This Repo
+### Option 3: Clone This Repo
 
 ```bash
 git clone https://github.com/fhoffa/geotab-vibe-guide.git

@@ -1,3 +1,7 @@
+# TODO: This workflow has not been validated end-to-end on the real repo.
+# The zip it would produce is not currently linked from any docs.
+# Once validated, re-add download links in skills/README.md and
+# guides/INSTANT_START_WITH_CLAUDE.md.  See skills/SKILLS_TODO.md.
 name: Package Skills
  
 on:

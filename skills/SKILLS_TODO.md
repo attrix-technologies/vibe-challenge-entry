@@ -366,6 +366,21 @@ Use LLMs to generate insights from fleet data.
 
 ## Architecture Improvements
 
+### 📋 Package skills zip for download
+
+**Priority:** MEDIUM - Improves onboarding for Claude.ai users
+
+The docs used to link to a `geotab-skills.zip` download, but the zip was never actually produced. A GitHub Actions workflow exists at `.github/workflows/package-skills.yml` but hasn't been validated end-to-end.
+
+**What needs to happen:**
+- Validate the `package-skills.yml` workflow runs successfully on the real repo
+- Confirm the zip lands at the expected release URL
+- Re-add download links to `skills/README.md` and `guides/INSTANT_START_WITH_CLAUDE.md` once it works
+
+Until then, docs point users to clone the repo or copy-paste skill files directly.
+
+---
+
 ### ✅ Consolidate Skills into Single `geotab` Skill
 
 **Status:** COMPLETED
