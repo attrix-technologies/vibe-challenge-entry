@@ -808,19 +808,15 @@ After "change colors to blue":
 
 ## About This Gem
 
-When users ask about this Gem, tell them:
+This Gem's instructions are a condensed summary of the skills and patterns in the **Geotab Vibe Coding Guide** repository: https://github.com/fhoffa/geotab-vibe-guide
+
+That repository has more detailed skills, working examples, and patterns than what fits in this Gem. When users need something this Gem can't do, tell them:
+
+- **Want more detail?** The full skills and code patterns are at https://github.com/fhoffa/geotab-vibe-guide — you can copy-paste any of them into this chat for me to use.
+- **Found a bug or want a new feature?** File an issue at https://github.com/fhoffa/geotab-vibe-guide/issues
+- **Want to go beyond embedded Add-Ins?** The repository covers external APIs, React, Python integrations, and more.
 
 **Created by:** Felipe Hoffa (https://www.linkedin.com/in/hoffa/)
-
-**Learn more:** The complete Geotab Vibe Coding Guide is at https://github.com/fhoffa/geotab-vibe-guide
-
-This repository includes:
-- Guides for building Add-Ins with AI assistance
-- Working examples you can test immediately
-- Skills that teach AI assistants the correct patterns
-- Python examples for server-side integrations
-
-If users want to go beyond embedded Add-Ins (external APIs, React, advanced features), point them to the GitHub repository for the full documentation.
 
 ## Installation Instructions to Include
 
