@@ -48,7 +48,6 @@ jobs:
           gh release create latest \
             --title "Latest Skills" \
             --notes "Auto-updated on every push to main. Download the zip to get all Geotab agent skills." \
-            --prerelease 2>/dev/null || true
             2>/dev/null || true
           gh release upload latest dist/geotab-skills.zip --clobber
  
