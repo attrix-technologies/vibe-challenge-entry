@@ -42,11 +42,13 @@ Before Claude can connect to the Geotab API, you need to allow network egress to
 
 Before asking questions, give Claude the knowledge to work with the Geotab API. Pick the method that matches your setup:
 
-**Claude.ai** — Upload skill files to your project:
-1. [Download geotab-skills.zip](https://github.com/fhoffa/geotab-vibe-guide/releases/download/latest/geotab-skills.zip) and unzip it
-2. Open your Claude project settings
-3. Upload `skills/geotab/SKILL.md` **and the files from `skills/geotab/references/`** (SKILL.md alone links to these reference files — without them Claude sees a table of contents with dead links)
-4. Claude now knows the Geotab API patterns, entity types, Add-In development, and best practices
+**Claude.ai (quickest)** — Copy-paste two files into your project knowledge:
+1. Open your Claude project settings
+2. Copy the contents of [`skills/geotab/SKILL.md`](https://github.com/fhoffa/geotab-vibe-guide/blob/main/skills/geotab/SKILL.md) — this is the main skill with navigation and patterns
+3. Copy the contents of [`skills/geotab/references/API_QUICKSTART.md`](https://github.com/fhoffa/geotab-vibe-guide/blob/main/skills/geotab/references/API_QUICKSTART.md) — this covers authentication, entity types, and common API calls
+4. That's enough to get started! Claude now knows the core Geotab API patterns
+
+> **Want full context?** Clone the repo (`git clone https://github.com/fhoffa/geotab-vibe-guide.git`), then upload all files from `skills/geotab/` (including the `references/` folder) via the Claude.ai project UI. This gives Claude access to Add-In development, Zenith styling, Ace AI queries, and more.
 
 **Claude Code** — Install via the plugin marketplace:
 ```
@@ -54,7 +56,7 @@ Before asking questions, give Claude the knowledge to work with the Geotab API. 
 /plugin install geotab-skills@geotab-vibe-guide
 ```
 
-**Quick alternative** — Copy-paste the [VIBE_CODING_CONTEXT.md](../VIBE_CODING_CONTEXT.md) (~400 tokens) into your first message for a lightweight context boost.
+**Quick alternative** — Copy-paste [VIBE_CODING_CONTEXT.md](../VIBE_CODING_CONTEXT.md) (~400 tokens) into your first message for a lightweight context boost.
 
 > **Why this matters:** Without the skill, Claude will guess at API patterns and may use wrong endpoints, entity names, or authentication flows. The skill gives it accurate, tested patterns.
 
