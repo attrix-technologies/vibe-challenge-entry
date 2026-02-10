@@ -421,3 +421,7 @@ Once you have the basic MCP server running:
 ---
 
 **Note:** Geotab is developing an official MCP implementation. Building your own now lets you start immediately and creates capabilities the official version may not include. Your custom MCP can coexist with the official one when it launches.
+
+## Other Data Channels
+
+Ace (used by this MCP server) is one of three ways to get fleet data. See [DATA_ACCESS_COMPARISON.md](./DATA_ACCESS_COMPARISON.md) for a benchmark of Ace vs the MyGeotab API (fastest, most flexible) vs the OData Data Connector (pre-aggregated KPIs for dashboards).

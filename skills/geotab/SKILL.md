@@ -11,6 +11,24 @@ metadata:
 
 This is the unified skill for all Geotab fleet management development. Navigate to the specific reference you need based on your task.
 
+## Choosing a Data Channel
+
+Geotab has three ways to get fleet data. Pick based on the task:
+
+| Need | Channel | Reference | Speed |
+|------|---------|-----------|-------|
+| Pre-aggregated KPIs (distance, fuel, idle, safety) for dashboards/reports | **OData Data Connector** | [DATA_CONNECTOR.md](references/DATA_CONNECTOR.md) | ~5–11s |
+| Raw entities (trips, devices, GPS, faults) or real-time data | **MyGeotab API** | [API_QUICKSTART.md](references/API_QUICKSTART.md) | ~0.5–2s |
+| Natural language questions, ad-hoc exploration | **Geotab Ace** | [ACE_API.md](references/ACE_API.md) | ~30–45s |
+
+**Key constraints:**
+- **OData** requires HTTP Basic Auth on a separate server — **not usable from Add-Ins** (they only get a session token). Use for server-side scripts, Python apps, and BI tools.
+- **API** is the only channel for real-time data (`DeviceStatusInfo`) and works everywhere including Add-Ins.
+- **Ace** is great for exploration but slow, may apply implicit filters, and results can vary between runs.
+- For trip-level or per-event detail, use the **API** — OData only has daily/hourly/monthly aggregates.
+
+Full comparison with benchmarks: [DATA_ACCESS_COMPARISON.md](../../guides/DATA_ACCESS_COMPARISON.md)
+
 ## Quick Navigation
 
 | Task | Reference | Description |
