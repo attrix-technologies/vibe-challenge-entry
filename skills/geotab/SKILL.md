@@ -166,7 +166,7 @@ api.call("Get", { typeName: "Device" }, function(devices) {
 | `LogRecord` | GPS breadcrumbs | Historical routes |
 | `StatusData` | Sensor readings | Engine diagnostics |
 | `ExceptionEvent` | Rule violations | Safety monitoring |
-| `FaultData` | Engine fault codes | Maintenance |
+| `FaultData` | Engine fault codes | Maintenance — [varies by demo database](../../guides/FAULT_MONITORING.md) |
 | `Zone` | Geofences | Location monitoring |
 | `Group` | Organizational hierarchy | Vehicle grouping |
 

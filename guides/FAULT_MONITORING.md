@@ -20,7 +20,7 @@
 >
 > Database 2's faults were all **GoDevice faults** (GPS antenna unplugged, engine hours stale) — not engine DTCs (OBD-II/J1939). These still demonstrate the full fault cycle lifecycle (persistent cycles, durations, counts), but won't have breakdown risk scores (those apply to engine DTCs only). Real production fleets will have both GoDevice and engine faults.
 >
-> **If your demo database has no fault data:** Try creating another demo database — fault data availability varies. Exception events (speeding, harsh cornering, etc.) are always available and are a different data category from diagnostic fault codes.
+> **If your demo database has no fault data:** Try creating another demo database with a different location/vocation/type of fleet. Exception events (speeding, harsh cornering, etc.) are always available and are a different data category from diagnostic fault codes.
 
 ## Where Do Fault Codes Come From?
 

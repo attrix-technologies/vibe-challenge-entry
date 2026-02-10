@@ -157,6 +157,8 @@ based on their specific behaviors."
 ---
 
 ### Idea 2.2: PredictMaint AI
+
+> **Demo data note:** `FaultData` availability varies by demo database — some have GoDevice faults, others have none. No engine DTCs in any tested demo. Try different demo configurations or use a real fleet database. See [FAULT_MONITORING.md](./FAULT_MONITORING.md) for details.
 **Concept:** Predictive maintenance system that alerts before breakdowns happen.
 
 **Head start:** Study the [Start-Stop Savings sample](./SDK_ADDIN_SAMPLES_GUIDE.md#4-start-stop-savings--diagnostic-data-and-roi-calculations) — it shows how to query diagnostics and calculate derived metrics.
@@ -744,6 +746,9 @@ compiling a narrative review document."
 ---
 
 ### Idea 8.6: PredictIQ - ML-Powered Predictive Maintenance
+
+> **Demo data note:** `FaultData` availability varies by demo database. See [FAULT_MONITORING.md](./FAULT_MONITORING.md) for details.
+
 **Concept:** Use machine learning to predict vehicle failures before they happen, not just threshold alerts.
 
 **Key Features:**

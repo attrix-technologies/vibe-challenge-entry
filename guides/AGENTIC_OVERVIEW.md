@@ -38,7 +38,7 @@ DECIDE:  Alert supervisor
 ACT:     Send Slack message with vehicle, driver, location
 ```
 
-**Medium: Maintenance Automation**
+**Medium: Maintenance Automation** *(requires database with fault data — [varies by demo](./FAULT_MONITORING.md))*
 ```
 MONITOR: Watch for engine fault codes
 DETECT:  Critical fault code appears

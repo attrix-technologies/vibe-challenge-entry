@@ -178,6 +178,8 @@ description: Integrate Geotab Ace API for natural language queries about fleet d
 #### 6. **geotab-predictive-maintenance**
 Package predictive maintenance patterns.
 
+> **Demo data note:** `FaultData` availability varies by demo database — some have GoDevice faults, others have none. Try different demo configurations or use a real fleet database. See [FAULT_MONITORING.md](../guides/FAULT_MONITORING.md) for details.
+
 ```yaml
 ---
 name: geotab-predictive-maintenance

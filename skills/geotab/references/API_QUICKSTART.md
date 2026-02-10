@@ -164,7 +164,7 @@ The MyGeotab API supports these entity types via the `Get` method. Not all are w
 |------|-------------|----------|-------|
 | `Diagnostic` | Sensor/data definitions | Read-only | Metadata about readings (65K+ types) |
 | `Controller` | ECU definitions | Read-only | Vehicle computer units |
-| `FaultData` | Engine fault codes | Read-only | DTC codes from vehicle |
+| `FaultData` | Engine fault codes | Read-only | DTC codes from vehicle — [availability varies by demo database](../../../guides/FAULT_MONITORING.md) |
 | `FailureMode` | Fault failure modes | Read-only | J1939 failure modes |
 | `FlashCode` | Flash codes | Read-only | Get not supported |
 
