@@ -253,6 +253,7 @@ print(f"Fuel types: {df['FuelType'].value_counts().to_dict()}")
 7. **New databases need ~2–3 hours** for KPI tables to populate after activation
 8. **Safety data lags ~2 days** — it benchmarks against fleets across Geotab, not just yours
 9. **Never hardcode credentials** — use `.env` + `python-dotenv`
+10. **Returns the full fleet** — unlike the API and Ace, the Data Connector ignores user permissions and always returns data for all vehicles. If you need permission-scoped results, use the API or Ace instead.
 
 ## Dependencies
 

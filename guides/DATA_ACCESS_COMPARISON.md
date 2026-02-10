@@ -10,6 +10,7 @@
 | **Data** | Pre-aggregated KPIs | Raw entities | Auto-generated SQL |
 | **Code needed** | Minimal (HTTP GET) | Moderate (aggregation logic) | None (natural language) |
 | **Best for** | Dashboards, BI tools, reports | Custom apps, real-time, granular analysis | Ad-hoc exploration, learning the data model |
+| **Permissions** | Full fleet (ignores user scope) | Respects user's group/vehicle permissions | Respects user's group/vehicle permissions |
 | **Works in Add-Ins** | No (separate auth) | Yes | Yes (via [Ace API](../skills/geotab/references/ACE_API.md)) |
 | **Guide** | [DATA_CONNECTOR.md](./DATA_CONNECTOR.md) | [API_REFERENCE_FOR_AI.md](./API_REFERENCE_FOR_AI.md) | [CUSTOM_MCP_GUIDE.md](./CUSTOM_MCP_GUIDE.md) |
 | **Skill** | [DATA_CONNECTOR.md](../skills/geotab/references/DATA_CONNECTOR.md) | [API_QUICKSTART.md](../skills/geotab/references/API_QUICKSTART.md) | [ACE_API.md](../skills/geotab/references/ACE_API.md) |
@@ -102,10 +103,12 @@ All three agree on 1.2% idle. The ratio is consistent even though absolute hours
 - Date range filters built in (`$search=last_14_day`)
 - Ideal for Power BI, Tableau, Excel with scheduled refresh
 - Complete data (no result caps on KPI tables)
+- Returns full fleet data regardless of user permissions — useful for fleet-wide reports
 
 **Weaknesses:**
 - No server-side filtering beyond date ranges (can't filter by vehicle or group in the query)
 - Returns all vehicles — client must filter/aggregate
+- Ignores user permissions — always returns the full fleet, not scoped to the user's group access
 - New accounts have a 2–3 hour backfill delay
 - Not accessible from MyGeotab Add-Ins (requires password-based auth on a separate server)
 - Medium speed (~5–11s per query)
@@ -126,6 +129,7 @@ All three agree on 1.2% idle. The ratio is consistent even though absolute hours
 - Rich filtering via search objects (by device, date, group, driver)
 - Real-time data (DeviceStatusInfo for live positions)
 - Works inside MyGeotab Add-Ins via the `api` object
+- Respects user permissions — results are scoped to the user's group/vehicle access
 
 **Weaknesses:**
 - **Fleet-wide aggregation doesn't scale.** The API itself is fast for targeted queries (trips for one vehicle, current location of a device). But the pattern of "fetch all trips across the entire fleet, then aggregate in pandas" breaks down on production fleets — you'll hit result caps, need extensive pagination, and spend significant time on client-side computation. See [Demo vs Production](#demo-vs-production) below.
@@ -149,6 +153,7 @@ All three agree on 1.2% idle. The ratio is consistent even though absolute hours
 - Automatically joins tables, converts units, adds device names
 - Great for exploration and ad-hoc questions
 - Works in Add-Ins via the [Ace API](../skills/geotab/references/ACE_API.md)
+- Respects user permissions — results are scoped to the user's group/vehicle access
 
 **Weaknesses:**
 - Slowest channel (~30–45s per question)
@@ -188,6 +193,7 @@ Even identical questions can return different numbers across channels:
 3. **Implicit filters:** Ace may add filters like `IsTracked = TRUE` based on its interpretation of your question.
 4. **Aggregation level:** The Data Connector gives you pre-aggregated daily/monthly totals. The API gives you raw per-trip data that you sum yourself. Small rounding differences are normal.
 5. **Unit conversion:** Ace may auto-convert km to miles. The Data Connector and API always return metric units.
+6. **Permissions:** The Data Connector returns the full fleet regardless of the querying user's permissions. The API and Ace respect user permissions — a user who only has access to certain groups will only see those vehicles. This can cause number differences when different users query the same fleet.
 
 When numbers don't match, it's usually one of these reasons — not a bug.
 
