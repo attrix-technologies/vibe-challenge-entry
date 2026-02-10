@@ -109,7 +109,7 @@ The `userName` can't be spoofed because it's tied to the session that Geotab jus
 
 **Checking Origin/Referer headers** — These are trivially spoofable from server-side code. Don't rely on them.
 
-**Hardcoding the Geotab server** — Geotab has multiple servers (`my.geotab.com`, `my123.geotab.com`, etc.). The session is only valid on the server where it was created. Always pass the server from the client and validate it before use.
+**Hardcoding the Geotab server** — Geotab has multiple servers (`my.geotab.com`, `myN.geotab.com`, etc.). The session is only valid on the server where it was created. Always pass the server from the client and validate it before use.
 
 **Failing open** — If your configuration is missing (e.g., forgot to set `ALLOWED_DATABASES`), your backend should reject all requests, not allow all requests. A misconfiguration should lock the door, not open it.
 

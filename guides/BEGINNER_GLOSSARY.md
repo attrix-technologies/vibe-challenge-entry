@@ -453,7 +453,7 @@ This is where fleet managers:
 
 When you connect to the Geotab API, you specify which database (which company's fleet) you want to access.
 
-**Example**: `my123.geotab.com` is a database URL.
+**Example**: `my.geotab.com` is a server URL.
 
 ### Credentials
 **What it is**: Your username, password, and database URL needed to access Geotab data.
