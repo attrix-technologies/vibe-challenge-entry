@@ -225,34 +225,15 @@ When writing prompts, reference these table names:
 | **DriverGroups** | No | Driver-to-group mappings |
 | **DriverMetadata** | No | Driver names and timezones |
 
-## Key Things to Tell Your AI
+## Give Your AI the Full Context
 
-When prompting an AI tool about the Data Connector, include these details so it doesn't get stuck:
+Instead of manually explaining the Data Connector's quirks to your AI, give it the skill reference file. It covers date filter syntax, auth format, pagination, error codes, and all the gotchas.
 
-1. **Date filters use `$search`, not `$filter`** — e.g., `?$search=last_14_day` or `?$search=from_2026-01-01_to_2026-01-31`
-2. **`last_` vs `this_`** — `last_3_month` = last 3 *complete* months (excludes current). `this_3_month` = most recent 3 months (includes current partial month). When `number` is 1, you can omit it: `last_month`, `this_year`.
-3. **Auth is HTTP Basic** with `database_name/username` as the username
-4. **There are two servers** (1 and 2) — the wrong one gives 406
-5. **Pagination** — follow `@odata.nextLink` in the response to get all records
-6. **Don't request too wide a date range** — you'll get 416. Use single months for daily data.
-7. **Rate limit** is 100 requests per user per minute (429 if exceeded)
-8. **Safety data lags ~2 days** behind KPI data (it benchmarks across all Geotab fleets)
+**Option A: Upload the file directly.** Download [DATA_CONNECTOR.md](../skills/geotab/references/DATA_CONNECTOR.md) and upload it to your AI chat as context.
 
----
+**Option B: Upload the full skills zip.** Grab [geotab-skills.zip](https://github.com/fhoffa/geotab-vibe-guide/releases/download/latest/geotab-skills.zip) — it includes the Data Connector reference plus all other Geotab skills. Upload the whole thing so your AI has everything it needs.
 
-## Common Errors Your AI Might Hit
-
-| Error | What to Tell the AI |
-|---|---|
-| **401** | "Check credentials — format is database_name/username for Basic Auth" |
-| **403** | "Try the server-specific URL instead of data-connector.geotab.com" |
-| **406** | "Wrong server — try the other server number (1 or 2)" |
-| **412** | "Data Connector isn't activated — install the add-in first" |
-| **416** | "Date range too wide — narrow the $search parameter" |
-| **429** | "Rate limited — wait a minute and retry" |
-| **500** | "Data Connector service temporarily unavailable — try again later" |
-| **503** | "MyGeotab auth service temporarily unavailable — try again later" |
-| **0 records** | "If just activated, the KPI pipeline needs 2–3 hours to backfill" |
+**Option C: Claude Code users.** Install the skills as a plugin — see [skills/README.md](../skills/README.md) for instructions.
 
 ---
 
