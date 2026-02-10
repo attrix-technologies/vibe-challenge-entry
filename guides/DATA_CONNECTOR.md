@@ -2,7 +2,9 @@
 
 > **What is it?** The Data Connector gives you a direct data feed from your fleet — daily KPIs, safety scores, fault codes, vehicle metadata — through a standard OData endpoint. Think of it as a pre-built analytics layer on top of your Geotab data. Instead of writing API calls to fetch trips, calculate idle time, and aggregate by vehicle, the Data Connector hands you clean, ready-to-analyze tables.
 
-> **Who is this for?** Anyone who wants fleet analytics in Python, Excel, Power BI, Tableau, or any tool that speaks HTTP. Also great for **Add-In developers** who need pre-aggregated KPIs — the Data Connector gives you daily/monthly rollups instantly, without fetching raw trips and computing aggregates yourself (faster than the API, no waiting for Ace).
+> **Who is this for?** Anyone who wants fleet analytics in Python, Excel, Power BI, Tableau, or any tool that speaks HTTP. Great for server-side scripts, standalone apps, and BI dashboards where you want pre-aggregated KPIs without fetching raw trips and computing aggregates yourself.
+>
+> **Note:** The Data Connector uses HTTP Basic Auth on a separate server — it's not accessible from MyGeotab Add-Ins (which only have a session token, not your password). For Add-In analytics, use the standard MyGeotab API or Ace instead.
 
 ## Before You Start
 

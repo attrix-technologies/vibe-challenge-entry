@@ -4,9 +4,11 @@
 
 - Querying pre-aggregated fleet KPIs (distance, fuel, idle time, safety scores)
 - Building dashboards or reports from fleet data without raw API calls
-- Add-In development needing aggregated data — faster than fetching raw trips via API, no Ace latency
+- Server-side scripts and standalone apps needing aggregated data
 - Connecting Python, Power BI, Excel, or Tableau to fleet analytics
 - Any task involving the OData endpoint at `odata-connector-{N}.geotab.com`
+
+**Not for Add-Ins:** The Data Connector requires HTTP Basic Auth (username + password) on a separate server. MyGeotab Add-Ins only receive a session token — they cannot query the OData endpoint directly. Use the standard MyGeotab API or Ace for in-Add-In analytics.
 
 ## Prerequisites
 
