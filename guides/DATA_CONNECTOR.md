@@ -160,6 +160,8 @@ Flag any vehicles with significant after-hours usage.
 
 ### Prompt 6: "Fleet Health Check"
 
+> **Note:** Step 5 queries FaultMonitoring, which is empty on demo databases (simulated vehicles don't generate DTCs). This prompt works best on databases with real vehicles. See [FAULT_MONITORING.md](./FAULT_MONITORING.md) for details.
+
 ```text
 Using the Data Connector, give me a fleet health report.
 

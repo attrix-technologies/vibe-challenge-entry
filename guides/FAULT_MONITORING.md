@@ -9,7 +9,15 @@
 > - **MyGeotab API:** `FaultData` entity for raw fault events
 > - **Ace:** Natural language queries about vehicle faults
 
-> **TODO — Demo account limitations:** The standard Geotab demo account is not populated with fault monitoring data, so the prompts and queries in this guide will likely return empty results on a demo database. To test these workflows, use a database with real vehicles that generate fault codes, or ask Geotab for a demo account that includes fault monitoring data.
+> **TODO — Demo account limitations:** The standard Geotab demo database does not contain fault monitoring data. We tested a USA Daytime demo (50 vehicles, Vans and Trucks) and found:
+> - **FaultMonitoring** — 0 records (OData)
+> - **FaultMonitoring_Daily** — 0 records (OData, with and without date filter)
+> - **FaultData** — 0 records (API, tested across 14-day, 90-day, and no-filter ranges)
+> - **ExceptionEvent** — 0 records via OData, but 50,000 via the API (pipeline delay)
+>
+> The tables exist in the schema (confirmed via `$metadata`) but are empty because simulated demo vehicles don't generate Diagnostic Trouble Codes (DTCs). The 50,000 exception events are **rule-based driving behavior detections** (speeding, harsh cornering, hard acceleration) — not diagnostic fault codes. These are different data categories that are easy to confuse.
+>
+> **To test fault monitoring workflows:** Use a database with real vehicles that generate engine fault codes, or ask Geotab for a demo account type that includes DTC data.
 
 ## Where Do Fault Codes Come From?
 
