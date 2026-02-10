@@ -46,7 +46,7 @@ The Data Connector exposes an OData v4 endpoint. You query it with HTTP GET requ
 
 Your database lives on server 1 or server 2. The wrong server returns a **406 Jurisdiction Mismatch** — try both to find yours.
 
-> **SAML/SSO users:** The Data Connector only supports basic authentication. If you use SAML/SSO to log into MyGeotab, you'll need a separate account with basic auth to connect.
+> **SAML/SSO users:** The Data Connector only supports basic authentication. If your organization uses SAML/SSO to log into MyGeotab, create a service account with basic auth credentials to connect.
 
 ---
 

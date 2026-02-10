@@ -247,7 +247,7 @@ print(f"Fuel types: {df['FuelType'].value_counts().to_dict()}")
 1. **Date filters use `$search`, not `$filter`** — this is the most common mistake
 2. **`last_` vs `this_`** — `last_` = complete past periods only. `this_` = includes current partial period.
 3. **Auth format is `database/username`** as the Basic Auth username field
-4. **SAML/SSO not supported** — Data Connector requires basic auth credentials
+4. **SAML/SSO not supported** — Data Connector requires basic auth credentials (create a service account)
 5. **Always detect your server number** (1 or 2) before querying
 6. **Follow `@odata.nextLink`** for paginated results — don't assume one page has everything
 7. **New databases need ~2–3 hours** for KPI tables to populate after activation
