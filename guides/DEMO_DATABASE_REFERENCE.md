@@ -42,11 +42,11 @@ The demo simulates realistic vehicle movement, driver behavior, and telematics d
 
 This guide documents multiple verified demo database profiles:
 
-| Profile | Data Center | Vehicle Type | Vocation | Simulated Routes | Status |
-|---------|-------------|--------------|----------|------------------|--------|
-| European Long Distance | Italy/Netherlands | Vans and Trucks | Long distance | Spain | Documented below |
-| USA Daytime | USA | Vans and Trucks | Daytime tour | USA | Confirming |
-| EV Fleet | USA or UK | Electric Vehicle (EV) | Hub and spoke | TBD | TODO |
+| Profile | Data Center | Vehicle Type | Vocation | Simulated Routes | Fault Data? | Status |
+|---------|-------------|--------------|----------|------------------|-------------|--------|
+| European Long Distance | Italy/Netherlands | Vans and Trucks | Long distance | Spain/Portugal | Yes — GoDevice faults | Documented below |
+| USA Daytime | USA | Passenger | Daytime tour | Las Vegas, Nevada | None | Tested, schema documented below |
+| EV Fleet | USA or UK | Electric Vehicle (EV) | Hub and spoke | TBD | Unknown | TODO |
 
 ### What Data Each Profile Has (Tested Feb 2026)
 
