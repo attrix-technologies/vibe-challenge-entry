@@ -56,7 +56,7 @@ Other options: Netlify, Vercel, Firebase Hosting (all have CORS support).
 
 | Approach | Best For | Notes |
 |----------|----------|-------|
-| **Vanilla JS + External CSS** | Most add-ins, embedded | Modern JS fine, external CSS for reliable styling |
+| **Vanilla JS + External CSS** | Most add-ins, embedded | External CSS for reliable styling |
 | **React + Zenith** | Professional UI matching MyGeotab | See [ZENITH_STYLING.md](ZENITH_STYLING.md) |
 
 **Note:** Embedded add-ins must use vanilla JS with inline styles. React/Zenith requires external hosting.
@@ -195,7 +195,6 @@ api.multiCall([
 - `<style>` tags ARE stripped - use inline `style=""` or load CSS dynamically via JS
 - CDN JS libraries WORK via `<script src="https://cdn...">`
 - CDN CSS works via dynamic loading: `var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.../bootstrap.min.css';document.head.appendChild(link);`
-- Modern JavaScript works (const, let, arrow functions, template literals are all fine)
 
 **Recommended CDN Libraries:**
 - **Charts:** Chart.js (`https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js`)

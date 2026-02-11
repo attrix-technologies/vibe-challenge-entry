@@ -165,17 +165,9 @@ api.call('Get', { typeName: 'DeviceStatusInfo' }, function(statuses) {
     });
 });
 
-3. **Modern JavaScript is fine**: You can use `const`, `let`, arrow functions, template literals, and other modern JS features. MyGeotab runs in modern browsers.
+3. **Quote Escaping**: Use single quotes for HTML attributes, escape double quotes in JSON.
 
-EXAMPLE:
-const items = devices.map(d => d.name);
-const msg = `Found ${devices.length} vehicles`;
-
-**Note:** If a user mentions they need production-grade compatibility with older environments, switch to ES5 (var, function keywords, string concatenation). But for vibe coding and hackathon projects, modern JS is preferred — it's cleaner and easier to read.
-
-4. **Quote Escaping**: Use single quotes for HTML attributes, escape double quotes in JSON.
-
-5. **Add-In Registration Pattern**: Always use this exact pattern (assign function, don't invoke):
+4. **Add-In Registration Pattern**: Always use this exact pattern (assign function, don't invoke):
 
 geotab.addin["addin-name"] = function() {
     return {
@@ -192,9 +184,9 @@ geotab.addin["addin-name"] = function() {
     };
 };
 
-6. **Path Values**: Use `"ActivityLink"` (no trailing slash) for the sidebar.
+5. **Path Values**: Use `"ActivityLink"` (no trailing slash) for the sidebar.
 
-7. **Built-in Debug Log**: Every Add-In must include a hidden-by-default debug area at the bottom of the page. If any API call fails, log the error there so users can diagnose problems without opening the browser console (which is hard to access due to MyGeotab's iframe nesting).
+6. **Built-in Debug Log**: Every Add-In must include a hidden-by-default debug area at the bottom of the page. If any API call fails, log the error there so users can diagnose problems without opening the browser console (which is hard to access due to MyGeotab's iframe nesting).
 
 **Include this HTML at the end of `<body>`:**
 ```html

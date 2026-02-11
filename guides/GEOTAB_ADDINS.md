@@ -188,8 +188,7 @@ CRITICAL REQUIREMENTS:
    geotab.addin["fleet-stats"] = function() { return {...}; };
 3. Must implement all three required lifecycle methods: initialize, focus, and blur
 4. Must call callback() in the initialize method
-5. Modern JavaScript is fine (const, let, arrow functions, template literals all work)
-6. **CRITICAL FOR DEPLOYMENT**: The hosting platform MUST support CORS (Cross-Origin Resource Sharing) and include the "Access-Control-Allow-Origin: *" header in responses. This is essential for MyGeotab to load the add-in.
+5. **CRITICAL FOR DEPLOYMENT**: The hosting platform MUST support CORS (Cross-Origin Resource Sharing) and include the "Access-Control-Allow-Origin: *" header in responses. This is essential for MyGeotab to load the add-in.
 
 FUNCTIONALITY:
 - Display the total number of vehicles in the fleet using the MyGeotab API
