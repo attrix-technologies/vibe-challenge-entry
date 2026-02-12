@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>Vehicle Navigator and Ace</title>
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css';
+    document.head.appendChild(link);
+  </script>
+</head>
+<body style='background:#f4f7f9; padding: 20px; font-family: sans-serif;'>
+
+  <div class='container'>
+    <div class='row'>
+
+      <!-- Vehicle List -->
+      <div class='col-md-7'>
+        <div style='background:white; padding:20px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
+          <h3>My Vehicles</h3>
+          <p style='color:#6c757d;'>Click a name for details, or Map to see it live.</p>
+          <div id='vehicle-list' class='list-group'>
+            <div style='text-align:center; padding:12px;'>Loading vehicles...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ask Ace -->
+      <div class='col-md-5'>
+        <div style='background:white; padding:20px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
+          <h3>Ask Ace</h3>
+          <div id='ace-chat' style='height:250px; overflow-y:auto; background:#f8f9fa; padding:10px; border-radius:5px; margin-bottom:10px; font-size:14px; border:1px solid #eee;'>
+            <div style='color:#666;'>Select a question below to ask Ace AI...</div>
+          </div>
+          <div id='ace-buttons'>
+            <button onclick="askAce('What are the top 5 vehicles by distance this month?')" style='display:block; width:100%; text-align:left; padding:8px 12px; margin-bottom:6px; background:white; border:1px solid #0d6efd; color:#0d6efd; border-radius:4px; cursor:pointer; font-size:13px;'>What are the top 5 vehicles by distance this month?</button>
+            <button onclick="askAce('Who are my top idling drivers?')" style='display:block; width:100%; text-align:left; padding:8px 12px; margin-bottom:6px; background:white; border:1px solid #0d6efd; color:#0d6efd; border-radius:4px; cursor:pointer; font-size:13px;'>Who are my top idling drivers?</button>
+            <button onclick="askAce('Summarize vehicle health alerts from the last week.')" style='display:block; width:100%; text-align:left; padding:8px 12px; margin-bottom:6px; background:white; border:1px solid #0d6efd; color:#0d6efd; border-radius:4px; cursor:pointer; font-size:13px;'>Summarize vehicle health alerts from the last week.</button>
+          </div>
+          <div id='ace-status' style='font-size:12px; color:#999; margin-top:8px;'></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug panel -->
+  <div style='position:fixed; bottom:0; left:0; right:0; text-align:center;'>
+    <button onclick='var d=document.getElementById("debug-log");d.style.display=d.style.display==="none"?"block":"none";' style='background:#e74c3c; color:#fff; border:none; padding:4px 16px; cursor:pointer; font-size:12px; border-radius:4px 4px 0 0;'>Toggle Debug Log</button>
+    <button onclick='copyDebugData()' style='background:#f39c12; color:#fff; border:none; padding:4px 16px; cursor:pointer; font-size:12px; border-radius:4px 4px 0 0; margin-left:4px;'>Copy Debug Data</button>
+    <pre id='debug-log' style='display:none; background:#1e1e1e; color:#0f0; padding:10px; margin:0; max-height:200px; overflow-y:auto; text-align:left; font-size:11px;'></pre>
+  </div>
+
+  <script>
+    var lastResponseData = null;
+    var aceApi = null;
+    var aceRunning = false;
+
+    function log(msg) {
+      var logEl = document.getElementById('debug-log');
+      logEl.innerHTML += '[' + new Date().toLocaleTimeString() + '] ' + msg + '\n';
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function copyDebugData() {
+      if (!lastResponseData) { alert('No data to copy yet!'); return; }
+      var textarea = document.createElement('textarea');
+      textarea.value = JSON.stringify(lastResponseData, null, 2);
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      alert('API data copied to clipboard!');
+    }
+
+    function appendChat(role, text) {
+      var chat = document.getElementById('ace-chat');
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:8px;';
+      if (role === 'you') {
+        div.innerHTML = '<b>You:</b> ' + text;
+      } else {
+        div.style.color = '#2c3e50';
+        div.innerHTML = '<b>Ace:</b> ' + text;
+      }
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function setAceStatus(msg) {
+      document.getElementById('ace-status').textContent = msg;
+    }
+
+    function askAce(question) {
+      if (!aceApi) { alert('Add-In not initialized yet.'); return; }
+      if (aceRunning) { alert('Ace is still processing a query. Please wait.'); return; }
+
+      aceRunning = true;
+      appendChat('you', question);
+      setAceStatus('Creating chat session...');
+      log('Ace: creating chat...');
+
+      // Step 1: create-chat
+      aceApi.call('GetAceResults', {
+        serviceName: 'dna-planet-orchestration',
+        functionName: 'create-chat',
+        customerData: true,
+        functionParameters: {}
+      }, function(response) {
+        log('Ace create-chat response: ' + JSON.stringify(response).substring(0, 200));
+        lastResponseData = response;
+        var chatId = response.apiResult.results[0].chat_id;
+        if (!chatId) {
+          appendChat('ace', 'Error: Could not create Ace chat session. Is Ace enabled in Administration > Beta Features?');
+          setAceStatus('');
+          aceRunning = false;
+          return;
+        }
+        log('Ace chat_id: ' + chatId);
+        setAceStatus('Sending question to Ace...');
+
+        // Step 2: send-prompt
+        aceApi.call('GetAceResults', {
+          serviceName: 'dna-planet-orchestration',
+          functionName: 'send-prompt',
+          customerData: true,
+          functionParameters: { chat_id: chatId, prompt: question }
+        }, function(response2) {
+          log('Ace send-prompt response: ' + JSON.stringify(response2).substring(0, 200));
+          lastResponseData = response2;
+          var data = response2.apiResult.results[0];
+          var mgId = data.message_group_id || ((data.message_group || {}).id);
+          if (!mgId) {
+            appendChat('ace', 'Error: No message_group_id returned.');
+            setAceStatus('');
+            aceRunning = false;
+            return;
+          }
+          log('Ace message_group_id: ' + mgId);
+          setAceStatus('Ace is thinking... (this can take 30-90 seconds)');
+
+          // Step 3: poll get-message-group
+          setTimeout(function() { pollAce(chatId, mgId, 0); }, 8000);
+
+        }, function(err) {
+          log('Ace send-prompt error: ' + err);
+          appendChat('ace', 'Error sending question: ' + err);
+          setAceStatus('');
+          aceRunning = false;
+        });
+
+      }, function(err) {
+        log('Ace create-chat error: ' + err);
+        appendChat('ace', 'Error creating chat: ' + err + '. Make sure Ace is enabled in Administration > Beta Features.');
+        setAceStatus('');
+        aceRunning = false;
+      });
+    }
+
+    function pollAce(chatId, mgId, attempts) {
+      if (attempts > 30) {
+        appendChat('ace', 'Timed out waiting for Ace response.');
+        setAceStatus('');
+        aceRunning = false;
+        return;
+      }
+
+      log('Ace polling attempt ' + (attempts + 1) + '...');
+
+      aceApi.call('GetAceResults', {
+        serviceName: 'dna-planet-orchestration',
+        functionName: 'get-message-group',
+        customerData: true,
+        functionParameters: { chat_id: chatId, message_group_id: mgId }
+      }, function(response) {
+        lastResponseData = response;
+        var data = response.apiResult.results[0];
+        var status = data.message_group.status.status;
+        log('Ace poll status: ' + status);
+
+        if (status === 'DONE') {
+          var messages = data.message_group.messages || {};
+          var output = '';
+          var keys = Object.keys(messages);
+          for (var i = 0; i < keys.length; i++) {
+            var msg = messages[keys[i]];
+            if (msg.reasoning) {
+              output += msg.reasoning + '<br>';
+            }
+            if (msg.preview_array && msg.preview_array.length > 0) {
+              output += '<table style="width:100%; font-size:12px; border-collapse:collapse; margin-top:6px;">';
+              // Header row from columns
+              if (msg.columns && msg.columns.length > 0) {
+                output += '<tr>';
+                for (var c = 0; c < msg.columns.length; c++) {
+                  output += '<th style="border-bottom:1px solid #ccc; padding:3px 6px; text-align:left;">' + msg.columns[c] + '</th>';
+                }
+                output += '</tr>';
+              }
+              // Data rows
+              for (var r = 0; r < msg.preview_array.length; r++) {
+                output += '<tr>';
+                var row = msg.preview_array[r];
+                var rowKeys = Object.keys(row);
+                for (var k = 0; k < rowKeys.length; k++) {
+                  output += '<td style="border-bottom:1px solid #eee; padding:3px 6px;">' + row[rowKeys[k]] + '</td>';
+                }
+                output += '</tr>';
+              }
+              output += '</table>';
+            }
+          }
+          if (!output) { output = 'Ace returned no data for this query.'; }
+          appendChat('ace', output);
+          setAceStatus('');
+          aceRunning = false;
+
+        } else if (status === 'FAILED') {
+          appendChat('ace', 'Ace query failed. Try rephrasing or a simpler question.');
+          setAceStatus('');
+          aceRunning = false;
+
+        } else {
+          setAceStatus('Ace is thinking... (attempt ' + (attempts + 1) + '/30)');
+          setTimeout(function() { pollAce(chatId, mgId, attempts + 1); }, 5000);
+        }
+
+      }, function(err) {
+        log('Ace poll error: ' + err);
+        appendChat('ace', 'Error polling Ace: ' + err);
+        setAceStatus('');
+        aceRunning = false;
+      });
+    }
+
+    geotab.addin["vehicle-navigator-and-ace"] = function() {
+      return {
+        initialize: function(api, state, callback) {
+          log('Initializing Add-In...');
+          aceApi = api;
+          callback();
+        },
+        focus: function(api, state) {
+          log('Refreshing vehicle list...');
+          aceApi = api;
+          api.call('Get', { typeName: 'Device', resultsLimit: 50 }, function(devices) {
+            lastResponseData = devices;
+            log('Loaded ' + devices.length + ' vehicles');
+            var list = document.getElementById('vehicle-list');
+            list.innerHTML = '';
+
+            devices.forEach(function(device) {
+              var row = document.createElement('div');
+              row.className = 'list-group-item';
+              row.style.cssText = 'display:flex; justify-content:space-between; align-items:center;';
+
+              // Vehicle name links to device detail page
+              var nameLink = document.createElement('a');
+              nameLink.href = '#';
+              nameLink.textContent = device.name;
+              nameLink.style.cssText = 'color:#2563eb; cursor:pointer; text-decoration:none; font-weight:500;';
+              nameLink.onclick = function(e) {
+                e.preventDefault();
+                log('Navigating to device detail: ' + device.id + ' (' + device.name + ')');
+                window.parent.location.hash = "device,id:" + device.id;
+              };
+
+              // Map button navigates to live map
+              var mapBtn = document.createElement('a');
+              mapBtn.href = '#';
+              mapBtn.innerHTML = 'Map &rarr;';
+              mapBtn.style.cssText = 'background:#0d6efd; color:white; padding:2px 10px; border-radius:4px; font-size:12px; text-decoration:none; cursor:pointer;';
+              mapBtn.onclick = function(e) {
+                e.preventDefault();
+                log('Navigating to map for: ' + device.id + ' (' + device.name + ')');
+                window.parent.location.hash = "map,liveVehicleIds:!(" + device.id + ")";
+              };
+
+              row.appendChild(nameLink);
+              row.appendChild(mapBtn);
+              list.appendChild(row);
+            });
+          }, function(err) {
+            log('Error loading vehicles: ' + err);
+            document.getElementById('vehicle-list').innerHTML = '<div style="color:red; padding:10px;">Error: ' + err + '</div>';
+          });
+        },
+        blur: function(api, state) {
+          log('Leaving page.');
+        }
+      };
+    };
+  </script>
+</body>
+</html>
