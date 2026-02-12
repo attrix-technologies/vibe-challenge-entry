@@ -1,0 +1,14 @@
+{
+  "_comment": "EXPECTED: FAIL on 'no <style> tags' — uses a <style> block instead of inline CSS",
+  "name": "Style Tag Addin",
+  "supportEmail": "https://github.com/fhoffa/geotab-vibe-guide",
+  "version": "1.0",
+  "items": [{
+    "url": "page.html",
+    "path": "ActivityLink",
+    "menuName": { "en": "Style Tag" }
+  }],
+  "files": {
+    "page.html": "<!DOCTYPE html><html><head><meta charset='utf-8'><style>.card{background:white;padding:20px;}</style></head><body><div class='card'>Content</div><div id='debug-toggle'><pre id='debug-log' style='display:none;'></pre></div><script>geotab.addin['style-tag']=function(){return{initialize:function(api,state,callback){callback();},focus:function(api,state){},blur:function(api,state){}};};</script></body></html>"
+  }
+}

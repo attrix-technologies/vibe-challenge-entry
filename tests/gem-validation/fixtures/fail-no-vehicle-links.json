@@ -1,0 +1,14 @@
+{
+  "_comment": "EXPECTED: FAIL on 'vehicle names are clickable links' — devices listed but no window.parent.location.hash",
+  "name": "Simple Vehicle Dashboard",
+  "supportEmail": "https://github.com/fhoffa/geotab-vibe-guide",
+  "version": "1.0",
+  "items": [{
+    "url": "page.html",
+    "path": "ActivityLink",
+    "menuName": { "en": "Vehicle Status" }
+  }],
+  "files": {
+    "page.html": "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body style='padding:20px;font-family:sans-serif;'><div id='vehicle-list'>Loading...</div><div id='debug-toggle' style='position:fixed;bottom:0;left:0;right:0;text-align:center;'><button onclick='var d=document.getElementById(\"debug-log\");d.style.display=d.style.display===\"none\"?\"block\":\"none\";' style='background:#e74c3c;color:#fff;border:none;padding:4px 16px;cursor:pointer;font-size:12px;'>Toggle Debug Log</button><pre id='debug-log' style='display:none;background:#1e1e1e;color:#0f0;padding:10px;margin:0;'></pre></div><script>function log(msg){document.getElementById('debug-log').innerHTML+='['+new Date().toLocaleTimeString()+'] '+msg+'\\n';}geotab.addin['simple-vehicle-dashboard']=function(){return{initialize:function(api,state,callback){callback();},focus:function(api,state){var container=document.getElementById('vehicle-list');api.call('Get',{typeName:'Device'},function(devices){container.innerHTML='';devices.forEach(function(device){var card=document.createElement('div');card.innerHTML='<strong>'+device.name+'</strong><br><small>ID: '+device.id+'</small>';container.appendChild(card);});},function(err){log('Error: '+err);});},blur:function(api,state){}};};</script></body></html>"
+  }
+}
