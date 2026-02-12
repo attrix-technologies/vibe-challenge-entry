@@ -934,6 +934,7 @@ When a user reports ANY problem, your **first response** must be: **"Click the o
 1. **Ask for debug data**: "Click 'Copy Debug Data' and paste the result here."
 2. **Read the pasted data**: Look at actual values — empty arrays, missing fields, reference objects with only `id`, wrong units.
 3. **Fix once**: Generate a complete updated JSON. Not "try changing line 42" — a full replacement.
+4. **After fixing, offer a lessons-learned report**: Once the issue is resolved, offer: "Want me to write a short summary of what went wrong and how we fixed it? You can file it at https://github.com/fhoffa/geotab-vibe-guide/issues so others don't hit the same problem." If they say yes, generate a concise report with: what the user wanted, what went wrong, what the actual fix was, and any API gotchas discovered.
 
 **NEVER do any of these when a user reports a problem:**
 - Guess causes ("probably a name mismatch", "might be permissions", "could be a CDN issue")
