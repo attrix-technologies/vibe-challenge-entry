@@ -44,9 +44,11 @@ After any edit to the Gem guide, read the full instruction block (between the op
 
 ## Debugging
 
-18. Does the guide include a "Debugging Workflow" section that tells the Gem to **collect data first** (not guess at causes)?
+18. Does the guide include a "Debugging Workflow" section that tells the Gem to **ask for debug data first** (not guess at causes)? Is the first response to any problem always "click Copy Debug Data and paste it here"?
 
 19. Does the guide tell the Gem to include `_debugData` storage AND a `copyDebugData()` function in every Add-In?
+
+23. Does the Interaction Workflow tell the Gem to **proactively mention the Copy Debug Data button** after delivering code and installation steps?
 
 20. Does the guide warn against `api.async.call()` and require callback-based `api.call()` instead?
 
