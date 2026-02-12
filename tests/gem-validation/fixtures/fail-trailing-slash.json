@@ -1,0 +1,14 @@
+{
+  "_comment": "EXPECTED: FAIL on 'path has no trailing slash' — path ends with /",
+  "name": "Trailing Slash",
+  "supportEmail": "https://github.com/fhoffa/geotab-vibe-guide",
+  "version": "1.0",
+  "items": [{
+    "url": "page.html",
+    "path": "ActivityLink/",
+    "menuName": { "en": "Trailing Slash" }
+  }],
+  "files": {
+    "page.html": "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body style='padding:20px;'><h1>Hello</h1><div id='debug-toggle'><pre id='debug-log' style='display:none;'></pre></div><script>geotab.addin['trailing-slash']=function(){return{initialize:function(api,state,callback){callback();},focus:function(api,state){},blur:function(api,state){}};};</script></body></html>"
+  }
+}

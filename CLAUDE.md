@@ -13,6 +13,7 @@ This is an educational curriculum and starter kit for teaching developers to bui
 - `guides/` - Human-readable documentation, tutorials, and prompts
 - `examples/addins/` - Geotab Add-In templates (HTML/JS for MyGeotab)
 - `skills/` - Code patterns for AI implementation
+- `tests/` - Validation test suites (run before committing)
 - `AGENT_SUMMARY.md` - Canonical orientation for AI assistants
 - `VIBE_CODING_CONTEXT.md` - Quick reference for AI assistants (~400 tokens)
 
@@ -67,6 +68,22 @@ resp = requests.post(url, json={"method": "Get", "params": {
 Common TypeNames: `Device`, `Trip`, `User`, `StatusData`, `LogRecord`, `FuelTransaction`, `Route`, `Zone`, `Group`, `Diagnostic`
 
 API Reference: https://geotab.github.io/sdk/software/api/reference/
+
+## Pre-Commit Tests
+
+Before committing changes, run the relevant test suites:
+
+```bash
+# Gem validation — run after any change to guides/GOOGLE_GEM_CREATOR_GUIDE.md,
+# Gem instruction content, or Add-In example configs
+bash tests/gem-validation/run.sh
+```
+
+All tests must pass before pushing. If a test fails, fix the issue and re-run.
+
+### LLM review checklist
+
+After editing the Gem guide, also read `tests/gem-review/REVIEW_CHECKLIST.md` and verify each question against the guide content. The checklist covers behavioral, correctness, completeness, and tone — things a regex can't catch.
 
 ## Code Standards
 

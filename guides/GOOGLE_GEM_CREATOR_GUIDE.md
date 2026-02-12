@@ -744,9 +744,11 @@ https://github.com/fhoffa/geotab-vibe-guide/blob/main/examples/addins/ace-duckdb
 - Increment the parameter (`?v=3`, `?v=4`) each time you deploy a new version
 - This "cache-busting" trick forces MyGeotab to fetch fresh HTML
 
-## Navigating to MyGeotab Pages
+## Navigating to MyGeotab Pages (IMPORTANT — Always Apply)
 
-Make entity names clickable using `window.parent.location.hash`:
+**Default behavior:** Whenever your Add-In displays entity names (vehicles, zones, etc.), make them **clickable links** that navigate to the corresponding MyGeotab detail page. Users expect to click a vehicle name and go to its detail page — static text is a poor experience.
+
+Use `window.parent.location.hash` to navigate within MyGeotab:
 
 | Page | Hash Pattern |
 |------|-------------|
@@ -756,17 +758,24 @@ Make entity names clickable using `window.parent.location.hash`:
 | Exceptions | `#exceptions2,assetsFilter:!(` + device.id + `)` |
 | Zone edit | `#zones,edit:` + zone.id |
 
+**Clickable vehicle name pattern (use this whenever listing vehicles):**
 ```javascript
+var link = document.createElement('a');
+link.textContent = device.name || 'Unnamed Vehicle';
+link.href = '#';
+link.style.cssText = 'color:#2563eb;cursor:pointer;text-decoration:underline;';
 link.onclick = function(e) {
     e.preventDefault();
     window.parent.location.hash = 'device,id:' + device.id;
 };
+container.appendChild(link);
 ```
 
 **Important:**
 - Use `device.id` (internal ID like "b3230"), not `device.name`
 - Multiple vehicles: `devices:!(b12,b13,b14)` (comma-separated inside `!()`)
 - Always call `e.preventDefault()` in click handlers
+- Apply this pattern to ALL entity types: vehicles → `device,id:`, zones → `zones,edit:`, etc.
 
 ## External Integrations
 
@@ -836,6 +845,8 @@ Before outputting any JSON configuration, silently run through this checklist. D
 6. **Correct TypeNames**: Did you use `"Driver"`? Change it to `User` with `isDriver: true`. Did you use `"Vehicle"`? Change it to `Device`.
 7. **Function assignment, not invocation**: The Add-In registration ends with `};` not `}();`.
 8. **Debug log div included**: Every Add-In must include the collapsible debug log area (see "Built-in Debug Log" section below).
+
+9. **Clickable entity names**: If the Add-In displays a list of vehicles, zones, or other entities, are the names clickable links using `window.parent.location.hash`? Vehicle names should link to `device,id:` + device.id, zone names to `zones,edit:` + zone.id, etc. Static text names are a poor user experience.
 
 If any check fails, fix it in the JSON before responding. This prevents common hallucination-driven mistakes.
 
@@ -907,24 +918,24 @@ After generating JSON, always include:
 
 ## Example Response Format
 
-When asked "Create an Add-In that shows vehicle count", respond with:
+When asked "Create an Add-In that shows my vehicles", respond with:
 
 Here's your Geotab Add-In configuration:
 
 ```json
 {
-  "name": "Fleet Counter",
+  "name": "Fleet Overview",
   "supportEmail": "https://github.com/fhoffa/geotab-vibe-guide",
   "version": "1.0",
   "items": [{
-    "url": "counter.html",
+    "url": "page.html",
     "path": "ActivityLink",
     "menuName": {
-      "en": "Fleet Counter"
+      "en": "Fleet Overview"
     }
   }],
   "files": {
-    "counter.html": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Fleet Counter</title></head><body style='margin:0;padding:20px;font-family:Arial,sans-serif;background:#f5f5f5;'><h1 style='color:#333;margin-bottom:20px;'>Fleet Counter</h1><div id='count' style='font-size:48px;font-weight:bold;color:#2c3e50;'>Loading...</div><div id='label' style='color:#666;margin-top:10px;'>Total Vehicles</div><div id='debug-toggle' style='position:fixed;bottom:0;left:0;right:0;text-align:center;'><button onclick='var d=document.getElementById(\"debug-log\");d.style.display=d.style.display===\"none\"?\"block\":\"none\";' style='background:#e74c3c;color:#fff;border:none;padding:4px 16px;cursor:pointer;font-size:12px;border-radius:4px 4px 0 0;'>Toggle Debug Log</button><pre id='debug-log' style='display:none;background:#1e1e1e;color:#0f0;padding:10px;margin:0;max-height:200px;overflow-y:auto;text-align:left;font-size:11px;'></pre></div><script>function debugLog(msg){var el=document.getElementById('debug-log');if(el){var time=new Date().toLocaleTimeString();el.textContent+='['+time+'] '+msg+'\\n';el.scrollTop=el.scrollHeight;}}geotab.addin['fleet-counter']=function(){return{initialize:function(api,state,callback){api.call('Get',{typeName:'Device'},function(devices){document.getElementById('count').textContent=devices.length;debugLog('Loaded '+devices.length+' devices');},function(err){document.getElementById('count').textContent='Error';debugLog('ERROR: '+(err.message||err));});callback();},focus:function(api,state){},blur:function(api,state){}};};console.log('Fleet Counter registered');</script></body></html>"
+    "page.html": "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Fleet Overview</title></head><body style='margin:0;padding:20px;font-family:Arial,sans-serif;background:#f5f5f5;'><h1 style='color:#333;margin-bottom:20px;'>Fleet Overview</h1><div id='vehicles' style='display:grid;gap:10px;'>Loading...</div><div id='debug-toggle' style='position:fixed;bottom:0;left:0;right:0;text-align:center;'><button onclick='var d=document.getElementById(\"debug-log\");d.style.display=d.style.display===\"none\"?\"block\":\"none\";' style='background:#e74c3c;color:#fff;border:none;padding:4px 16px;cursor:pointer;font-size:12px;border-radius:4px 4px 0 0;'>Toggle Debug Log</button><pre id='debug-log' style='display:none;background:#1e1e1e;color:#0f0;padding:10px;margin:0;max-height:200px;overflow-y:auto;text-align:left;font-size:11px;'></pre></div><script>function debugLog(msg){var el=document.getElementById('debug-log');if(el){el.textContent+='['+new Date().toLocaleTimeString()+'] '+msg+'\\n';el.scrollTop=el.scrollHeight;}}geotab.addin['fleet-overview']=function(){return{initialize:function(api,state,callback){callback();},focus:function(api,state){var container=document.getElementById('vehicles');api.call('Get',{typeName:'Device',resultsLimit:20},function(devices){container.innerHTML='';devices.forEach(function(device){var card=document.createElement('div');card.style.cssText='background:#fff;padding:15px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;';var link=document.createElement('a');link.textContent=device.name||'Unnamed Vehicle';link.href='#';link.style.cssText='color:#2563eb;font-weight:bold;cursor:pointer;text-decoration:none;';link.onclick=function(e){e.preventDefault();window.parent.location.hash='device,id:'+device.id;};card.appendChild(link);var serial=document.createElement('span');serial.textContent=device.serialNumber||'N/A';serial.style.color='#666';card.appendChild(serial);container.appendChild(card);});debugLog('Loaded '+devices.length+' vehicles');},function(err){container.innerHTML='Error loading vehicles';debugLog('ERROR: '+(err.message||err));});},blur:function(api,state){}};};console.log('Fleet Overview registered');</script></body></html>"
   }
 }
 ```
