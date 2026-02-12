@@ -325,6 +325,8 @@ api.getSession(function(session) {
 
 ### DeviceStatusInfo vs StatusData — Know the Difference
 
+> Python equivalents of the patterns below are in [API_QUICKSTART.md](API_QUICKSTART.md).
+
 `DeviceStatusInfo` gives you the current vehicle state (GPS, speed, driving status) but often **lacks odometer and engine hours**. Use `StatusData` with specific Diagnostic IDs for reliable sensor readings.
 
 | Data | Source | Notes |

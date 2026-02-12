@@ -96,284 +96,34 @@ initialize: function(api, state, callback) {
 - Visible even without DevTools open
 - Useful for mobile testing
 
-## API Call Style: Always Use Callbacks (Not api.async)
+## API Data Gotchas (Quick Reference)
 
-The Geotab API object injected into Add-Ins supports two calling styles, but only one works reliably everywhere:
+These are the most common data-related bugs. Full code patterns and examples live in the references linked below — this section is a quick reminder of what to watch for.
 
-```javascript
-// ✅ CORRECT — callback-based, works in ALL environments
-api.call('Get', { typeName: 'Device' }, function(devices) {
-    // success
-}, function(err) {
-    // error
-});
+| Gotcha | What goes wrong | Where to find the fix |
+|--------|----------------|----------------------|
+| `api.async` undefined | Crashes in some MyGeotab versions | [ADDINS.md — API Calling Conventions](ADDINS.md) |
+| `this` in event handlers | `this` becomes the button element, not your object | [ADDINS.md — Common Pitfalls](ADDINS.md) |
+| `DeviceStatusInfo` missing odometer | Returns 0 — use `StatusData` + `DiagnosticOdometerId` instead | [ADDINS.md — DeviceStatusInfo vs StatusData](ADDINS.md) |
+| Unit conversions | Odometer is meters, engine hours is seconds — values look absurdly large | [ADDINS.md — Unit Conversions](ADDINS.md) |
+| Reference objects have only `id` | `exception.device.name` is undefined — build lookup maps | [ADDINS.md — Reference Objects](ADDINS.md) |
+| ExceptionEvent has no GPS | Query `LogRecord` for coordinates during the event's time range | [ADDINS.md — Reference Objects](ADDINS.md) |
 
-// ❌ WRONG — api.async may be undefined in some MyGeotab environments
-api.async.call('Get', { typeName: 'Device' }).then(function(devices) {
-    // This crashes with: Cannot read properties of undefined (reading 'call')
-});
-```
+For Python equivalents of these patterns, see [API_QUICKSTART.md](API_QUICKSTART.md).
 
-**Why:** `api.async` is a newer convenience wrapper that isn't available in all MyGeotab versions. The callback-based `api.call(method, params, successCb, errorCb)` is the universal, battle-tested pattern.
+## Common Add-In Mistakes (Quick Reference)
 
-**For multiple parallel calls**, nest callbacks or use `api.multiCall`:
-```javascript
-// Option A: Nested callbacks
-api.call('Get', { typeName: 'Device' }, function(devices) {
-    api.call('Get', { typeName: 'DeviceStatusInfo' }, function(statuses) {
-        // Both datasets available here
-    });
-});
+These are covered in detail (with full code examples) in [ADDINS.md — Critical Mistakes to Avoid](ADDINS.md). Summary for quick diagnosis:
 
-// Option B: multiCall (preferred for independent calls)
-api.multiCall([
-    ['Get', { typeName: 'Device' }],
-    ['Get', { typeName: 'DeviceStatusInfo' }]
-], function(results) {
-    var devices = results[0];
-    var statuses = results[1];
-});
-```
-
-## The `this` Keyword Trap in Add-Ins
-
-A common crash pattern: defining functions as methods on the return object and calling them with `this` from event handlers or callbacks.
-
-```javascript
-// ❌ WRONG — `this` changes context in event handler
-geotab.addin['my-addin'] = function() {
-    return {
-        initialize: function(api, state, callback) {
-            document.getElementById('btn').onclick = function() {
-                this.run(api);  // ERROR: `this` is now the button element!
-            };
-            this.run(api);
-            callback();
-        },
-        run: function(api) { /* ... */ }
-    };
-};
-
-// ✅ CORRECT — define functions as closure variables
-geotab.addin['my-addin'] = function() {
-    var run = function(api) { /* ... */ };
-
-    return {
-        initialize: function(api, state, callback) {
-            document.getElementById('btn').onclick = function() {
-                run(api);  // Works — `run` is in closure scope
-            };
-            run(api);
-            callback();
-        }
-    };
-};
-```
-
-**Rule:** Define your Add-In's internal functions as `var` declarations inside the outer function scope, not as methods on the return object. Pass `api` as a parameter.
-
-## DeviceStatusInfo — Missing Odometer and Engine Hours
-
-`DeviceStatusInfo` returns current vehicle state (GPS, speed, driving status, exception events) but often does NOT include odometer or engine hours. In many Geotab environments, these fields are missing entirely from the response object.
-
-**Real-world example:** A user built a Fleet Replacement dashboard using `DeviceStatusInfo` for odometer data. Every vehicle showed 0 miles because the `odometer` field was absent from the response. The actual odometer data lived in `StatusData` with `DiagnosticOdometerId`.
-
-```javascript
-// ❌ UNRELIABLE — odometer may be missing from DeviceStatusInfo
-api.call('Get', { typeName: 'DeviceStatusInfo' }, function(statuses) {
-    statuses.forEach(function(s) {
-        var miles = (s.odometer || 0) / 1609.34;  // Usually 0!
-    });
-});
-
-// ✅ RELIABLE — query StatusData for odometer and engine hours
-api.call('Get', {
-    typeName: 'StatusData',
-    search: { diagnosticSearch: { id: 'DiagnosticOdometerId' }, latestOnly: true }
-}, function(odoData) {
-    // Find the reading for a specific device
-    var entry = odoData.find(function(o) { return o.device.id === deviceId; });
-    var miles = entry ? Math.round(entry.data / 1609.34) : 0;
-}, errorCallback);
-
-// Same for engine hours
-api.call('Get', {
-    typeName: 'StatusData',
-    search: { diagnosticSearch: { id: 'DiagnosticEngineHoursId' }, latestOnly: true }
-}, function(hourData) {
-    var entry = hourData.find(function(h) { return h.device.id === deviceId; });
-    var hours = entry ? Math.round(entry.data / 3600) : 0;  // Seconds to hours!
-}, errorCallback);
-```
-
-**Use DeviceStatusInfo for:** GPS position, speed, driving status, bearing, exception events, device communication status.
-
-**Use StatusData for:** Odometer, engine hours, fuel level, battery voltage, and any specific diagnostic readings.
-
-## StatusData Unit Conversions (Critical!)
-
-StatusData values from the Geotab API use SI/metric base units. Without conversion, values look absurdly large or nonsensical.
-
-| Diagnostic | Raw Unit | To Miles | To Hours | To km/h |
-|------------|----------|----------|----------|---------|
-| `DiagnosticOdometerId` | **meters** | ÷ 1609.34 | — | ÷ 1000 (km) |
-| `DiagnosticEngineHoursId` | **seconds** | — | ÷ 3600 | — |
-| `DiagnosticSpeedId` | **km/h** | × 0.621371 (mph) | — | (already km/h) |
-| Trip `.distance` | **kilometers** | × 0.621371 | — | (already km) |
-
-**Real-world example:** An odometer reading of `193,297,400` is meters, not miles. That's `193,297,400 / 1609.34 ≈ 120,109 miles`. Engine hours of `12,891,600` is seconds, which is `12,891,600 / 3600 ≈ 3,581 hours`.
-
-```javascript
-// Convert StatusData odometer (meters) to miles
-var miles = Math.round(odoEntry.data / 1609.34);
-
-// Convert StatusData engine hours (seconds) to hours
-var hours = Math.round(hourEntry.data / 3600);
-```
-
-## Common Mistakes
-
-### 1. Forgetting to Call callback()
-
-**Problem:** Add-In hangs during initialization
-
-```javascript
-// Wrong - callback never called
-initialize: function(api, state, callback) {
-    loadData(api);
-    // Missing callback()!
-}
-
-// Correct
-initialize: function(api, state, callback) {
-    loadData(api);
-    callback();
-}
-
-// Also correct - call after async work
-initialize: function(api, state, callback) {
-    api.call("Get", {typeName: "Device"}, function(devices) {
-        displayDevices(devices);
-        callback();  // Called when async work completes
-    });
-}
-```
-
-### 2. Not Handling Errors
-
-**Problem:** API calls fail silently
-
-```javascript
-// No error handling
-api.call("Get", {typeName: "Device"}, function(devices) {
-    displayDevices(devices);
-});
-
-// With error handling
-api.call("Get", {typeName: "Device"},
-    function(devices) {
-        displayDevices(devices);
-    },
-    function(error) {
-        console.error("Failed to load devices:", error);
-        showErrorMessage("Could not load vehicles. Please try again.");
-    }
-);
-```
-
-### 3. Using Immediate Invocation
-
-**Problem:** Using `}();` instead of `};` when registering
-
-```javascript
-// Wrong - invokes the function immediately
-geotab.addin["name"] = function() { return {...}; }();
-
-// Correct - assigns the function for MyGeotab to call
-geotab.addin["name"] = function() { return {...}; };
-```
-
-### 4. Undeclared Variables
-
-**Problem:** Forgetting `const`, `let`, or `var` creates implicit globals
-
-```javascript
-// Wrong - implicit global
-devices = [];
-
-// Correct - properly declared
-const devices = [];
-```
-
-### 5. Variable Name Collisions with 'state'
-
-**Problem:** Using `state` as both parameter AND global variable
-
-```javascript
-// Wrong - 'state' parameter collides with global
-var state = { data: [] };
-
-geotab.addin["name"] = function() {
-    return {
-        initialize: function(api, state, callback) {
-            // Which 'state'? Confusion!
-            state.data = [];  // Modifies parameter, not your variable!
-            callback();
-        }
-    };
-};
-
-// Correct - use different names
-var appState = { data: [] };
-
-geotab.addin["name"] = function() {
-    return {
-        initialize: function(api, pageState, callback) {
-            // Clear: appState is yours, pageState is from MyGeotab
-            appState.data = [];
-            callback();
-        }
-    };
-};
-```
-
-### 6. Using resultsLimit for Counting
-
-**Problem:** Only getting partial count
-
-```javascript
-// Wrong - only returns up to 100
-api.call("Get", {
-    typeName: "Device",
-    resultsLimit: 100
-}, function(devices) {
-    // devices.length will be at most 100!
-});
-
-// Correct - returns all for accurate count
-api.call("Get", {
-    typeName: "Device"
-}, function(devices) {
-    console.log("Total vehicles: " + devices.length);
-});
-```
-
-### 7. Using typeName: "Driver" Directly
-
-**Problem:** Causes InvalidCastException in many databases
-
-```javascript
-// Wrong - causes errors in many databases
-api.call("Get", {typeName: "Driver"}, ...);
-
-// Correct - always works
-api.call("Get", {
-    typeName: "User",
-    search: { isDriver: true }
-}, function(drivers) {
-    console.log("Total drivers: " + drivers.length);
-});
-```
+| Symptom | Likely cause |
+|---------|-------------|
+| Add-In hangs on load | Missing `callback()` in `initialize` |
+| API calls fail silently | No error callback — always pass the 4th argument to `api.call` |
+| Add-In doesn't register | Using `}();` (immediate invocation) instead of `};` |
+| Unexpected variable values | Implicit globals — forgot `var`/`let`/`const` |
+| `state` behaves oddly | Your variable shadows the `initialize(api, state, callback)` parameter — rename yours to `appState` |
+| Device count capped at 100 | Using `resultsLimit` when you meant to count all — omit it |
+| `InvalidCastException` on drivers | Using `typeName: "Driver"` — use `User` with `search: { isDriver: true }` |
 
 ## GitHub Pages Issues
 
