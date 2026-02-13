@@ -38,6 +38,8 @@ Then use [**CLAUDE PROMPTS**](./guides/CLAUDE_PROMPTS.md) for ready-made prompts
 
 [**ANTIGRAVITY QUICKSTART**](./guides/ANTIGRAVITY_QUICKSTART.md) - Use Google's free IDE to build interactive dashboards.
 
+[**GOOGLE TOOLS GUIDE**](./guides/GOOGLE_TOOLS_GUIDE.md) - Overview of all Google vibe coding tools: Gemini Canvas, AI Studio, Firebase Studio, Gemini CLI, and Project Astra.
+
 ---
 
 ### Path D: Advanced Add-In Development
@@ -96,6 +98,7 @@ If you're an AI coding assistant, start with:
     *   [`HACKATHON_IDEAS.md`](./guides/HACKATHON_IDEAS.md)
     *   [`TUTORIAL_DESIGN.md`](./guides/TUTORIAL_DESIGN.md)
     *   [`GEOTAB_ADDINS.md`](./guides/GEOTAB_ADDINS.md) - Advanced Add-In development
+    *   [`GOOGLE_TOOLS_GUIDE.md`](./guides/GOOGLE_TOOLS_GUIDE.md) - Google's vibe coding tools spectrum
 *   [**`GEOTAB_OVERVIEW.md`**](./GEOTAB_OVERVIEW.md): Read this if you want to understand *what* Geotab actually does.
 
 ---
