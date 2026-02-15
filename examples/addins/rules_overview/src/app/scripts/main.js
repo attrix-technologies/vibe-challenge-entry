@@ -54,11 +54,10 @@ geotab.addin.rulesOverview = function (api, state, meta) {
      * @param {object} freshState - The page state object allows access to URL, page navigation and global group filter.
     */
     focus: function (freshApi, freshState) {
-
         elAddin.className = elAddin.className.replace('hidden', '').trim();
         freshApi.getSession(session => {
           freshState.currentSession = session
-          reactRoot.render(<App geotabApi={freshApi} geotabState={freshState} appName={appName} addinId={addinId} />);
+          reactRoot.render(<App geotabApi={freshApi} geotabState={freshState} appName={appName} addinId={addinId} language={freshState.language || 'en'} />);
         })
 
       // show main content

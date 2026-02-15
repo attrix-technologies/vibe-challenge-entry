@@ -94,4 +94,6 @@ When writing code examples or snippets:
 
 ## Add-in preferences
 
-When tasked to create an add-in, prefer using a complete node.js project with all files and dependencies over a single HTML file - like the Runner Demo add-in in `examples/addins/runner_demo/`. This setup allows for local testing and debugging before building for deployment. 
+When tasked to create an add-in, prefer using a complete node.js project with all files and dependencies over a single HTML file - like the Runner Demo add-in in `examples/addins/runner_demo/`. This setup allows for local testing and debugging before building for deployment.
+
+For React/Zenith add-ins, always wrap the component tree with `<LanguageProvider language={language}>` from `@geotab/zenith` and pass `language={freshState.language || 'en'}` from `main.js`. This ensures Zenith component labels display in the user's language.

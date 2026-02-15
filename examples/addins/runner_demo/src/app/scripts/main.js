@@ -59,7 +59,8 @@ geotab.addin.runnerDemo = function (api, state, meta) {
         freshApi.getSession(session => {
           freshState.currentSession = session;
           console.log('addin focus', freshState);
-          reactRoot.render(<App geotabApi={freshApi} geotabState={freshState} appName={appName} addinId={addinId} />);
+          console.log(freshState.language);
+          reactRoot.render(<App geotabApi={freshApi} geotabState={freshState} appName={appName} addinId={addinId} language={freshState.language || 'en'} />);
         });
       
       // show main content

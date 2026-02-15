@@ -4,7 +4,10 @@
       "mcp__auggie__codebase-retrieval",
       "Bash(npm install:*)",
       "Bash(npx webpack:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:developers.geotab.com)",
+      "WebSearch",
+      "Bash(ls:*)"
     ]
   }
 }

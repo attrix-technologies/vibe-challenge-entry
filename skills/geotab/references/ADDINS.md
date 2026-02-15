@@ -163,6 +163,24 @@ initialize: function(api, state, callback) {
 
 MyGeotab handles `menuName` translations automatically. For external add-ins, your JavaScript handles UI labels via `state.translate`, and you should include translations/<lang>.json files that return an object with key/value pairs for each string to be translated. The key can be the default (English) string or a dereferenced key (in which case there should be an entry in the translations/en.json file).
 
+#### React/Zenith Add-Ins: LanguageProvider
+
+For React add-ins using Zenith components, wrap your component tree with `<LanguageProvider>` so Zenith's built-in labels (table headers, button text, etc.) update to the user's language:
+
+```jsx
+import { LanguageProvider } from '@geotab/zenith';
+
+const App = ({ language }) => (
+  <LanguageProvider language={language}>
+    <YourComponents />
+  </LanguageProvider>
+);
+```
+
+Pass `language={freshState.language || 'en'}` from `main.js` when rendering `<App>`. In production MyGeotab, `state.language` is set automatically. In the dev runner, the language dropdown sets `state.language` and calls `focus()` to re-render the React tree without a full page reload.
+
+**Note:** Zenith expects BCP 47 mixed-case tags (e.g., `zh-Hans`, not `zh-hans`).
+
 ### Filtering Devices by Group
 
 Large fleets can have thousands of vehicles. Add a group dropdown to let users narrow the list:
@@ -940,6 +958,7 @@ Here's my current vanilla JS add-in:
 
 **Zenith Gotchas We Discovered:**
 - `FeedbackProvider` wrapper required for `Alert` components
+- `LanguageProvider` wrapper required for Zenith components to display in the user's language (use `zh-Hans`, not `zh-hans`)
 - Zenith `Table` component has issues with custom render functions -> use HTML table with Zenith styling instead
 - Component names differ: `TextInput` (not TextField), `Waiting` (not Spinner)
 - Large bundle includes all fonts even if unused

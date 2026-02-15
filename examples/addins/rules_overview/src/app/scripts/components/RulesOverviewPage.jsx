@@ -99,10 +99,10 @@ const RulesOverviewPage = () => {
     return (
       <div>
         <Header>
-          <Header.Title pageName="Rules Overview"></Header.Title>
+          <Header.Title pageName={geotabState.translate('Rules Overview')}></Header.Title>
         </Header>
         <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
-          Loading rules and exceptions...
+          {geotabState.translate('Loading rules and exceptions...')}
         </div>
       </div>
     );
@@ -112,7 +112,7 @@ const RulesOverviewPage = () => {
     return (
       <div>
         <Header>
-          <Header.Title pageName="Rules Overview"></Header.Title>
+          <Header.Title pageName={geotabState.translate('Rules Overview')}></Header.Title>
         </Header>
         <div style={{ padding: '2rem', textAlign: 'center', color: '#dc2626' }}>
           {error}
@@ -124,15 +124,15 @@ const RulesOverviewPage = () => {
   return (
     <div>
       <Header>
-        <Header.Title pageName="Rules Overview"></Header.Title>
+        <Header.Title pageName={geotabState.translate('Rules Overview')}></Header.Title>
       </Header>
       <div style={{ padding: '1rem' }}>
         <table className="rules-table">
           <thead>
             <tr>
-              <th style={{ textAlign: 'left', padding: '0.5rem 1rem' }}>Rule</th>
-              <th style={{ textAlign: 'center', padding: '0.5rem 1rem' }}>Trend (4 weeks)</th>
-              <th style={{ textAlign: 'right', padding: '0.5rem 1rem' }}>Exceptions</th>
+              <th style={{ textAlign: 'left', padding: '0.5rem 1rem' }}>{geotabState.translate('Rule')}</th>
+              <th style={{ textAlign: 'center', padding: '0.5rem 1rem' }}>{geotabState.translate('Trend (4 weeks)')}</th>
+              <th style={{ textAlign: 'right', padding: '0.5rem 1rem' }}>{geotabState.translate('Exceptions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -168,7 +168,7 @@ const RulesOverviewPage = () => {
         </table>
         {rules.length === 0 && (
           <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
-            No enabled rules found.
+            {geotabState.translate('No enabled rules found.')}
           </div>
         )}
       </div>

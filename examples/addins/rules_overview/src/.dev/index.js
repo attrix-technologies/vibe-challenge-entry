@@ -17,9 +17,10 @@
 // Global object is used to simulate the api, state, and geotab objects
 global.api
 global.state = require('./state');
+global.state.language = localStorage.language || 'en';
 global.geotab = {
-    addin: {}, 
-    customButtons: {}, 
+    addin: {},
+    customButtons: {},
     isDriveAddin: false
 }
 // Importing the app rules -> Where addin will be described
@@ -44,11 +45,16 @@ global.translator = new Translator('#rulesOverview', language);
 
 // Global Translate function
 global.state.translate = function(target, language) {
-    
+
     // First translation from initialize doesn't pass a language in. Will cause problems is language is undefined
     if (typeof language !== 'undefined'){
         localStorage.language = language;
-        location.reload();
+        global.state.language = language;
+        // Re-render the React tree via focus() instead of full page reload
+        var name = Object.keys(geotab.addin)[0];
+        if (name && geotab.addin[name].focus) {
+            geotab.addin[name].focus(global.api, global.state);
+        }
     }
 
     // Primary behaviour passes HTMLElement, but function needs to support string translation as well

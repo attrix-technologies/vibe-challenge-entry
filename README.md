@@ -14,6 +14,10 @@
 
 > I think the problem is elsewhere, it does call focus again, but it doesn't trigger a new call to getDevices (which uses the current groupfilter). I think it's something to change with react's useState usage here.
 
+> You'll see in the top bar of the add-in runner that there is a language dropdown. This used to be practical to test our translations in older add-ins, but now with Zenith and the new translation files with state.translate, it doesn't work (it relied on localStorage properties that don't exist in production, whereas we usually depend on user.language. In Zenith, the components should be wrapped in a LanguageProvider that should be set from the user.language property. Make sure to add this to both Zenith examples as best practice, but also: 1. Update  the ADDINS skill to mention this for external add-ins, maybe update the Zenith docs if they don't already mention this, and update Claude.md to make sure you know to include this in all future external add-ins. What's important to me is that it can also work with the runner's language bar - so in production, use the current user's language, but in the local runner for   testing, proritize using the selected language. Make sure changing the language applies the changes dynamically. Zenith lang ref: https://developers.geotab.com/zenith-storybook/?path=/docs/application-language-and-date-format--docs
+
+> Nicely done, now apply needed/missing translations to both external add-in examples. Make sure fr.json is populated with all required keys and values.
+
 ## Authors
 
 This repo was initially forked from [https://github.com/fhoffa/geotab-vibe-guide](https://github.com/fhoffa/geotab-vibe-guide) created by [Felipe Hoffa](https://www.linkedin.com/in/hoffa/). 

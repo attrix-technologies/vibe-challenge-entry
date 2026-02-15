@@ -107,6 +107,9 @@ That's it. The AI will:
 
 Things the AI might get wrong (and how to fix):
 
+**Zenith components show English even when language is set**
+Tell AI: "Wrap the component tree with LanguageProvider from @geotab/zenith"
+
 **"FeedbackProvider is not initialized"**
 Tell AI: "Wrap the component with FeedbackProvider for Alert to work"
 

@@ -35,25 +35,25 @@ const DevicesPage = () => {
 
   const columns = useMemo(() => [{
     id: "col1",
-    title: "Name",
+    title: geotabState.translate('Name'),
     meta: {
       defaultWidth: 200
     }
   }, {
     id: "col2",
-    title: "Serial Number",
+    title: geotabState.translate('Serial Number'),
     meta: {
       defaultWidth: 200
     }
   }, {
     id: "col3",
-    title: "License Plate",
+    title: geotabState.translate('License Plate'),
     meta: {
       defaultWidth: 200
     }
   }, {
     id: "col4",
-    title: "Asset Type",
+    title: geotabState.translate('Asset Type'),
     meta: {
       defaultWidth: 200
     }
@@ -64,23 +64,23 @@ const DevicesPage = () => {
     return {
       id: index.toString(),
       col1: device.name,
-      col2: device.serialNumber ? device.serialNumber : "############",
-      col3: device.licensePlate ? device.licensePlate : "############",
-      col4: device.deviceType
+      col2: device.serialNumber ? device.serialNumber : "N/A",
+      col3: device.licensePlate ? device.licensePlate : "N/A",
+      col4: device.deviceType ? device.deviceType : geotabState.translate("Unknown")
     }
   }), [devices]);
 
   return (
     <div>
       <Header>
-        <Header.Title pageName='Assets'></Header.Title>
-        <Header.Menu id="menu1" name="Links" icon={IconLink2} type={ButtonType.Secondary} >
-          <Menu.Item id="item1" name="Assets" icon={IconPackage2} link='#devices,sortMode:byName' />
-          <Menu.Item id="item2" name="Map" icon={IconLocationMap} link='#map,liveVehicleIds:all' />
+        <Header.Title pageName={geotabState.translate('Assets')}></Header.Title>
+        <Header.Menu id="menu1" name={geotabState.translate('Links')} icon={IconLink2} type={ButtonType.Secondary} >
+          <Menu.Item id="item1" name={geotabState.translate('Assets')} icon={IconPackage2} link='#devices,sortMode:byName' />
+          <Menu.Item id="item2" name={geotabState.translate('Map')} icon={IconLocationMap} link='#map,liveVehicleIds:all' />
         </Header.Menu>
       </Header>
       <div style={{ height: "500px" }}>
-        <Table description="Fleet Assets" columns={columns} entities={entities}></Table>
+        <Table description={geotabState.translate('Fleet Assets')} columns={columns} entities={entities}></Table>
       </div>
     </div >
   );

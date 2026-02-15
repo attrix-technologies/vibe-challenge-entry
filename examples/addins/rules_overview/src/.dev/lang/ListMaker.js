@@ -12,7 +12,7 @@ class ListMaker {
             'pl':'Polski',
             'pt-BR':'Português (Brasil)',
             'ja':'日本語',
-            'zh-hans':'简体中文'
+            'zh-Hans':'简体中文'
         };
     }
 

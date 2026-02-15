@@ -30,6 +30,26 @@ npm install @geotab/zenith
 import '@geotab/zenith/dist/index.css';
 ```
 
+## Localization with LanguageProvider
+
+Wrap your React tree with `<LanguageProvider>` so Zenith components display labels in the user's language:
+
+```jsx
+import { LanguageProvider } from '@geotab/zenith';
+
+const App = ({ language }) => (
+  <LanguageProvider language={language}>
+    <GeotabContext.Provider value={[context]}>
+      <YourPage />
+    </GeotabContext.Provider>
+  </LanguageProvider>
+);
+```
+
+Pass `language={freshState.language || 'en'}` from `main.js`. In production, `state.language` is set by MyGeotab. In the dev runner, the language dropdown updates `state.language` and calls `focus()` to re-render dynamically.
+
+**Important:** Use BCP 47 mixed-case language tags (`zh-Hans`, not `zh-hans`).
+
 ## Component Hierarchy
 
 Zenith organizes components into four levels:
@@ -294,6 +314,25 @@ import '@geotab/zenith/dist/index.css';
 
 // CORRECT
 {loading ? <Waiting /> : data.map(item => <Row item={item} />)}
+```
+
+### Missing LanguageProvider for Localization
+```jsx
+// WRONG - Zenith components always show English labels
+function App() {
+  return <Table columns={columns} data={data} />;
+}
+
+// CORRECT - wrap with LanguageProvider
+import { LanguageProvider } from '@geotab/zenith';
+
+function App({ language }) {
+  return (
+    <LanguageProvider language={language}>
+      <Table columns={columns} data={data} />
+    </LanguageProvider>
+  );
+}
 ```
 
 ### Missing FeedbackProvider for Alerts
