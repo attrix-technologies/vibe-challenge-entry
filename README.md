@@ -18,6 +18,12 @@
 
 > Nicely done, now apply needed/missing translations to both external add-in examples. Make sure fr.json is populated with all required keys and values.
 
+> Now I have a good basis for a vanilla React/Zenith translated add-in that works in the runner, but I'd like you to fix the UI for the group filter. This is what it looks like when I'm picking groups, not very readable. Not very "Zenith"-y. [image1] In contrast, when I select to use the Advanced Group Filter, that has a nice Zenith experience: [image2] Please just make it more readable, increase z-index, add padding, background-color, etc. 
+
+> Just fix the broken chevron icons and we're good.
+
+
+
 ## Authors
 
 This repo was initially forked from [https://github.com/fhoffa/geotab-vibe-guide](https://github.com/fhoffa/geotab-vibe-guide) created by [Felipe Hoffa](https://www.linkedin.com/in/hoffa/). 

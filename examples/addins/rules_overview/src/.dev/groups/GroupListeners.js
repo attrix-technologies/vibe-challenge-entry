@@ -114,13 +114,9 @@ class GroupListeners {
 
     _rotateToggleButton(){
         if(this.open){
-            this.groupToggle.children[0].style['mask-image'] = `url(${xIconSvg})`;
-            this.groupToggle.children[0].style['-webkit-mask-image'] = `url(${xIconSvg})`;
-            this.groupToggle.children[0].style['transform'] = 'none';
+            this.groupToggle.classList.add('open');
         } else {
-            this.groupToggle.children[0].style['mask-image'] = `url(${chevron})`;
-            this.groupToggle.children[0].style['-webkit-mask-image'] = `url(${chevron})`;
-            this.groupToggle.children[0].style['transform'] = 'rotate(-90deg)';
+            this.groupToggle.classList.remove('open');
         }
     }
 

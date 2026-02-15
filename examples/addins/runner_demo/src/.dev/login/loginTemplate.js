@@ -73,13 +73,47 @@ let loginExample = `
         background-color: #25477b;
     }
 
-    .group-toggle-button svg {
+    #group-toggle-button {
+        appearance: none;
+        background: none;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        cursor: pointer;
+        padding: 0;
+        color: #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        margin: 0.5em 0;
+    }
+
+    #group-toggle-button:hover {
+        background-color: #f0f0f0;
+        border-color: #bbb;
+    }
+
+    #group-toggle-button svg {
+        width: 16px;
+        height: 16px;
         mask-image: url(${icon});
         mask-repeat: no-repeat;
+        mask-size: contain;
+        mask-position: center;
         -webkit-mask-image: url(${icon});
         -webkit-mask-repeat: no-repeat;
-        background-color: #666;
+        -webkit-mask-size: contain;
+        -webkit-mask-position: center;
+        background-color: #555;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         transform: rotate(-90deg);
+    }
+
+    #group-toggle-button.open svg {
+        transform: rotate(90deg);
     }
 
     .group-wrapper {
@@ -93,7 +127,6 @@ let loginExample = `
     #group-selector {
         display: flex;
         position: relative;
-        z-index: 10003;
         margin: 0.5em 0;
     }
 
@@ -130,14 +163,116 @@ let loginExample = `
 
     #group-dropdown {
         display: none;
-        position: absolute;
+        position: fixed;
         top: 40px;
-        width: 250px;
-        z-index: 10003;
+        left: 40px;
+        width: 300px;
+        z-index: 99999;
         min-height: auto;
-        max-height: 80vh;
+        max-height: 400px;
         overflow-y: auto;
-        border: 1px solid #ccc;
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        padding: 12px;
+    }
+
+    #filter-dropdown {
+        background-color: transparent !important;
+    }
+
+    #group-dropdown ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    #group-dropdown li {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.15s ease;
+        line-height: 1.5;
+        font-size: 14px;
+        background-color: #ffffff !important;
+    }
+
+    #group-dropdown li:hover {
+        background-color: #f3f4f6 !important;
+    }
+
+    #group-dropdown .organization-filter-popup__item {
+        display: block;
+        padding: 10px 12px;
+        text-decoration: none;
+        color: #374151;
+        border-radius: 4px;
+        transition: background-color 0.15s ease;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    #group-dropdown .organization-filter-popup__item:hover {
+        background-color: #f3f4f6;
+    }
+
+    #group-dropdown .organization-filter-advanced-link {
+        border-top: 1px solid #e5e7eb;
+        margin-top: 8px;
+        padding-top: 12px;
+        font-weight: 500;
+        color: #2563eb;
+    }
+
+    #group-dropdown .organization-filter-advanced-link:hover {
+        background-color: #eff6ff;
+    }
+
+    #group-dropdown .groupFilterListElement,
+    #group-dropdown .groupFilterFolderElement {
+        padding: 6px 8px;
+        margin: 2px 0;
+    }
+
+    #group-dropdown .groupFilterListElement label,
+    #group-dropdown .groupFilterFolderElement label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #ffffff !important;
+    }
+
+    #group-dropdown input[type="checkbox"] {
+        margin-right: 8px;
+        cursor: pointer;
+        background-color: #ffffff !important;
+    }
+
+    #group-dropdown label {
+        background-color: #ffffff !important;
+    }
+
+    #group-dropdown ul ul {
+        margin-left: 20px;
+        border-left: 1px solid #e5e7eb;
+        padding-left: 8px;
+    }
+
+    /* Override Geotab button styles within dropdown */
+    #group-dropdown .geotabButton,
+    #group-dropdown .navButton {
+        background-color: transparent !important;
+    }
+
+    #group-dropdown .geotabButton:hover,
+    #group-dropdown .navButton:hover {
+        background-color: #f3f4f6 !important;
     }
 
     #group-remove-all {
