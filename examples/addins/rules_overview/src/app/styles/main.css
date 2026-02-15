@@ -1,0 +1,30 @@
+.hidden {
+    display: none;
+}
+
+.rules-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.rules-table thead {
+    border-bottom: 2px solid var(--zenith-color-border, #e5e7eb);
+}
+
+.rules-table th {
+    font-weight: 600;
+    color: var(--zenith-color-text-secondary, #6b7280);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.rules-table tbody tr {
+    border-bottom: 1px solid var(--zenith-color-border, #f3f4f6);
+    transition: background-color 0.15s ease;
+}
+
+.rules-table tbody tr:hover {
+    background-color: var(--zenith-color-background-hover, #f9fafb);
+}

@@ -1,0 +1,24 @@
+{
+  "name": "runnerDemo",
+  "supportEmail": "support@attrix.ca",
+  "version": "0.0.1",
+  "items": [{
+    
+    
+    "url": "runnerDemo.html",
+    "category": "AddIns",
+    "menuName": {
+      "en": "Runner Demo"
+    },
+    
+    "icon": "images/icon.svg"
+  }],
+  
+  
+  "dev": {
+    "root": "runnerDemo",
+    "dist": {
+      "host": "https://storage.googleapis.com/geotab-addins/main/runnerDemo/"
+    }
+  }
+}

@@ -13,7 +13,6 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 | **Want pre-built fleet analytics (KPIs, safety)** | [DATA_CONNECTOR.md](./DATA_CONNECTOR.md) |
 | **Want automated monitoring/alerts** | [AGENTIC_OVERVIEW.md](./AGENTIC_OVERVIEW.md) |
 | **At a hackathon** | [HACKATHON_IDEAS.md](./HACKATHON_IDEAS.md) |
-| **Teaching a workshop** | [slides/README.md](../slides/README.md) |
 | **Want to distribute your solution** | [GEOTAB_ECOSYSTEM_PRIMER.md](./GEOTAB_ECOSYSTEM_PRIMER.md) |
 
 ---
@@ -71,7 +70,6 @@ Welcome! This folder contains guides to help you build with Geotab APIs using AI
 ### Hackathons & Workshops
 
 - **[HACKATHON_IDEAS.md](./HACKATHON_IDEAS.md)** - Project ideas with difficulty levels, APIs to use, and starter prompts.
-- **[slides/README.md](../slides/README.md)** - Slides and facilitator guide for running a vibe coding workshop.
 - **[TUTORIAL_DESIGN.md](./TUTORIAL_DESIGN.md)** - Design document for the tutorial structure.
 
 ---

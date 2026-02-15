@@ -1,0 +1,24 @@
+{
+  "name": "rulesOverview",
+  "supportEmail": "support@attrix.ca",
+  "version": "0.0.1",
+  "items": [{
+
+
+    "url": "rulesOverview.html",
+    "category": "AddIns",
+    "menuName": {
+      "en": "Rules Overview"
+    },
+
+    "icon": "images/icon.svg"
+  }],
+
+
+  "dev": {
+    "root": "rulesOverview",
+    "dist": {
+      "host": "https://storage.googleapis.com/geotab-addins/main/rulesOverview/"
+    }
+  }
+}

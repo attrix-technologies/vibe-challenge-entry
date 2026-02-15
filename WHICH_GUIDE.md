@@ -15,7 +15,6 @@ Quick navigation to the right resource for your needs.
 | Setting up credentials | [CREDENTIALS.md](./guides/CREDENTIALS.md) | Concise .env setup |
 | Credential issues | [CREDENTIALS.md](./guides/CREDENTIALS.md) | Detailed troubleshooting |
 | Teaching workshop | [TUTORIAL_DESIGN.md](./guides/TUTORIAL_DESIGN.md) | Full curriculum design |
-| Running workshop | [slides/README.md](./slides/README.md) | Slides + facilitator notes |
 | Need project ideas | [HACKATHON_IDEAS.md](./guides/HACKATHON_IDEAS.md) | 20+ hackathon projects |
 | **Fleet analytics via Data Connector** | [DATA_CONNECTOR.md](./guides/DATA_CONNECTOR.md) | **Pre-built KPIs, safety scores, faults via the Data Connector** |
 | Advanced integrations | [ADVANCED_INTEGRATIONS.md](./guides/ADVANCED_INTEGRATIONS.md) | MCP servers, voice interfaces, AI content generation |
@@ -49,9 +48,6 @@ Are you a human or AI tool?
 │  │
 │  ├─ Just getting started?
 │  │  └─> INSTANT_START_WITH_CLAUDE.md (fastest) or API_REFERENCE_FOR_AI.md (local setup)
-│  │
-│  ├─ Teaching a workshop?
-│  │  └─> TUTORIAL_DESIGN.md → slides/README.md
 │  │
 │  └─ Building a project?
 │      │
@@ -90,12 +86,10 @@ If you need to minimize context size:
 **Pre-workshop:**
 1. Share GOOGLE_GEM_USER_GUIDE.md (easiest) or INSTANT_START_WITH_CLAUDE.md with participants
 2. Review TUTORIAL_DESIGN.md for philosophy
-3. Practice with slides/README.md
 
 **During workshop:**
-1. Present from slides/README.md
-2. Share VIBE_CODING_CONTEXT.md for AI tool users
-3. Share CLAUDE_PROMPTS.md for prompting help
+1. Share VIBE_CODING_CONTEXT.md for AI tool users
+2. Share CLAUDE_PROMPTS.md for prompting help
 
 **After workshop:**
 1. Share HACKATHON_IDEAS.md for inspiration

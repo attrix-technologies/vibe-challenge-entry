@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__auggie__codebase-retrieval",
+      "Bash(npm install:*)",
+      "Bash(npx webpack:*)",
+      "Bash(npm run build:*)"
+    ]
+  }
+}

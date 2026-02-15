@@ -22,11 +22,11 @@ Custom pages that integrate directly into MyGeotab. They can display dashboards,
 {
   "name": "My Add In",
   "supportEmail": "https://github.com/your-repo",
-  "version": "1.0",
+  "version": "1.0.0",
   "items": [{
     "url": "page.html",
     "path": "ActivityLink",
-    "menuName": { "en": "My Add-In" }
+    "menuName": { "en": "My Add-In", "fr": "Mon Module Complémentaire"}
   }],
   "files": {
     "page.html": "<!DOCTYPE html><html>...</html>"
@@ -60,6 +60,10 @@ Other options: Netlify, Vercel, Firebase Hosting (all have CORS support).
 | **React + Zenith** | Professional UI matching MyGeotab | See [ZENITH_STYLING.md](ZENITH_STYLING.md) |
 
 **Note:** Embedded add-ins must use vanilla JS with inline styles. React/Zenith requires external hosting.
+
+## Runner-compatible Add-Ins
+
+More complex add-ins should be built using npm and webpack. The `runner_demo` in `examples/addins/runner_demo/` is a good starting point. This includes not only the add-in source files (including React/Zenith dependencies), but also a full development environment with hot-reloading and debugging tools. This allows for a more efficient development process, and makes it easier to translate the add-in to other languages. In this mode, you should make sure to populate the translations/<lang>.json files with the appropriate translations. Always make sure to design multilingal add-ins and that the fr.json file is fully populated. You can run npm install && npm run dev to get user feedback as you make requested changes. Then npm run build to allow the user to deploy. 
 
 ## Add-In Structure
 
@@ -121,7 +125,7 @@ body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
   "items": [{
     "url": "https://yourusername.github.io/repo/your-addin.html",
     "path": "ActivityLink/",
-    "menuName": { "en": "Your Add-In" }
+    "menuName": { "en": "Your Add-In", "fr": "Votre Module Complémentaire" }
   }]
 }
 ```
@@ -140,7 +144,7 @@ body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
 
 ### Localization (i18n)
 
-MyGeotab passes the user's language in `state.language` during `initialize`. Use this to set UI labels:
+MyGeotab passes the user's language in `state.language` during `initialize`. For embedded add-ins, you may use this to set UI labels:
 
 ```javascript
 var i18n = {
@@ -157,7 +161,7 @@ initialize: function(api, state, callback) {
 }
 ```
 
-MyGeotab handles `menuName` translations automatically. Your JavaScript handles UI labels via `state.language`.
+MyGeotab handles `menuName` translations automatically. For external add-ins, your JavaScript handles UI labels via `state.translate`, and you should include translations/<lang>.json files that return an object with key/value pairs for each string to be translated. The key can be the default (English) string or a dereferenced key (in which case there should be an entry in the translations/en.json file).
 
 ### Filtering Devices by Group
 

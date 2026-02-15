@@ -1,122 +1,20 @@
-# Geotab Vibe Coding: Zero to Hero
+# Geotab Vibe Coding: Hero to Hero 2.0
 
-> [!IMPORTANT]
-> **The Geotab Vibe Coding Challenge is LIVE!** $25,000 in prizes. Build fleet intelligence solutions using AI-assisted development. The sprint runs **Feb 12 -- Mar 2, 2026**. [**Register now**](https://luma.com/h6ldbaxp) to get all the important updates, and check out the [project ideas](./guides/HACKATHON_IDEAS.md) for inspiration. See the [registration page](https://luma.com/h6ldbaxp) for official terms and conditions.
+## My Vibe-Coding Journey
 
-**Build fleet management apps in minutes using AI.**
+> Create a new add-in that shows me a summary of existing (enabled) rules with a sparkline next to its name that shows the number of exceptions trend over the last 4 weeks. Show me what it looks like in the runner when you're done. 
 
-This repository is a "Vibe Coding" starter kit. You don't need to be an expert coder. You just need to know how to ask the right questions.
+> I found the boilerplate layout of the npm run dev runner environment to be quite broken in terms of UI (it was created when Geotab looked very different and under outdated assumptions). I would like to update the UI of the left nav menu and maybe the top bar, too. Right now the arrow toggle button is broken and the mygeotab icon is very small. I am talking about boilerplate in examples/addins/runner_demo/src/.dev. I don't need the full menu with menu entries (locally they will not be able to navigate anyway), but I would like the user to be able to toggle wide/folded menu so they can see their addin under the right widths and how it reacts to these changes. Here is the current mygeotab menu's outerhtml, but let me know what else you would need to fix it. First fix it in runner_demo, then once I validate, you can replicate under the rules_overview copy we made.
 
-## Before You Start
+> First of all, the group filter is important functionality for testing, I didn't ask to remove it. The outerHtml I copied was just from the left nav, the group filter is in the top header. Please restore the functionality. The UI/CSS of it was broken (and I was going to ask you to work on it next), but the functionality of it was fine. Second of all, now the left menu nav toggle works well, but the add-in context doesn't render nicely in either state (open or closed) - the add-in content is hidden behind the left nav and the top header. In MyGeotab, the add-in       content covers only the available content under the top header and right of the (open or closed) left nav menu. Please adjust making changes only to the .dev folder and without touching the CSS in the add-in's source jsx or css files, because it's a local runner UI problem and not a production add-in problem. 
 
-1. **Get credentials:** [Create a free demo database](https://my.geotab.com/registration.html) (takes 2 minutes)
-   > **Important:** On the registration page, click **"Create a Demo Database"** (not "I'm a New Customer"). This gives you pre-populated sample data to work with.
-2. **New to coding?** Read the [**Beginner's Guide**](./guides/BEGINNER_GUIDE.md) first
+> This works for the most part. The group filter selection updates the group filter component, but it doesn't actually change the state.getGroupFilter() value (it seems). Previously, I think it would just call focus() again from my add-in's lifecycle methods, and within it, the state.getGroupFilter() had updated value. Maybe the getGroupFilter() method works now (I couldn't test), but I don't think it triggers focus so really nothing happens when I change the groups.
 
-## Choose Your Path
+> I am running runner_demo and it still does nothing when I apply the group filter changes in the add-in.
 
-### Path A: Build a MyGeotab Add-In (Easiest!)
-**Want a custom page that lives INSIDE MyGeotab? This is the fastest way.**
+> I think the problem is elsewhere, it does call focus again, but it doesn't trigger a new call to getDevices (which uses the current groupfilter). I think it's something to change with react's useState usage here.
 
-[**START WITH THE GOOGLE GEM**](./guides/GOOGLE_GEM_USER_GUIDE.md) - Describe (or draw) what you want → Get JSON → Paste into MyGeotab → Done.
+## Authors
 
-No coding. No hosting. No technical setup. Just conversation.
-
----
-
-### Path B: Explore the API with Claude
-**Want to explore the Geotab API and learn how it works?**
-
-[**INSTANT START WITH CLAUDE**](./guides/INSTANT_START_WITH_CLAUDE.md) - Zero to working code in 60 seconds. No installation needed.
-
-Then use [**CLAUDE PROMPTS**](./guides/CLAUDE_PROMPTS.md) for ready-made prompts to build things.
-
----
-
-### Path C: Build a Dashboard App
-**Want a standalone app with maps, charts, and data analysis?**
-
-[**ANTIGRAVITY QUICKSTART**](./guides/ANTIGRAVITY_QUICKSTART.md) - Use Google's free IDE to build interactive dashboards.
-
-[**GOOGLE TOOLS GUIDE**](./guides/GOOGLE_TOOLS_GUIDE.md) - Overview of all Google vibe coding tools: Gemini Canvas, AI Studio, Firebase Studio, Gemini CLI, and Project Astra.
-
----
-
-### Path D: Advanced Add-In Development
-**Need external APIs, complex frameworks, or hosted solutions?**
-
-[**GEOTAB ADD-INS GUIDE**](./guides/GEOTAB_ADDINS.md) - Full guide for hosted Add-Ins with React, external data sources, and more.
-
----
-
-### Path E: Fleet Analytics with Data Connector
-**Want pre-built KPIs, safety scores, and fault data without writing API calls?**
-
-[**DATA CONNECTOR GUIDE**](./guides/DATA_CONNECTOR.md) - Query aggregated fleet metrics through the Data Connector endpoint. Works with Python, Excel, Power BI, or any HTTP client.
-
----
-
-### Path F: Automated Monitoring & Alerts (Agentic Systems)
-**Want autonomous agents that monitor your fleet 24/7 and take action?**
-
-[**AGENTIC OVERVIEW**](./guides/AGENTIC_OVERVIEW.md) - Understand what agentic systems are and choose your approach.
-
-[**N8N QUICKSTART**](./guides/AGENTIC_QUICKSTART_N8N.md) - Build your first fleet monitoring agent in 30 minutes using n8n's visual workflow builder.
-
-Examples: Speeding alerts to Slack, maintenance ticket creation, geofence notifications, AI-powered safety coaching.
-
----
-
-## 🧭 Workshop Organizer Snapshot
-
-Use this repo as a **60-minute hackathon kickoff workshop** starter for developer onboarding and community events.
-
-- **Core curriculum:** [`guides/TUTORIAL_DESIGN.md`](./guides/TUTORIAL_DESIGN.md)
-- **Facilitator materials:** [`slides/README.md`](./slides/README.md)
-- **Project follow-up ideas:** [`guides/HACKATHON_IDEAS.md`](./guides/HACKATHON_IDEAS.md)
-
----
-
-## 🤖 For AI Assistants
-
-If you're an AI coding assistant, start with:
-
-1. [AGENT_SUMMARY.md](./AGENT_SUMMARY.md) - canonical repo orientation
-2. [skills/README.md](./skills/README.md) - choose the right skill pack first
-3. [VIBE_CODING_CONTEXT.md](./VIBE_CODING_CONTEXT.md) - minimal-token API context
-4. [WHICH_GUIDE.md](./WHICH_GUIDE.md) - route to deeper docs by task
-
----
-
-## 📂 Repository Structure
-
-*   [**`GOOGLE_GEM_USER_GUIDE.md`**](./guides/GOOGLE_GEM_USER_GUIDE.md): **Start here!** Build Add-Ins by describing (or drawing) what you want.
-*   [**`BEGINNER_GUIDE.md`**](./guides/BEGINNER_GUIDE.md): New to coding? This explains all terms.
-*   [**`CLAUDE_PROMPTS.md`**](./guides/CLAUDE_PROMPTS.md): Ready-made prompts to build apps with Claude.
-*   [**`examples/`**](./examples/): Working Add-In examples plus AI delegation guidance.
-*   [**`guides/`**](./guides/): Hackathon ideas, tutorials, and deep dives.
-    *   [`HACKATHON_IDEAS.md`](./guides/HACKATHON_IDEAS.md)
-    *   [`TUTORIAL_DESIGN.md`](./guides/TUTORIAL_DESIGN.md)
-    *   [`GEOTAB_ADDINS.md`](./guides/GEOTAB_ADDINS.md) - Advanced Add-In development
-    *   [`GOOGLE_TOOLS_GUIDE.md`](./guides/GOOGLE_TOOLS_GUIDE.md) - Google's vibe coding tools spectrum
-*   [**`GEOTAB_OVERVIEW.md`**](./GEOTAB_OVERVIEW.md): Read this if you want to understand *what* Geotab actually does.
-
----
-
-## 🧘 What is "Vibe Coding"?
-
-Vibe coding is about **flow**. Instead of fighting with syntax and documentation:
-1.  **Ask** the AI to connect and explore.
-2.  **Vibe** with the data it finds.
-3.  **Iterate** on ideas ("Make it a dashboard", "Add a map").
-
----
-
-**Ready? [Start with the Google Gem](./guides/GOOGLE_GEM_USER_GUIDE.md) and build your first Add-In by describing (or drawing) what you want!**
-
----
-
-## Author
-
-Created by [Felipe Hoffa](https://www.linkedin.com/in/hoffa/). To message and to subscribe for updates, connect on [LinkedIn](https://www.linkedin.com/in/hoffa/).
-
+This repo was initially forked from [https://github.com/fhoffa/geotab-vibe-guide](https://github.com/fhoffa/geotab-vibe-guide) created by [Felipe Hoffa](https://www.linkedin.com/in/hoffa/). 
+The changes to implement add-in runner functionality and produce a final entry for the Vibe Coding Challenge are by [LP Papillon](https://www.linkedin.com/in/lppapillon/).

@@ -92,10 +92,6 @@ When writing code examples or snippets:
 - Add clear comments and error handling
 - Keep examples beginner-friendly
 
-## Documentation Style
+## Add-in preferences
 
-This is educational content. When writing documentation:
-- Use narrative, conversational tone
-- Target beginners who may be new to coding
-- Explain concepts, don't assume knowledge
-- Include ready-made prompts users can copy-paste to AI tools
+When tasked to create an add-in, prefer using a complete node.js project with all files and dependencies over a single HTML file - like the Runner Demo add-in in `examples/addins/runner_demo/`. This setup allows for local testing and debugging before building for deployment. 
