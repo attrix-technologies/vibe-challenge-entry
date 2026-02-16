@@ -1,0 +1,13 @@
+{
+  "addins": [
+    {
+      "name": "last-week-in-fleet",
+      "path": "examples/addins/last-week-in-fleet"
+    },
+    {
+      "name": "rules_overview",
+      "path": "examples/addins/rules_overview"
+    }
+  ]
+}
+

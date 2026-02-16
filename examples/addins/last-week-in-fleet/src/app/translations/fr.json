@@ -1,0 +1,47 @@
+{
+  "Last Week in Fleet": "La semaine en flotte",
+  "Productivity": "Productivit\u00e9",
+  "Safety": "S\u00e9curit\u00e9",
+  "Compliance": "Conformit\u00e9",
+  "Sustainability": "Durabilit\u00e9",
+
+  "Trip Routes": "Itin\u00e9raires",
+  "Key Performance Indicators": "Indicateurs cl\u00e9s de performance",
+  "Total Distance": "Distance totale",
+  "Total Driving Time": "Temps de conduite total",
+  "Driving Time %": "Temps de conduite %",
+  "Total Idling Time": "Temps de ralenti total",
+  "Idling Time %": "Temps de ralenti %",
+  "hrs": "h",
+  "km": "km",
+
+  "Initializing...": "Initialisation\u2026",
+  "Getting trips from last week...": "R\u00e9cup\u00e9ration des trajets de la semaine derni\u00e8re\u2026",
+  "No trips found for last week": "Aucun trajet trouv\u00e9 pour la semaine derni\u00e8re",
+  "Linking trips...": "Liaison des trajets\u2026",
+  "Drawing straight-line routes...": "Tra\u00e7age des lignes directes\u2026",
+  "Map matching:": "Correspondance cartographique\u00a0:",
+  "Complete": "Termin\u00e9",
+
+  "Safety metrics and insights will appear here.": "Les indicateurs et analyses de s\u00e9curit\u00e9 appara\u00eetront ici.",
+  "This tab will show:": "Cet onglet affichera\u00a0:",
+  "Speeding events": "\u00c9v\u00e9nements d\u2019exc\u00e8s de vitesse",
+  "Harsh braking incidents": "Incidents de freinage brusque",
+  "Aggressive acceleration events": "\u00c9v\u00e9nements d\u2019acc\u00e9l\u00e9ration agressive",
+  "Driver safety scores": "Scores de s\u00e9curit\u00e9 des conducteurs",
+  "Collision risk analysis": "Analyse du risque de collision",
+
+  "Compliance metrics and reports will appear here.": "Les indicateurs et rapports de conformit\u00e9 appara\u00eetront ici.",
+  "HOS (Hours of Service) violations": "Violations HOS (heures de service)",
+  "Driver duty status logs": "Journaux de statut de service des conducteurs",
+  "Vehicle inspection reports": "Rapports d\u2019inspection des v\u00e9hicules",
+  "Regulatory compliance scores": "Scores de conformit\u00e9 r\u00e9glementaire",
+  "DVIR (Driver Vehicle Inspection Report) completion rates": "Taux de compl\u00e9tion des DVIR (rapports d\u2019inspection)",
+
+  "Environmental impact and sustainability metrics will appear here.": "Les indicateurs d\u2019impact environnemental et de durabilit\u00e9 appara\u00eetront ici.",
+  "Total fuel consumption": "Consommation totale de carburant",
+  "CO2 emissions": "\u00c9missions de CO2",
+  "Fuel efficiency trends": "Tendances d\u2019efficacit\u00e9 \u00e9nerg\u00e9tique",
+  "Electric vehicle usage statistics": "Statistiques d\u2019utilisation des v\u00e9hicules \u00e9lectriques",
+  "Carbon footprint reduction recommendations": "Recommandations de r\u00e9duction de l\u2019empreinte carbone"
+}

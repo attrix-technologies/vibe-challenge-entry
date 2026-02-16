@@ -1,0 +1,20 @@
+{
+  "name": "lastWeekInFleet",
+  "supportEmail": "support@attrix.ca",
+  "version": "0.0.1",
+  "items": [{
+    "url": "lastWeekInFleet.html",
+    "category": "AddIns",
+    "menuName": {
+      "en": "Last Week in Fleet",
+      "fr": "La semaine dernière au sein de la flotte"
+    },
+    "icon": "images/icon.svg"
+  }],
+  "dev": {
+    "root": "lastWeekInFleet",
+    "dist": {
+      "host": "https://storage.googleapis.com/geotab-addins/main/last-week-in-fleet/"
+    }
+  }
+}
