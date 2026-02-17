@@ -6,6 +6,8 @@ import polyline from '@mapbox/polyline';
 const CONCURRENCY = 5;
 const THIRTY_MIN_MS = 30 * 60 * 1000;
 const WEEK_HOURS = 7 * 24; // 168 hours in a full week
+const DEFAULT_CENTER = [-73.17375896, 45.57401727]; // [lng, lat]
+const MIN_ZOOM = 3;
 
 // Parse .NET TimeSpan format "[d.]hh:mm:ss[.fff]" into hours
 const parseTimeSpanToHours = (ts) => {
@@ -49,6 +51,8 @@ const ProductivityTab = () => {
   const map = useRef(null);
   const deviceColors = useRef(new Map());
   const matchedCount = useRef(0);
+  const lastGroupFilter = useRef(null);
+  const hasData = useRef(false);
 
   // ── Date helpers ──────────────────────────────────────────────────────
   const getLastWeekRange = () => {
@@ -102,6 +106,19 @@ const ProductivityTab = () => {
     }
   }, []);
 
+  // ── Remove all trip layers from the map ──────────────────────────────
+  const clearMapLayers = () => {
+    if (!map.current) return;
+    const style = map.current.getStyle();
+    if (!style || !style.layers) return;
+    style.layers.forEach(layer => {
+      if (layer.id.startsWith('trip-')) {
+        map.current.removeLayer(layer.id);
+        map.current.removeSource(layer.id);
+      }
+    });
+  };
+
   // ── Build GPX payload from an array of {lat, lon, time} waypoints ───
   const buildGPX = (waypoints) => {
     const trkpts = waypoints
@@ -118,6 +135,8 @@ ${trkpts}
   };
 
   // ── Fetch interpolated LogRecords for 30-min increments (multicall) ──
+  // On rate-limit or any error, resolves with [] so map matching still
+  // proceeds with just the start/stop points.
   const fetchIntermediatePoints = (trip) => {
     return new Promise((resolve) => {
       const startMs = new Date(trip.start).getTime();
@@ -130,8 +149,8 @@ ${trkpts}
       }
 
       const calls = [];
-      for (let t = startMs + THIRTY_MIN_MS; t < stopMs; t += THIRTY_MIN_MS) {
-        const iso = new Date(t).toISOString();
+      for (let ts = startMs + THIRTY_MIN_MS; ts < stopMs; ts += THIRTY_MIN_MS) {
+        const iso = new Date(ts).toISOString();
         calls.push(['Get', {
           typeName: 'LogRecord',
           search: {
@@ -147,30 +166,35 @@ ${trkpts}
         return;
       }
 
-      geotabApi.multiCall(calls, (results) => {
-        const points = [];
-        results.forEach((records, i) => {
-          if (records && records.length > 0) {
-            const rec = records[0];
-            points.push({
-              lat: rec.latitude,
-              lon: rec.longitude,
-              time: rec.dateTime || calls[i][1].search.fromDate
-            });
-          }
+      try {
+        geotabApi.multiCall(calls, (results) => {
+          const points = [];
+          results.forEach((records, i) => {
+            if (records && records.length > 0) {
+              const rec = records[0];
+              points.push({
+                lat: rec.latitude,
+                lon: rec.longitude,
+                time: rec.dateTime || calls[i][1].search.fromDate
+              });
+            }
+          });
+          resolve(points);
+        }, (err) => {
+          logger.warn(`Intermediate points failed for trip ${trip.id} (rate limit?): ${err}`);
+          resolve([]);
         });
-        resolve(points);
-      }, (err) => {
-        logger.warn(`Intermediate points failed for trip ${trip.id}: ${err}`);
+      } catch (err) {
+        logger.warn(`Intermediate points threw for trip ${trip.id}: ${err}`);
         resolve([]);
-      });
+      }
     });
   };
 
   // ── Map-match a single trip ──────────────────────────────────────────
   const mapMatchTrip = async (trip) => {
     try {
-      // Get intermediate waypoints for long trips
+      // Get intermediate waypoints for long trips (gracefully degrades on rate limit)
       const intermediatePoints = await fetchIntermediatePoints(trip);
 
       // Build full waypoint list: start + intermediates + stop
@@ -233,13 +257,85 @@ ${trkpts}
     await Promise.all(workers);
   };
 
+  // ── Resolve company address to map center coordinates ────────────────
+  const getMapCenter = () => {
+    return new Promise((resolve) => {
+      geotabApi.call('Get', { typeName: 'SystemSettings' }, (settings) => {
+        try {
+          const address = settings && settings[0] && settings[0].companyAddress;
+          if (!address) {
+            resolve(DEFAULT_CENTER);
+            return;
+          }
+
+          geotabApi.call('GetCoordinates', {
+            addresses: [address]
+          }, (coords) => {
+            if (coords && coords.length > 0 && coords[0] && coords[0].x !== 0 && coords[0].y !== 0) {
+              resolve([coords[0].x, coords[0].y]); // [lng, lat]
+            } else {
+              resolve(DEFAULT_CENTER);
+            }
+          }, () => resolve(DEFAULT_CENTER));
+        } catch (e) {
+          resolve(DEFAULT_CENTER);
+        }
+      }, () => resolve(DEFAULT_CENTER));
+    });
+  };
+
+  // ── Serialize group filter for comparison ─────────────────────────────
+  const getGroupFilterKey = () => {
+    try {
+      const filter = geotabState.getGroupFilter();
+      return JSON.stringify(filter);
+    } catch (e) {
+      return '';
+    }
+  };
+
   // ── Main data loader ─────────────────────────────────────────────────
   useEffect(() => {
+    // Only reload if group filter changed or we have no data yet
+    const currentFilter = getGroupFilterKey();
+    if (hasData.current && currentFilter === lastGroupFilter.current) {
+      return;
+    }
+    lastGroupFilter.current = currentFilter;
+
     const loadData = async () => {
       try {
+        // If reloading due to filter change, clear old map layers
+        if (hasData.current) {
+          clearMapLayers();
+          deviceColors.current.clear();
+        }
+
         setLoading(true);
         setStatus(geotabState.translate('Getting trips from last week...'));
+        setProgress(5);
+
+        // Resolve map center from company address before anything else
+        const mapCenter = await getMapCenter();
         setProgress(10);
+
+        // ── Init map ──────────────────────────────────────────────
+        if (!map.current && mapContainer.current) {
+          map.current = new maplibregl.Map({
+            container: mapContainer.current,
+            style: 'https://nav.attrix.ai/styles/light.json',
+            center: mapCenter,
+            zoom: 10,
+            minZoom: MIN_ZOOM
+          });
+          map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+          // Wait for style to load before adding sources/layers
+          await new Promise(resolve => {
+            if (map.current.isStyleLoaded()) resolve();
+            else map.current.on('load', resolve);
+          });
+        }
 
         const { fromDate, toDate } = getLastWeekRange();
         logger.log(`Loading trips from ${fromDate} to ${toDate}`);
@@ -254,6 +350,7 @@ ${trkpts}
           if (trips.length === 0) {
             setStatus(geotabState.translate('No trips found for last week'));
             setLoading(false);
+            hasData.current = true;
             return;
           }
 
@@ -293,22 +390,6 @@ ${trkpts}
 
           logger.log(`${tripsToMatch.length} trips ready for map matching`);
 
-          // ── Init map ──────────────────────────────────────────────
-          if (!map.current && mapContainer.current) {
-            map.current = new maplibregl.Map({
-              container: mapContainer.current,
-              style: 'https://nav.attrix.ai/styles/light.json',
-              zoom: 4
-            });
-            map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
-
-            // Wait for style to load before adding sources/layers
-            await new Promise(resolve => {
-              if (map.current.isStyleLoaded()) resolve();
-              else map.current.on('load', resolve);
-            });
-          }
-
           // ── Draw all trips as straight lines immediately ──────────
           setStatus(geotabState.translate('Drawing straight-line routes...'));
           const bounds = new maplibregl.LngLatBounds();
@@ -324,7 +405,7 @@ ${trkpts}
           });
 
           if (!bounds.isEmpty()) {
-            map.current.fitBounds(bounds, { padding: 50 });
+            map.current.fitBounds(bounds, { padding: 40 });
           }
 
           setProgress(30);
@@ -353,12 +434,13 @@ ${trkpts}
           });
 
           // ── Progressive map matching with 5 concurrent slots ──────
-          setStatus(`Map matching: 0 / ${tripsToMatch.length}`);
+          setStatus(`${geotabState.translate('Map matching:')} 0 / ${tripsToMatch.length}`);
           await processTripsWithPool(tripsToMatch, tripsToMatch.length);
 
           setProgress(100);
           setStatus(geotabState.translate('Complete'));
           setLoading(false);
+          hasData.current = true;
 
         }, (error) => {
           logger.error('Error loading trips: ' + error);
@@ -374,33 +456,20 @@ ${trkpts}
     };
 
     loadData();
+  }, [focusKey]);
 
+  // Clean up map only on unmount
+  useEffect(() => {
     return () => {
       if (map.current) {
         map.current.remove();
         map.current = null;
       }
     };
-  }, [focusKey]);
+  }, []);
 
   return (
     <div className="productivity-layout">
-      <div className="map-section">
-        <h2>{geotabState.translate('Trip Routes')}</h2>
-        <div className="map-wrapper">
-          <div ref={mapContainer} className="map-container" />
-        </div>
-
-        {loading && (
-          <div>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progress}%` }} />
-            </div>
-            <div className="status-message">{status}</div>
-          </div>
-        )}
-      </div>
-
       <div className="kpis-section">
         <h2>{geotabState.translate('Key Performance Indicators')}</h2>
         <div className="kpi-grid">
@@ -425,6 +494,22 @@ ${trkpts}
             <div className="kpi-value">{kpis.idlingTimePercent}%</div>
           </div>
         </div>
+      </div>
+
+      <div className="map-section">
+        <h2>{geotabState.translate('Trip Routes')}</h2>
+        <div className="map-wrapper">
+          <div ref={mapContainer} className="map-container" />
+        </div>
+
+        {loading && (
+          <div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+            <div className="status-message">{status}</div>
+          </div>
+        )}
       </div>
     </div>
   );

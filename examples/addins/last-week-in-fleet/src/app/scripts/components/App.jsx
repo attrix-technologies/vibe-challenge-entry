@@ -37,10 +37,18 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
           <Tabs tabs={tabs} activeTabId={selectedTab} onTabChange={setSelectedTab} />
 
           <div className="tab-content">
-            {selectedTab === 'productivity' && <ProductivityTab />}
-            {selectedTab === 'safety' && <SafetyTab />}
-            {selectedTab === 'compliance' && <ComplianceTab />}
-            {selectedTab === 'sustainability' && <SustainabilityTab />}
+            <div style={{ display: selectedTab === 'productivity' ? 'block' : 'none' }}>
+              <ProductivityTab />
+            </div>
+            <div style={{ display: selectedTab === 'safety' ? 'block' : 'none' }}>
+              <SafetyTab />
+            </div>
+            <div style={{ display: selectedTab === 'compliance' ? 'block' : 'none' }}>
+              <ComplianceTab />
+            </div>
+            <div style={{ display: selectedTab === 'sustainability' ? 'block' : 'none' }}>
+              <SustainabilityTab />
+            </div>
           </div>
         </div>
       </GeotabContext.Provider>
