@@ -30,19 +30,99 @@ body {
   height: 100%;
 }
 
+.map-and-chart {
+  display: flex;
+  gap: 16px;
+  padding-right: 16px;
+}
+
 .map-section {
+  flex: 3;
+  min-width: 0;
+}
+
+.distance-chart {
   flex: 1;
+  min-width: 220px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
 }
 
-.tile-value {
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.tile-unit {
+.distance-chart-title {
   font-size: 14px;
-  color: #6c757d;
-  margin-left: 4px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.distance-chart-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 500px;
+}
+
+.distance-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.distance-bar-name {
+  width: 80px;
+  font-size: 12px;
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+.distance-bar-track {
+  flex: 1;
+  height: 10px;
+  background: #f3f4f6;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.distance-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  min-width: 2px;
+}
+
+.distance-bar-value {
+  width: 45px;
+  font-size: 11px;
+  color: #6b7280;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.distance-chart-separator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  color: #9ca3af;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.separator-label {
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .map-and-chart {
+    flex-direction: column;
+  }
+  .distance-chart {
+    max-width: none;
+  }
 }
 
 .loading {

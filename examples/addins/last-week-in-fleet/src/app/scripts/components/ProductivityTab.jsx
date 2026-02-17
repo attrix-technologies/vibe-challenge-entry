@@ -48,6 +48,7 @@ const ProductivityTab = () => {
     totalIdlingTime: 0,
     idlingTimePercent: 0
   });
+  const [deviceDistances, setDeviceDistances] = useState([]);
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -435,6 +436,44 @@ ${trkpts}
             idlingTimePercent: totalVehicleHours > 0 ? ((totalIdlingHours / totalVehicleHours) * 100).toFixed(1) : '0.0'
           });
 
+          // ── Distance per device + resolve names ─────────────────
+          const distByDevice = new Map();
+          processedTrips.forEach(trip => {
+            const did = trip.device.id;
+            distByDevice.set(did, (distByDevice.get(did) || 0) + (trip.distance || 0));
+          });
+
+          // Fetch device details to get names
+          const deviceIdArray = [...deviceIds];
+          const fetchDeviceNames = () => new Promise((resolve) => {
+            const calls = deviceIdArray.map(id => ['Get', {
+              typeName: 'Device',
+              search: { id }
+            }]);
+            geotabApi.multiCall(calls, (results) => {
+              const nameMap = new Map();
+              results.forEach((devices) => {
+                if (devices && devices.length > 0) {
+                  nameMap.set(devices[0].id, devices[0].name || devices[0].id);
+                }
+              });
+              resolve(nameMap);
+            }, () => resolve(new Map()));
+          });
+
+          const deviceNameMap = await fetchDeviceNames();
+
+          const sorted = [...distByDevice.entries()]
+            .map(([id, dist]) => ({
+              id,
+              name: deviceNameMap.get(id) || id,
+              distance: dist,
+              color: getDeviceColor(id)
+            }))
+            .sort((a, b) => b.distance - a.distance);
+
+          setDeviceDistances(sorted);
+
           // ── Progressive map matching with 5 concurrent slots ──────
           setStatus(`${geotabState.translate('Map matching:')} 0 / ${tripsToMatch.length}`);
           await processTripsWithPool(tripsToMatch, tripsToMatch.length);
@@ -488,14 +527,63 @@ ${trkpts}
         </SummaryTile>
       </SummaryTileBar>
 
-      <div className="map-section">
-        <div className="map-wrapper">
-          <div ref={mapContainer} className="map-container" />
+      <div className="map-and-chart">
+        <div className="map-section">
+          <div className="map-wrapper">
+            <div ref={mapContainer} className="map-container" />
+          </div>
+          {loading && (
+            <div style={{ marginTop: '16px' }}>
+              <ProgressBar min={0} max={100} now={progress} size="medium" />
+              <div className="status-message">{status}</div>
+            </div>
+          )}
         </div>
-        {loading && (
-          <div style={{ marginTop: '16px' }}>
-            <ProgressBar min={0} max={100} now={progress} size="medium" />
-            <div className="status-message">{status}</div>
+
+        {deviceDistances.length > 0 && (
+          <div className="distance-chart">
+            <div className="distance-chart-title">{geotabState.translate('Distance by Vehicle')} ({geotabState.translate('km')})</div>
+            <div className="distance-chart-list">
+              {(() => {
+                const maxDist = deviceDistances[0].distance;
+                const TRUNCATE_THRESHOLD = 25;
+                let items = deviceDistances;
+                let truncated = false;
+
+                if (deviceDistances.length > TRUNCATE_THRESHOLD) {
+                  const top = deviceDistances.slice(0, 10);
+                  const bottom = deviceDistances.slice(-10);
+                  items = [...top, null, ...bottom];
+                  truncated = true;
+                }
+
+                return items.map((item, i) => {
+                  if (item === null) {
+                    return (
+                      <div key="separator" className="distance-chart-separator">
+                        <span>⋮</span>
+                        <span className="separator-label">
+                          {deviceDistances.length - 20} {geotabState.translate('more')}
+                        </span>
+                      </div>
+                    );
+                  }
+                  const pct = maxDist > 0 ? (item.distance / maxDist) * 100 : 0;
+                  return (
+                    <div key={item.id} className="distance-bar-row">
+                      <div className="distance-bar-name" title={item.name}>{item.name}</div>
+                      <div className="distance-bar-track">
+                        <div
+                          className="distance-bar-fill"
+                          style={{ width: `${pct}%`, backgroundColor: item.color }}
+                        />
+                      </div>
+                      <div className="distance-bar-value">{item.distance.toFixed(0)}</div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
           </div>
         )}
       </div>

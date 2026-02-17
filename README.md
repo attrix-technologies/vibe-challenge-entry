@@ -59,6 +59,10 @@ All good now. From my initial assessment, now I'm able to create a new add-in wi
 
 > This is better. Still weird, the tiles are too wide. Also probably don't need a title mid-way down the page for the map. Use summarytile labels to show the relative % values and combine them in the driving/idling times.
 
+> I would like to show a visual representation of distance driven by vehicle. We can split the viewport width on larger screens, the map can take up something like 75% of the width and on the  remaining space on the right, show kind of a lean vertical bar chart where the bars represent total distance driven by device across the trips we got. Each bar should be the same color as the lines from the map. The label should show the vehicle name, not id, so Get the details for the relevant devices. If there are many devices (like over 30) we can show top 10 and bottom 10 only (with a separator to show there is a missing gap). It should be modern looking. You can use Zenith charts if it suits this use-case, otherwise you can draw manually or use another charting library.
+
+> Not bad, but the cutoff with the edge of the window is too abrupt. Maybe it needs margin or padding? What do you think? We need to show units (km), either once at the top of next to each value. Make the lines a little bit more narrow. The split threshold should be 25, not 30.
+
 
 ## Authors
 
