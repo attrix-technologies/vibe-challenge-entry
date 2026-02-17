@@ -391,6 +391,7 @@ ${trkpts}
             return Math.sqrt(dx * dx + dy * dy) * 111000 > 10;
           });
 
+          tripsToMatch.sort((a, b) => b.distance - a.distance);
           logger.log(`${tripsToMatch.length} trips ready for map matching`);
 
           // ── Draw all trips as straight lines immediately ──────────

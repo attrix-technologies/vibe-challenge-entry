@@ -63,6 +63,8 @@ All good now. From my initial assessment, now I'm able to create a new add-in wi
 
 > Not bad, but the cutoff with the edge of the window is too abrupt. Maybe it needs margin or padding? What do you think? We need to show units (km), either once at the top of next to each value. Make the lines a little bit more narrow. The split threshold should be 25, not 30.
 
+> Sort trips by distance descending before map-matching them, so we map-match the longest trips first. When there are lots of trips, it takes a while to map-match, and visually the longest trips have the biggest impact.
+
 
 ## Authors
 
