@@ -53,11 +53,11 @@
     }
   },
   "dependencies": {
-    "@geotab/zenith": "^1.15.0",
+    "@geotab/zenith": "^3.4.1",
     "@mapbox/polyline": "^1.2.1",
     "@maplibre/maplibre-gl-style-spec": "^20.0.0",
     "maplibre-gl": "^4.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   }
 }

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
+import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar } from '@geotab/zenith';
+import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import maplibregl from 'maplibre-gl';
 import polyline from '@mapbox/polyline';
@@ -470,43 +472,29 @@ ${trkpts}
 
   return (
     <div className="productivity-layout">
-      <div className="kpis-section">
-        <h2>{geotabState.translate('Key Performance Indicators')}</h2>
-        <div className="kpi-grid">
-          <div className="kpi-card">
-            <div className="kpi-label">{geotabState.translate('Total Distance')}</div>
-            <div className="kpi-value">{kpis.totalDistance} {geotabState.translate('km')}</div>
-          </div>
-          <div className="kpi-card">
-            <div className="kpi-label">{geotabState.translate('Total Driving Time')}</div>
-            <div className="kpi-value">{kpis.totalDrivingTime} {geotabState.translate('hrs')}</div>
-          </div>
-          <div className="kpi-card">
-            <div className="kpi-label">{geotabState.translate('Driving Time %')}</div>
-            <div className="kpi-value">{kpis.drivingTimePercent}%</div>
-          </div>
-          <div className="kpi-card">
-            <div className="kpi-label">{geotabState.translate('Total Idling Time')}</div>
-            <div className="kpi-value">{kpis.totalIdlingTime} {geotabState.translate('hrs')}</div>
-          </div>
-          <div className="kpi-card">
-            <div className="kpi-label">{geotabState.translate('Idling Time %')}</div>
-            <div className="kpi-value">{kpis.idlingTimePercent}%</div>
-          </div>
-        </div>
-      </div>
+      <SummaryTileBar>
+        <SummaryTile id="distance" title={geotabState.translate('Total Distance')} size={SummaryTileSize.Small}>
+          <Overview title={kpis.totalDistance} description={geotabState.translate('km')} />
+        </SummaryTile>
+        <SummaryTile id="driving-time" title={geotabState.translate('Driving Time')} size={SummaryTileSize.Small}>
+          <Overview title={kpis.totalDrivingTime} description={geotabState.translate('hrs')} label={{
+            percentage: kpis.drivingTimePercent
+          }} />
+        </SummaryTile>
+        <SummaryTile id="idling-time" title={geotabState.translate('Idling Time')} size={SummaryTileSize.Small}>
+          <Overview title={kpis.totalIdlingTime} description={geotabState.translate('hrs')} label={{
+            percentage: kpis.idlingTimePercent
+          }} />
+        </SummaryTile>
+      </SummaryTileBar>
 
       <div className="map-section">
-        <h2>{geotabState.translate('Trip Routes')}</h2>
         <div className="map-wrapper">
           <div ref={mapContainer} className="map-container" />
         </div>
-
         {loading && (
-          <div>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progress}%` }} />
-            </div>
+          <div style={{ marginTop: '16px' }}>
+            <ProgressBar min={0} max={100} now={progress} size="medium" />
             <div className="status-message">{status}</div>
           </div>
         )}

@@ -1,17 +1,14 @@
 {
-  "Last Week in Fleet": "La semaine en flotte",
+  "Last Week in Fleet": "La semaine dernière au sein de la flotte",
   "Productivity": "Productivit\u00e9",
   "Safety": "S\u00e9curit\u00e9",
   "Compliance": "Conformit\u00e9",
   "Sustainability": "Durabilit\u00e9",
 
-  "Trip Routes": "Itin\u00e9raires",
   "Key Performance Indicators": "Indicateurs cl\u00e9s de performance",
   "Total Distance": "Distance totale",
-  "Total Driving Time": "Temps de conduite total",
-  "Driving Time %": "Temps de conduite %",
-  "Total Idling Time": "Temps de ralenti total",
-  "Idling Time %": "Temps de ralenti %",
+  "Driving Time": "Temps de conduite",
+  "Idling Time": "Temps de ralenti",
   "hrs": "h",
   "km": "km",
 

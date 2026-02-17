@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { LanguageProvider, Tabs } from '@geotab/zenith';
+import { LanguageProvider, Tabs, Header } from '@geotab/zenith';
 
 import ProductivityTab from './ProductivityTab.jsx';
 import SafetyTab from './SafetyTab.jsx';
@@ -32,7 +32,9 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
     <LanguageProvider language={language}>
       <GeotabContext.Provider value={[context]}>
         <div style={{ height: '100%' }}>
-          <h1 style={{ marginBottom: '16px' }}>{geotabState.translate('Last Week in Fleet')}</h1>
+          <Header>
+            <Header.Title pageName={geotabState.translate('Last Week in Fleet')} />
+          </Header>
 
           <Tabs tabs={tabs} activeTabId={selectedTab} onTabChange={setSelectedTab} />
 
