@@ -56,6 +56,7 @@ const ProductivityTab = () => {
   const matchedCount = useRef(0);
   const lastGroupFilter = useRef(null);
   const hasData = useRef(false);
+  const abortRef = useRef(null);
 
   // ── Date helpers ──────────────────────────────────────────────────────
   const getLastWeekRange = () => {
@@ -232,16 +233,18 @@ ${trkpts}
   };
 
   // ── Pool: 5-slot concurrency ─────────────────────────────────────────
-  const processTripsWithPool = async (trips, totalTrips) => {
+  const processTripsWithPool = async (trips, totalTrips, signal) => {
     let idx = 0;
     matchedCount.current = 0;
 
     const worker = async () => {
       while (idx < trips.length) {
+        if (signal.aborted) return;
         const i = idx++;
         const trip = trips[i];
 
         const coords = await mapMatchTrip(trip);
+        if (signal.aborted) return;
         matchedCount.current++;
 
         setProgress(30 + Math.round((matchedCount.current / totalTrips) * 60));
@@ -305,6 +308,13 @@ ${trkpts}
       return;
     }
     lastGroupFilter.current = currentFilter;
+
+    // Abort any in-flight map matching from a previous run
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     const loadData = async () => {
       try {
@@ -475,14 +485,18 @@ ${trkpts}
 
           setDeviceDistances(sorted);
 
+          // Mark data as loaded so re-focus won't restart everything
+          hasData.current = true;
+
           // ── Progressive map matching with 5 concurrent slots ──────
           setStatus(`${geotabState.translate('Map matching:')} 0 / ${tripsToMatch.length}`);
-          await processTripsWithPool(tripsToMatch, tripsToMatch.length);
+          await processTripsWithPool(tripsToMatch, tripsToMatch.length, controller.signal);
 
-          setProgress(100);
-          setStatus(geotabState.translate('Complete'));
-          setLoading(false);
-          hasData.current = true;
+          if (!controller.signal.aborted) {
+            setProgress(100);
+            setStatus(geotabState.translate('Complete'));
+            setLoading(false);
+          }
 
         }, (error) => {
           logger.error('Error loading trips: ' + error);

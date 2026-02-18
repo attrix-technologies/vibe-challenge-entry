@@ -149,3 +149,62 @@ body {
   font-size: 14px;
   color: #6c757d;
 }
+
+.tile-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.tile-no-rules {
+  font-size: 13px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.stacked-bar-track {
+  flex: 1;
+  height: 10px;
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.stacked-bar-segment {
+  height: 100%;
+  position: relative;
+  cursor: default;
+}
+
+.stacked-bar-segment:first-child {
+  border-radius: 3px 0 0 3px;
+}
+
+.stacked-bar-segment:last-child {
+  border-radius: 0 3px 3px 0;
+}
+
+.stacked-bar-segment:first-child:last-child {
+  border-radius: 3px;
+}
+
+.stacked-bar-segment::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+
+.stacked-bar-segment:hover::after {
+  opacity: 1;
+}
