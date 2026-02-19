@@ -5,6 +5,7 @@ import { MapboxOverlay } from '@deck.gl/mapbox';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import maplibregl from 'maplibre-gl';
 import GeotabContext from '../contexts/Geotab';
+import { fmt } from '../utils/units';
 
 const RULE_GROUPS = {
   speeding: ['RuleSpeedingId', 'RuleGpsSpeedingWindowId'],
@@ -44,7 +45,7 @@ const DENSITY_GRID = 0.005;
 
 const SafetyTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, language } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -405,12 +406,12 @@ const SafetyTab = () => {
                         key={type}
                         className="stacked-bar-segment"
                         style={{ width: `${pct}%`, backgroundColor: EVENT_COLORS[type].hex }}
-                        data-tooltip={`${labelForType(type)}: ${count}`}
+                        data-tooltip={`${labelForType(type)}: ${fmt(count, language)}`}
                       />
                     );
                   })}
                 </div>
-                <div className="distance-bar-value">{item.total}</div>
+                <div className="distance-bar-value">{fmt(item.total, language)}</div>
               </div>
             );
           })}
@@ -443,7 +444,7 @@ const SafetyTab = () => {
                 ) : (
                   <Overview
                     icon={colorDot(EVENT_COLORS[key].hex)}
-                    title={String(counts[key] || 0)}
+                    title={fmt(counts[key] || 0, language)}
                     description={t('events')}
                     label={getLabel(counts[key] || 0, prevCounts[key] || 0)}
                   />

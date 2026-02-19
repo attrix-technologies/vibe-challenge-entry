@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
+import { convertDistance, distanceUnit, fmt } from '../utils/units';
 import maplibregl from 'maplibre-gl';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { PathLayer } from '@deck.gl/layers';
@@ -38,7 +39,7 @@ const parseTimeSpanToHours = (ts) => {
 
 const ProductivityTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, isMetric, language } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -462,11 +463,11 @@ ${trkpts}
           const totalVehicleHours = deviceIds.size * WEEK_HOURS;
 
           setKpis({
-            totalDistance: totalDistance.toFixed(1),
-            totalDrivingTime: totalDrivingHours.toFixed(1),
-            drivingTimePercent: totalVehicleHours > 0 ? ((totalDrivingHours / totalVehicleHours) * 100).toFixed(1) : '0.0',
-            totalIdlingTime: totalIdlingHours.toFixed(1),
-            idlingTimePercent: totalVehicleHours > 0 ? ((totalIdlingHours / totalVehicleHours) * 100).toFixed(1) : '0.0'
+            totalDistance,
+            totalDrivingTime: totalDrivingHours,
+            drivingTimePercent: totalVehicleHours > 0 ? ((totalDrivingHours / totalVehicleHours) * 100) : 0,
+            totalIdlingTime: totalIdlingHours,
+            idlingTimePercent: totalVehicleHours > 0 ? ((totalIdlingHours / totalVehicleHours) * 100) : 0
           });
 
           // ── Distance per device + resolve names ─────────────────
@@ -531,16 +532,16 @@ ${trkpts}
     <div className="productivity-layout">
       <SummaryTileBar>
         <SummaryTile id="distance" title={t('Total Distance')} size={SummaryTileSize.Small}>
-          <Overview title={kpis.totalDistance} description={t('km')} />
+          <Overview title={fmt(convertDistance(kpis.totalDistance, isMetric), language, 1)} description={t(distanceUnit(isMetric))} />
         </SummaryTile>
         <SummaryTile id="driving-time" title={t('Driving Time')} size={SummaryTileSize.Small}>
-          <Overview title={kpis.totalDrivingTime} description={t('hrs')} label={{
-            percentage: kpis.drivingTimePercent
+          <Overview title={fmt(kpis.totalDrivingTime, language, 1)} description={t('hrs')} label={{
+            percentage: fmt(kpis.drivingTimePercent, language, 1)
           }} />
         </SummaryTile>
         <SummaryTile id="idling-time" title={t('Idling Time')} size={SummaryTileSize.Small}>
-          <Overview title={kpis.totalIdlingTime} description={t('hrs')} label={{
-            percentage: kpis.idlingTimePercent
+          <Overview title={fmt(kpis.totalIdlingTime, language, 1)} description={t('hrs')} label={{
+            percentage: fmt(kpis.idlingTimePercent, language, 1)
           }} />
         </SummaryTile>
       </SummaryTileBar>
@@ -567,10 +568,10 @@ ${trkpts}
 
         {deviceDistances.length > 0 && (
           <div className="distance-chart">
-            <div className="distance-chart-title">{t('Distance by Vehicle')} ({t('km')})</div>
+            <div className="distance-chart-title">{t('Distance by Vehicle')} ({t(distanceUnit(isMetric))})</div>
             <div className="distance-chart-list">
               {(() => {
-                const maxDist = deviceDistances[0].distance;
+                const maxDist = convertDistance(deviceDistances[0].distance, isMetric);
                 const TRUNCATE_THRESHOLD = 25;
                 let items = deviceDistances;
                 let truncated = false;
@@ -593,7 +594,8 @@ ${trkpts}
                       </div>
                     );
                   }
-                  const pct = maxDist > 0 ? (item.distance / maxDist) * 100 : 0;
+                  const converted = convertDistance(item.distance, isMetric);
+                  const pct = maxDist > 0 ? (converted / maxDist) * 100 : 0;
                   return (
                     <div key={item.id} className="distance-bar-row">
                       <div className="distance-bar-name" title={item.name}>{item.name}</div>
@@ -603,7 +605,7 @@ ${trkpts}
                           style={{ width: `${pct}%`, backgroundColor: `rgb(${item.color.join(',')})` }}
                         />
                       </div>
-                      <div className="distance-bar-value">{item.distance < 1 ? '<1' : item.distance.toFixed(0)}</div>
+                      <div className="distance-bar-value">{converted < 1 ? '<1' : fmt(converted, language, 0)}</div>
                     </div>
                   );
                 });

@@ -132,6 +132,8 @@ All good now. From my initial assessment, now I'm able to create a new add-in wi
 > Looks good, but when there is none of one kind of fuel, gray out and disable those summary tiles. Add another column in the total to sum the idling emissions separately. Would it be easy to pull the trip data from the productivity tab and use that distance to also add average fuel economy to summary-tiles and to the table per vehicle?
 
 > The summary-tiles for gasoline are still not grayed out in this case and there doesn't seem to be any data, gray them out. Replace the card's table content with a DataGrid Zenith component so we can sort columns.
+
+> I'd like to make everything shown in the user's preferred unit. There is a boolean property for the current user: isMetric. If user.isMetric then we should show in km, kg, liters, like we do now. If not, then the data will still come in metric units, but we need to make the conversions. Apply this to all tabs, charts, summary-tiles, tables, everywhere. I'd also like to format numbers nicely according to locale, 20135 L is not proper formatting. In the US they would expect 20,135 and in Canada it should be 20 135. Make sure this doesn't break sorting for the datagrid, I still want to sort by numerical value and not do a string comparison.
   
 ## Authors
 

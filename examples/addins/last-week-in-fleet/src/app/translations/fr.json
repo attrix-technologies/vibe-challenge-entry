@@ -86,5 +86,13 @@
   "Gasoline": "Essence",
   "No fuel data available for last week": "Aucune donn\u00e9e de carburant disponible pour la semaine derni\u00e8re",
   "L": "L",
-  "kg": "kg"
+  "kg": "kg",
+  "mi": "mi",
+  "gal": "gal",
+  "lb": "lb",
+  "MPG": "MPG",
+  "Distance": "Distance",
+  "Fuel Used": "Carburant utilis\u00e9",
+  "Idling Fuel": "Carburant au ralenti",
+  "Idling CO\u2082": "CO\u2082 au ralenti"
 }

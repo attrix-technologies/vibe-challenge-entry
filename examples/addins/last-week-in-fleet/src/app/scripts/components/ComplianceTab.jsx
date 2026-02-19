@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar, Card } from '@geotab/zenith';
 import { Overview, OverviewOptionsArrow, OverviewOptionsType } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
+import { convertDistance, distanceUnit, fmt } from '../utils/units';
 
 const MALFUNCTION_STATUSES = {
   PowerCompliance: '[P] Power malfunction',
@@ -15,7 +16,7 @@ const MALFUNCTION_STATUSES = {
 
 const ComplianceTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices, drivers } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, drivers, isMetric, language } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -288,25 +289,25 @@ const ComplianceTab = () => {
           <SummaryTileBar>
             <SummaryTile id="hos" title={t('HOS Violations')} size={SummaryTileSize.Small}>
               <Overview
-                title={String(hosCount)}
+                title={fmt(hosCount, language)}
                 description={t('violations')}
                 label={getLabel(hosCount, prevHosCount)}
               />
             </SummaryTile>
             <SummaryTile id="unverified" title={t('Unverified Logs')} size={SummaryTileSize.Small}>
               <Overview
-                title={String(unverifiedDriverDays)}
+                title={fmt(unverifiedDriverDays, language)}
                 description={t('driver-days')}
               />
             </SummaryTile>
             <SummaryTile id="eld" title={t('ELD Malfunctions')} size={SummaryTileSize.Small}>
-              <Overview title={String(eldCount)} description={t('malfunctions')} />
+              <Overview title={fmt(eldCount, language)} description={t('malfunctions')} />
             </SummaryTile>
             <SummaryTile id="pc" title={t('PC Distance')} size={SummaryTileSize.Small}>
-              <Overview title={String(pcDistanceKm)} description={t('km')} />
+              <Overview title={fmt(convertDistance(pcDistanceKm, isMetric), language)} description={t(distanceUnit(isMetric))} />
             </SummaryTile>
             <SummaryTile id="ym" title={t('YM Distance')} size={SummaryTileSize.Small}>
-              <Overview title={String(ymDistanceKm)} description={t('km')} />
+              <Overview title={fmt(convertDistance(ymDistanceKm, isMetric), language)} description={t(distanceUnit(isMetric))} />
             </SummaryTile>
           </SummaryTileBar>
 
@@ -329,11 +330,11 @@ const ComplianceTab = () => {
                         {getViolationsByDriver().map(d => (
                           <tr key={d.id}>
                             <td>{d.name}</td>
-                            <td>{d.count}</td>
+                            <td>{fmt(d.count, language)}</td>
                             <td>
                               <ul className="compliance-reason-list">
-                                {d.reasons.map(([reason, count]) => (
-                                  <li key={reason}>{reason}{count > 1 ? ` (${count})` : ''}</li>
+                                {d.reasons.map(([reason, cnt]) => (
+                                  <li key={reason}>{reason}{cnt > 1 ? ` (${fmt(cnt, language)})` : ''}</li>
                                 ))}
                               </ul>
                             </td>
@@ -363,7 +364,7 @@ const ComplianceTab = () => {
                         {unverifiedByDriver.map(d => (
                           <tr key={d.id}>
                             <td>{d.name}</td>
-                            <td>{d.days}</td>
+                            <td>{fmt(d.days, language)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -391,13 +392,13 @@ const ComplianceTab = () => {
                         {eldMalfunctions.map(m => (
                           <tr key={m.id}>
                             <td>{m.name}</td>
-                            <td>{m.count}</td>
+                            <td>{fmt(m.count, language)}</td>
                             <td>
                               <ul className="compliance-reason-list">
-                                {m.types.map(([status, count]) => (
+                                {m.types.map(([status, cnt]) => (
                                   <li key={status}>
                                     {MALFUNCTION_STATUSES[status] ? t(MALFUNCTION_STATUSES[status]) : status}
-                                    {count > 1 ? ` (${count})` : ''}
+                                    {cnt > 1 ? ` (${fmt(cnt, language)})` : ''}
                                   </li>
                                 ))}
                               </ul>
@@ -422,15 +423,15 @@ const ComplianceTab = () => {
                         <tr>
                           <th>{t('Driver')}</th>
                           <th>{t('Logs')}</th>
-                          <th>{t('Distance (km)')}</th>
+                          <th>{`${t('Distance')} (${t(distanceUnit(isMetric))})`}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {pcByDriver.map(d => (
                           <tr key={d.id}>
                             <td>{d.name}</td>
-                            <td>{d.count}</td>
-                            <td>{d.km}</td>
+                            <td>{fmt(d.count, language)}</td>
+                            <td>{fmt(convertDistance(d.km, isMetric), language)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -451,15 +452,15 @@ const ComplianceTab = () => {
                         <tr>
                           <th>{t('Driver')}</th>
                           <th>{t('Logs')}</th>
-                          <th>{t('Distance (km)')}</th>
+                          <th>{`${t('Distance')} (${t(distanceUnit(isMetric))})`}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {ymByDriver.map(d => (
                           <tr key={d.id}>
                             <td>{d.name}</td>
-                            <td>{d.count}</td>
-                            <td>{d.km}</td>
+                            <td>{fmt(d.count, language)}</td>
+                            <td>{fmt(convertDistance(d.km, isMetric), language)}</td>
                           </tr>
                         ))}
                       </tbody>

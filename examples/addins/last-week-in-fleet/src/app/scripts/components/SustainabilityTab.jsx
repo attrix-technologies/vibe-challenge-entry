@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar, Table } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
+import { convertDistance, convertVolume, convertWeight, convertEconomy, distanceUnit, volumeUnit, weightUnit, economyUnit, fmt } from '../utils/units';
 
 const GHG_FACTORS = { Diesel: 2.68, Gasoline: 2.31 }; // kg CO2 per liter
 const VIN_BATCH_SIZE = 50;
@@ -19,7 +20,7 @@ const DISABLED_TILE_STYLE = { opacity: 0.4, pointerEvents: 'none' };
 
 const SustainabilityTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, isMetric, language } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -250,12 +251,12 @@ const SustainabilityTab = () => {
             id: did,
             name: devices.get(did)?.name || did,
             fuelType,
-            totalLiters: Math.round(fuel.totalFuel * 10) / 10,
-            idlingLiters: Math.round(fuel.idlingFuel * 10) / 10,
-            distKm: Math.round(distKm),
-            economy: economy !== null ? Math.round(economy * 10) / 10 : null,
-            co2kg: Math.round(co2 * 10) / 10,
-            idlingCo2kg: Math.round(idlingCo2 * 10) / 10
+            totalFuel: Math.round(convertVolume(fuel.totalFuel, isMetric) * 10) / 10,
+            idlingFuel: Math.round(convertVolume(fuel.idlingFuel, isMetric) * 10) / 10,
+            dist: Math.round(convertDistance(distKm, isMetric)),
+            economy: economy !== null ? Math.round(convertEconomy(economy, isMetric) * 10) / 10 : null,
+            co2: Math.round(convertWeight(co2, isMetric) * 10) / 10,
+            idlingCo2: Math.round(convertWeight(idlingCo2, isMetric) * 10) / 10
           });
 
           if (fuelType === 'Diesel') {
@@ -269,18 +270,20 @@ const SustainabilityTab = () => {
           }
         });
 
-        vehicleRows.sort((a, b) => b.totalLiters - a.totalLiters);
+        vehicleRows.sort((a, b) => b.totalFuel - a.totalFuel);
 
-        setDieselLiters(Math.round(dTotal));
-        setGasolineLiters(Math.round(gTotal));
-        setDieselIdlingLiters(Math.round(dIdle));
-        setGasolineIdlingLiters(Math.round(gIdle));
-        setDieselCO2(Math.round(dTotal * GHG_FACTORS.Diesel));
-        setGasolineCO2(Math.round(gTotal * GHG_FACTORS.Gasoline));
-        setDieselIdlingCO2(Math.round(dIdle * GHG_FACTORS.Diesel));
-        setGasolineIdlingCO2(Math.round(gIdle * GHG_FACTORS.Gasoline));
-        setDieselEconomy(dDistKm > 0 ? Math.round((dTotal / dDistKm) * 1000) / 10 : null);
-        setGasolineEconomy(gDistKm > 0 ? Math.round((gTotal / gDistKm) * 1000) / 10 : null);
+        setDieselLiters(Math.round(convertVolume(dTotal, isMetric)));
+        setGasolineLiters(Math.round(convertVolume(gTotal, isMetric)));
+        setDieselIdlingLiters(Math.round(convertVolume(dIdle, isMetric)));
+        setGasolineIdlingLiters(Math.round(convertVolume(gIdle, isMetric)));
+        setDieselCO2(Math.round(convertWeight(dTotal * GHG_FACTORS.Diesel, isMetric)));
+        setGasolineCO2(Math.round(convertWeight(gTotal * GHG_FACTORS.Gasoline, isMetric)));
+        setDieselIdlingCO2(Math.round(convertWeight(dIdle * GHG_FACTORS.Diesel, isMetric)));
+        setGasolineIdlingCO2(Math.round(convertWeight(gIdle * GHG_FACTORS.Gasoline, isMetric)));
+        const dEcon = dDistKm > 0 ? (dTotal / dDistKm) * 100 : null;
+        const gEcon = gDistKm > 0 ? (gTotal / gDistKm) * 100 : null;
+        setDieselEconomy(dEcon !== null ? Math.round(convertEconomy(dEcon, isMetric) * 10) / 10 : null);
+        setGasolineEconomy(gEcon !== null ? Math.round(convertEconomy(gEcon, isMetric) * 10) / 10 : null);
         setFuelByVehicle(vehicleRows);
         setLoading(false);
       } catch (err) {
@@ -297,16 +300,21 @@ const SustainabilityTab = () => {
 
   const [sortSettings, setSortSettings] = useState(undefined);
 
+  const dU = distanceUnit(isMetric);
+  const vU = volumeUnit(isMetric);
+  const wU = weightUnit(isMetric);
+  const eU = economyUnit(isMetric);
+
   const columns = useMemo(() => [
     { id: 'name', title: t('Vehicle'), sortable: true, meta: { defaultWidth: 160 } },
     { id: 'fuelTypeLabel', title: t('Fuel Type'), sortable: true, meta: { defaultWidth: 130 } },
-    { id: 'distKm', title: t('Distance (km)'), sortable: true, meta: { defaultWidth: 120 } },
-    { id: 'totalLiters', title: t('Fuel Used (L)'), sortable: true, meta: { defaultWidth: 120 } },
-    { id: 'idlingLiters', title: t('Idling Fuel (L)'), sortable: true, meta: { defaultWidth: 130 } },
-    { id: 'economy', title: t('L/100km'), sortable: true, meta: { defaultWidth: 100 } },
-    { id: 'co2kg', title: t('CO\u2082 (kg)'), sortable: true, meta: { defaultWidth: 100 } },
-    { id: 'idlingCo2kg', title: t('Idling CO\u2082 (kg)'), sortable: true, meta: { defaultWidth: 130 } }
-  ], [loading]);
+    { id: 'dist', title: `${t('Distance')} (${t(dU)})`, sortable: true, columnComponent: { render: (e) => fmt(e.dist, language) }, meta: { defaultWidth: 120 } },
+    { id: 'totalFuel', title: `${t('Fuel Used')} (${t(vU)})`, sortable: true, columnComponent: { render: (e) => fmt(e.totalFuel, language, 1) }, meta: { defaultWidth: 120 } },
+    { id: 'idlingFuel', title: `${t('Idling Fuel')} (${t(vU)})`, sortable: true, columnComponent: { render: (e) => fmt(e.idlingFuel, language, 1) }, meta: { defaultWidth: 130 } },
+    { id: 'economy', title: t(eU), sortable: true, columnComponent: { render: (e) => fmt(e.economy, language, 1) }, meta: { defaultWidth: 100 } },
+    { id: 'co2', title: `CO\u2082 (${t(wU)})`, sortable: true, columnComponent: { render: (e) => fmt(e.co2, language, 1) }, meta: { defaultWidth: 100 } },
+    { id: 'idlingCo2', title: `${t('Idling CO\u2082')} (${t(wU)})`, sortable: true, columnComponent: { render: (e) => fmt(e.idlingCo2, language, 1) }, meta: { defaultWidth: 130 } }
+  ], [loading, isMetric, language]);
 
   const entities = useMemo(() => {
     const rows = fuelByVehicle.map(v => ({
@@ -341,32 +349,32 @@ const SustainabilityTab = () => {
           <SummaryTileBar>
             <div style={hasDiesel ? undefined : DISABLED_TILE_STYLE}>
               <SummaryTile id="diesel-fuel" title={t('Diesel Fuel')} size={SummaryTileSize.Small}>
-                <Overview title={String(dieselLiters)} description={t('L')} />
+                <Overview title={fmt(dieselLiters, language)} description={t(volumeUnit(isMetric))} />
               </SummaryTile>
             </div>
             <div style={hasGasoline ? undefined : DISABLED_TILE_STYLE}>
               <SummaryTile id="gasoline-fuel" title={t('Gasoline Fuel')} size={SummaryTileSize.Small}>
-                <Overview title={String(gasolineLiters)} description={t('L')} />
+                <Overview title={fmt(gasolineLiters, language)} description={t(volumeUnit(isMetric))} />
               </SummaryTile>
             </div>
             <div style={hasDiesel ? undefined : DISABLED_TILE_STYLE}>
               <SummaryTile id="diesel-co2" title={t('Diesel CO\u2082')} size={SummaryTileSize.Small}>
-                <Overview title={String(dieselCO2)} description={t('kg')} />
+                <Overview title={fmt(dieselCO2, language)} description={t(weightUnit(isMetric))} />
               </SummaryTile>
             </div>
             <div style={hasGasoline ? undefined : DISABLED_TILE_STYLE}>
               <SummaryTile id="gasoline-co2" title={t('Gasoline CO\u2082')} size={SummaryTileSize.Small}>
-                <Overview title={String(gasolineCO2)} description={t('kg')} />
+                <Overview title={fmt(gasolineCO2, language)} description={t(weightUnit(isMetric))} />
               </SummaryTile>
             </div>
             <div style={hasDiesel && dieselEconomy !== null ? undefined : DISABLED_TILE_STYLE}>
               <SummaryTile id="diesel-economy" title={t('Diesel Avg')} size={SummaryTileSize.Small}>
-                <Overview title={dieselEconomy !== null ? String(dieselEconomy) : '—'} description={t('L/100km')} />
+                <Overview title={dieselEconomy !== null ? fmt(dieselEconomy, language, 1) : '—'} description={t(economyUnit(isMetric))} />
               </SummaryTile>
             </div>
             <div style={hasGasoline && gasolineEconomy !== null ? undefined : DISABLED_TILE_STYLE}>
               <SummaryTile id="gasoline-economy" title={t('Gasoline Avg')} size={SummaryTileSize.Small}>
-                <Overview title={gasolineEconomy !== null ? String(gasolineEconomy) : '—'} description={t('L/100km')} />
+                <Overview title={gasolineEconomy !== null ? fmt(gasolineEconomy, language, 1) : '—'} description={t(economyUnit(isMetric))} />
               </SummaryTile>
             </div>
           </SummaryTileBar>

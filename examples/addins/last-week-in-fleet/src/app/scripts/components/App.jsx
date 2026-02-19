@@ -20,6 +20,7 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
   const [selectedTab, setSelectedTab] = useState('productivity');
   const [devices, setDevices] = useState(null);  // Map<id, name> | null while loading
   const [drivers, setDrivers] = useState(null);  // Map<id, {name, timeZoneId}> | null while loading
+  const [isMetric, setIsMetric] = useState(true);
   const lastDeviceFilterRef = useRef(null);
 
   // ── Fetch devices + drivers for current group filter ───────────────
@@ -70,7 +71,21 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
     });
   }, [focusKeyRef.current]);
 
-  const context = { geotabApi, geotabState, logger, focusKey: focusKeyRef.current, devices, drivers };
+  // ── Fetch current user's isMetric preference (one-time) ──────────
+  useEffect(() => {
+    geotabApi.getSession(session => {
+      geotabApi.call('Get', {
+        typeName: 'User',
+        search: { name: session.userName },
+        propertySelector: { fields: ['isMetric'], isIncluded: true }
+      }, users => {
+        setIsMetric(users[0]?.isMetric ?? true);
+        logger.log(`User isMetric: ${users[0]?.isMetric}`);
+      }, () => setIsMetric(true));
+    });
+  }, []);
+
+  const context = { geotabApi, geotabState, logger, focusKey: focusKeyRef.current, devices, drivers, isMetric, language };
   const t = (key) => geotabState.translate(key);
 
   const tabs = [
