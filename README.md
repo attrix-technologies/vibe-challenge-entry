@@ -100,6 +100,12 @@ All good now. From my initial assessment, now I'm able to create a new add-in wi
 > We need translations for the malfunction descriptions, but keep the same letters in the beginning, they are important. In French, "ELD Malfunctions" should be "Défaillances" and not "Pannes ELD".
 
 > I see you added a t() function again. If you think it helps readability, I'll live with it, but for consistency do the same throughout the entire add-in.
+
+>  It's really not useful to show bottom 10 for exceptionevents on the safety tab. If there are more than 20 to show, show top 20 and then "x more".
+
+> The productivity map consumes a large amount of RAM and uses lots of resources. I know the map-matching payload results are very big, but I think once we convert to encoded polylines, it should be reduced, no? Do you think it would help using deck.gl for the polyline layer here as well? I think it would. Maybe we need to use loader.gl too but I'm not sure. Whatever you think makes sense to free up resources.
+
+> It hasn't completed yet, so maybe it will change colors and update when it's done map-matching, but so far all lines are black and as the trips get map-matched, the map doesn't change at all. Can we still make it 1-color-per-truck and map-match dynamically as it's ready with deck.gl?
   
 ## Authors
 

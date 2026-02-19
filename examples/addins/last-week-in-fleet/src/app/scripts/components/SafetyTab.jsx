@@ -37,7 +37,7 @@ const TILE_CONFIG = [
 
 const EVENT_ORDER = TILE_CONFIG.map(t => t.key);
 const BATCH_SIZE = 250;
-const TRUNCATE_THRESHOLD = 25;
+const TRUNCATE_THRESHOLD = 20;
 const DEFAULT_CENTER = [-73.17375896, 45.57401727];
 const MIN_ZOOM = 3;
 const DENSITY_GRID = 0.005;
@@ -376,9 +376,7 @@ const SafetyTab = () => {
 
     let items = deviceEventData;
     if (deviceEventData.length > TRUNCATE_THRESHOLD) {
-      const top = deviceEventData.slice(0, 10);
-      const bottom = deviceEventData.slice(-10);
-      items = [...top, null, ...bottom];
+      items = [...deviceEventData.slice(0, TRUNCATE_THRESHOLD), null];
     }
 
     return (
@@ -391,7 +389,7 @@ const SafetyTab = () => {
                 <div key="separator" className="distance-chart-separator">
                   <span>&#8942;</span>
                   <span className="separator-label">
-                    {deviceEventData.length - 20} {t('more')}
+                    {deviceEventData.length - TRUNCATE_THRESHOLD} {t('more')}
                   </span>
                 </div>
               );

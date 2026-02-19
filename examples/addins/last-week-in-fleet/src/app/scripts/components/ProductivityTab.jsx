@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import maplibregl from 'maplibre-gl';
+import { MapboxOverlay } from '@deck.gl/mapbox';
+import { PathLayer } from '@deck.gl/layers';
 import polyline from '@mapbox/polyline';
 
 const CONCURRENCY = 5;
@@ -53,6 +55,8 @@ const ProductivityTab = () => {
 
   const mapContainer = useRef(null);
   const map = useRef(null);
+  const deckOverlay = useRef(null);
+  const pathsData = useRef([]);
   const deviceColors = useRef(new Map());
   const matchedCount = useRef(0);
   const lastGroupFilter = useRef(null);
@@ -72,56 +76,64 @@ const ProductivityTab = () => {
     return { fromDate: lastSunday.toISOString(), toDate: lastSaturday.toISOString() };
   };
 
-  // ── Colour per device ────────────────────────────────────────────────
+  // ── Colour per device (returns [r, g, b] for deck.gl) ───────────────
   const getDeviceColor = (deviceId) => {
     if (!deviceColors.current.has(deviceId)) {
       const hue = Math.floor(Math.random() * 360);
-      deviceColors.current.set(deviceId, `hsl(${hue}, 70%, 50%)`);
+      // Convert HSL (70% saturation, 50% lightness) to RGB
+      const s = 0.7, l = 0.5;
+      const c = (1 - Math.abs(2 * l - 1)) * s;
+      const x = c * (1 - Math.abs((hue / 60) % 2 - 1));
+      const m = l - c / 2;
+      let r, g, b;
+      if (hue < 60) { r = c; g = x; b = 0; }
+      else if (hue < 120) { r = x; g = c; b = 0; }
+      else if (hue < 180) { r = 0; g = c; b = x; }
+      else if (hue < 240) { r = 0; g = x; b = c; }
+      else if (hue < 300) { r = x; g = 0; b = c; }
+      else { r = c; g = 0; b = x; }
+      deviceColors.current.set(deviceId, [
+        Math.round((r + m) * 255),
+        Math.round((g + m) * 255),
+        Math.round((b + m) * 255)
+      ]);
     }
     return deviceColors.current.get(deviceId);
   };
 
-  // ── Stable layer id per trip ─────────────────────────────────────────
-  const layerId = (trip) => `trip-${trip.id}`;
-
-  // ── Draw a trip on the map (straight line or matched polyline) ───────
-  const drawTrip = useCallback((trip, coordinates) => {
-    if (!map.current) return;
-    const id = layerId(trip);
-    const color = getDeviceColor(trip.device.id);
-    const source = map.current.getSource(id);
-
-    const geojson = {
-      type: 'Feature',
-      properties: {},
-      geometry: { type: 'LineString', coordinates }
-    };
-
-    if (source) {
-      source.setData(geojson);
-    } else {
-      map.current.addSource(id, { type: 'geojson', data: geojson });
-      map.current.addLayer({
-        id,
-        type: 'line',
-        source: id,
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        paint: { 'line-color': color, 'line-width': 3, 'line-opacity': 0.7 }
-      });
-    }
-  }, []);
-
-  // ── Remove all trip layers from the map ──────────────────────────────
-  const clearMapLayers = () => {
-    if (!map.current) return;
-    const style = map.current.getStyle();
-    if (!style || !style.layers) return;
-    style.layers.forEach(layer => {
-      if (layer.id.startsWith('trip-')) {
-        map.current.removeLayer(layer.id);
-        map.current.removeSource(layer.id);
-      }
+  // ── Flush paths data to a single deck.gl PathLayer ──────────────────
+  const flushPaths = () => {
+    if (!deckOverlay.current) return;
+    deckOverlay.current.setProps({
+      layers: [
+        new PathLayer({
+          id: 'trip-paths',
+          data: pathsData.current.slice(), // new ref so deck.gl detects change
+          getPath: d => d.path,
+          getColor: d => d.color,
+          getWidth: 3,
+          widthUnits: 'pixels',
+          capRounded: true,
+          jointRounded: true,
+          opacity: 0.7
+        })
+      ]
     });
+  };
+
+  // ── Add or replace a trip path (no render — call flushPaths after) ──
+  const addPath = (trip, coordinates) => {
+    const color = getDeviceColor(trip.device.id);
+    const idx = pathsData.current.findIndex(d => d.id === trip.id);
+    const entry = { id: trip.id, path: coordinates, color };
+    if (idx >= 0) pathsData.current[idx] = entry;
+    else pathsData.current.push(entry);
+  };
+
+  // ── Clear all trip paths ────────────────────────────────────────────
+  const clearMapLayers = () => {
+    pathsData.current = [];
+    flushPaths();
   };
 
   // ── Build GPX payload from an array of {lat, lon, time} waypoints ───
@@ -252,7 +264,8 @@ ${trkpts}
         setStatus(`${t('Map matching:')} ${matchedCount.current} / ${totalTrips}`);
 
         if (coords && map.current) {
-          drawTrip(trip, coords);
+          addPath(trip, coords);
+          flushPaths();
         }
       }
     };
@@ -343,12 +356,8 @@ ${trkpts}
             minZoom: MIN_ZOOM
           });
           map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
-
-          // Wait for style to load before adding sources/layers
-          await new Promise(resolve => {
-            if (map.current.isStyleLoaded()) resolve();
-            else map.current.on('load', resolve);
-          });
+          deckOverlay.current = new MapboxOverlay({ layers: [], interleaved: false });
+          map.current.addControl(deckOverlay.current);
         }
 
         const { fromDate, toDate } = getLastWeekRange();
@@ -414,10 +423,11 @@ ${trkpts}
               [trip.startPoint.x, trip.startPoint.y],
               [trip.stopPoint.x, trip.stopPoint.y]
             ];
-            drawTrip(trip, coords);
+            addPath(trip, coords);
             bounds.extend(coords[0]);
             bounds.extend(coords[1]);
           });
+          flushPaths();
 
           if (!bounds.isEmpty()) {
             map.current.fitBounds(bounds, { padding: 40 });
@@ -516,6 +526,8 @@ ${trkpts}
   // Clean up map only on unmount
   useEffect(() => {
     return () => {
+      pathsData.current = [];
+      deckOverlay.current = null;
       if (map.current) {
         map.current.remove();
         map.current = null;
@@ -596,7 +608,7 @@ ${trkpts}
                       <div className="distance-bar-track">
                         <div
                           className="distance-bar-fill"
-                          style={{ width: `${pct}%`, backgroundColor: item.color }}
+                          style={{ width: `${pct}%`, backgroundColor: `rgb(${item.color.join(',')})` }}
                         />
                       </div>
                       <div className="distance-bar-value">{item.distance.toFixed(0)}</div>
