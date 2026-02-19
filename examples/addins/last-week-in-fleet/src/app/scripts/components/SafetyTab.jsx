@@ -44,7 +44,7 @@ const DENSITY_GRID = 0.005;
 
 const SafetyTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -126,21 +126,6 @@ const SafetyTab = () => {
     return null;
   };
 
-  // ── Fetch device names ─────────────────────────────────────────────
-  const fetchDeviceNames = (deviceIds) => new Promise((resolve) => {
-    if (deviceIds.length === 0) { resolve(new Map()); return; }
-    const calls = deviceIds.map(id => ['Get', { typeName: 'Device', search: { id } }]);
-    geotabApi.multiCall(calls, (results) => {
-      const nameMap = new Map();
-      results.forEach((devices) => {
-        if (devices && devices.length > 0) {
-          nameMap.set(devices[0].id, devices[0].name || devices[0].id);
-        }
-      });
-      resolve(nameMap);
-    }, () => resolve(new Map()));
-  });
-
   // ── Fetch LogRecords in batches ────────────────────────────────────
   const fetchEventLocations = async (allEvents) => {
     if (allEvents.length === 0) return [];
@@ -208,27 +193,30 @@ const SafetyTab = () => {
         deckOverlay.current = new MapboxOverlay({ layers: [], interleaved: false });
         map.current.addControl(deckOverlay.current);
       }
-      if (eventPoints.length > 0 && deckOverlay.current) {
-        deckOverlay.current.setProps({
-          layers: [
-            new ScatterplotLayer({
-              id: 'safety-events',
-              data: eventPoints,
-              getPosition: d => d.position,
-              getFillColor: d => d.color,
-              getRadius: d => d.radius,
-              radiusUnits: 'pixels',
-              radiusMinPixels: 3,
-              radiusMaxPixels: 18,
-              opacity: 0.8,
-              antialiasing: true
-            })
-          ]
-        });
-        const bounds = new maplibregl.LngLatBounds();
-        eventPoints.forEach(p => bounds.extend(p.position));
-        if (!bounds.isEmpty()) map.current.fitBounds(bounds, { padding: 40 });
+      if (!deckOverlay.current) return;
+      if (eventPoints.length === 0) {
+        deckOverlay.current.setProps({ layers: [] });
+        return;
       }
+      deckOverlay.current.setProps({
+        layers: [
+          new ScatterplotLayer({
+            id: 'safety-events',
+            data: eventPoints,
+            getPosition: d => d.position,
+            getFillColor: d => d.color,
+            getRadius: d => d.radius,
+            radiusUnits: 'pixels',
+            radiusMinPixels: 3,
+            radiusMaxPixels: 18,
+            opacity: 0.8,
+            antialiasing: true
+          })
+        ]
+      });
+      const bounds = new maplibregl.LngLatBounds();
+      eventPoints.forEach(p => bounds.extend(p.position));
+      if (!bounds.isEmpty()) map.current.fitBounds(bounds, { padding: 40 });
     };
     initMap();
   }, [loading, eventPoints]);
@@ -239,6 +227,12 @@ const SafetyTab = () => {
 
   // ── Main data loader ───────────────────────────────────────────────
   useEffect(() => {
+    if (!devices) {
+      hasData.current = false;
+      lastGroupFilter.current = null;
+      return;
+    }
+
     const currentFilter = getGroupFilterKey();
     if (hasData.current && currentFilter === lastGroupFilter.current) return;
     lastGroupFilter.current = currentFilter;
@@ -273,13 +267,15 @@ const SafetyTab = () => {
         return;
       }
 
+      const groupFilter = geotabState.getGroupFilter();
+      const deviceGroups = groupFilter.length > 0 ? groupFilter : [{ id: 'GroupCompanyId' }];
       const thisWeekCalls = rulesToFetch.map(ruleId => ['Get', {
         typeName: 'ExceptionEvent',
-        search: { fromDate: thisWeek.fromDate, toDate: thisWeek.toDate, ruleSearch: { id: ruleId } }
+        search: { fromDate: thisWeek.fromDate, toDate: thisWeek.toDate, ruleSearch: { id: ruleId }, deviceSearch: { groups: deviceGroups } }
       }]);
       const prevWeekCalls = rulesToFetch.map(ruleId => ['Get', {
         typeName: 'ExceptionEvent',
-        search: { fromDate: prevWeek.fromDate, toDate: prevWeek.toDate, ruleSearch: { id: ruleId } }
+        search: { fromDate: prevWeek.fromDate, toDate: prevWeek.toDate, ruleSearch: { id: ruleId }, deviceSearch: { groups: deviceGroups } }
       }]);
 
       const allCalls = [...thisWeekCalls, ...prevWeekCalls];
@@ -291,7 +287,10 @@ const SafetyTab = () => {
 
         const sumByGroup = (weekResults) => {
           const countByRule = new Map();
-          weekResults.forEach((events, i) => countByRule.set(rulesToFetch[i], events ? events.length : 0));
+          weekResults.forEach((events, i) => {
+            const scoped = events ? events.filter(e => devices.has(e.device?.id)) : [];
+            countByRule.set(rulesToFetch[i], scoped.length);
+          });
           const totals = {};
           for (const [group, ruleIds] of Object.entries(activeRulesByGroup)) {
             totals[group] = ruleIds.reduce((sum, id) => sum + (countByRule.get(id) || 0), 0);
@@ -319,6 +318,7 @@ const SafetyTab = () => {
           events.forEach(event => {
             if (!event.activeFrom || !event.device || !event.device.id) return;
             const did = event.device.id;
+            if (!devices.has(did)) return; // skip events outside group scope
             allEvents.push({ activeFrom: event.activeFrom, deviceId: did, type: group });
             if (!deviceMap.has(did)) {
               deviceMap.set(did, { speeding: 0, acceleration: 0, cornering: 0, braking: 0, tailgating: 0, collisions: 0 });
@@ -327,13 +327,11 @@ const SafetyTab = () => {
           });
         });
 
-        // Fetch device names and build chart data
-        const deviceIds = [...deviceMap.keys()];
-        const nameMap = await fetchDeviceNames(deviceIds);
+        // Build chart data using shared device names
         const sorted = [...deviceMap.entries()]
           .map(([id, eventCounts]) => ({
             id,
-            name: nameMap.get(id) || id,
+            name: devices.get(id) || id,
             counts: eventCounts,
             total: Object.values(eventCounts).reduce((a, b) => a + b, 0)
           }))
@@ -356,7 +354,7 @@ const SafetyTab = () => {
       logger.error('Error loading rules: ' + error);
       setLoading(false);
     });
-  }, [focusKey]);
+  }, [focusKey, devices]);
 
   // ── Helpers for rendering ──────────────────────────────────────────
   const colorDot = (hex) => (
@@ -429,48 +427,46 @@ const SafetyTab = () => {
           <div className="status-message">{t('Loading safety events...')}</div>
         </div>
       ) : (
-        <>
-          <SummaryTileBar>
-            {TILE_CONFIG.map(({ key, label }) => {
-              const isDisabled = disabledGroups.has(key);
-              return (
-                <SummaryTile
-                  key={key}
-                  id={key}
-                  title={t(label)}
-                  size={SummaryTileSize.Small}
-                  className={isDisabled ? 'tile-disabled' : undefined}
-                >
-                  {isDisabled ? (
-                    <span className="tile-no-rules">{t('No rules')}</span>
-                  ) : (
-                    <Overview
-                      icon={colorDot(EVENT_COLORS[key].hex)}
-                      title={String(counts[key] || 0)}
-                      description={t('events')}
-                      label={getLabel(counts[key] || 0, prevCounts[key] || 0)}
-                    />
-                  )}
-                </SummaryTile>
-              );
-            })}
-          </SummaryTileBar>
-
-          <div className="map-and-chart">
-            <div className="map-section">
-              <div className="map-wrapper">
-                <div ref={mapContainer} className="map-container" />
-              </div>
-              {mapStatus && (
-                <div style={{ marginTop: '8px' }}>
-                  <div className="status-message">{mapStatus}</div>
-                </div>
-              )}
-            </div>
-            {renderDeviceChart()}
-          </div>
-        </>
+        <SummaryTileBar>
+          {TILE_CONFIG.map(({ key, label }) => {
+            const isDisabled = disabledGroups.has(key);
+            return (
+              <SummaryTile
+                key={key}
+                id={key}
+                title={t(label)}
+                size={SummaryTileSize.Small}
+                className={isDisabled ? 'tile-disabled' : undefined}
+              >
+                {isDisabled ? (
+                  <span className="tile-no-rules">{t('No rules')}</span>
+                ) : (
+                  <Overview
+                    icon={colorDot(EVENT_COLORS[key].hex)}
+                    title={String(counts[key] || 0)}
+                    description={t('events')}
+                    label={getLabel(counts[key] || 0, prevCounts[key] || 0)}
+                  />
+                )}
+              </SummaryTile>
+            );
+          })}
+        </SummaryTileBar>
       )}
+
+      <div className="map-and-chart" style={{ display: loading ? 'none' : undefined }}>
+        <div className="map-section">
+          <div className="map-wrapper">
+            <div ref={mapContainer} className="map-container" />
+          </div>
+          {mapStatus && (
+            <div style={{ marginTop: '8px' }}>
+              <div className="status-message">{mapStatus}</div>
+            </div>
+          )}
+        </div>
+        {renderDeviceChart()}
+      </div>
     </div>
   );
 };

@@ -38,7 +38,7 @@ const parseTimeSpanToHours = (ts) => {
 
 const ProductivityTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -316,6 +316,15 @@ ${trkpts}
 
   // ── Main data loader ─────────────────────────────────────────────────
   useEffect(() => {
+    if (!devices) {
+      // Devices loading (group filter changed) — abort in-flight work and
+      // reset guards so the reload fires once correct devices arrive
+      if (abortRef.current) abortRef.current.abort();
+      hasData.current = false;
+      lastGroupFilter.current = null;
+      return;
+    }
+
     // Only reload if group filter changed or we have no data yet
     const currentFilter = getGroupFilterKey();
     if (hasData.current && currentFilter === lastGroupFilter.current) {
@@ -332,11 +341,9 @@ ${trkpts}
 
     const loadData = async () => {
       try {
-        // If reloading due to filter change, clear old map layers
-        if (hasData.current) {
-          clearMapLayers();
-          deviceColors.current.clear();
-        }
+        // Clear old map layers on every load (including filter changes)
+        clearMapLayers();
+        deviceColors.current.clear();
 
         setLoading(true);
         setStatus(t('Getting trips from last week...'));
@@ -366,8 +373,12 @@ ${trkpts}
         geotabApi.call('Get', {
           typeName: 'Trip',
           search: { fromDate, toDate, includeOverlappedTrips: true }
-        }, async (trips) => {
-          logger.log(`Loaded ${trips.length} trips`);
+        }, async (allTrips) => {
+          if (controller.signal.aborted) return; // Stale request from previous filter
+
+          // Filter trips to only devices in the current group scope
+          const trips = allTrips.filter(trip => devices.has(trip.device.id));
+          logger.log(`Loaded ${allTrips.length} trips, ${trips.length} in group scope`);
           setProgress(20);
 
           if (trips.length === 0) {
@@ -465,30 +476,11 @@ ${trkpts}
             distByDevice.set(did, (distByDevice.get(did) || 0) + (trip.distance || 0));
           });
 
-          // Fetch device details to get names
-          const deviceIdArray = [...deviceIds];
-          const fetchDeviceNames = () => new Promise((resolve) => {
-            const calls = deviceIdArray.map(id => ['Get', {
-              typeName: 'Device',
-              search: { id }
-            }]);
-            geotabApi.multiCall(calls, (results) => {
-              const nameMap = new Map();
-              results.forEach((devices) => {
-                if (devices && devices.length > 0) {
-                  nameMap.set(devices[0].id, devices[0].name || devices[0].id);
-                }
-              });
-              resolve(nameMap);
-            }, () => resolve(new Map()));
-          });
-
-          const deviceNameMap = await fetchDeviceNames();
-
           const sorted = [...distByDevice.entries()]
+            .filter(([, dist]) => dist > 0)
             .map(([id, dist]) => ({
               id,
-              name: deviceNameMap.get(id) || id,
+              name: devices.get(id) || id,
               distance: dist,
               color: getDeviceColor(id)
             }))
@@ -521,7 +513,7 @@ ${trkpts}
     };
 
     loadData();
-  }, [focusKey]);
+  }, [focusKey, devices]);
 
   // Clean up map only on unmount
   useEffect(() => {
@@ -611,7 +603,7 @@ ${trkpts}
                           style={{ width: `${pct}%`, backgroundColor: `rgb(${item.color.join(',')})` }}
                         />
                       </div>
-                      <div className="distance-bar-value">{item.distance.toFixed(0)}</div>
+                      <div className="distance-bar-value">{item.distance < 1 ? '<1' : item.distance.toFixed(0)}</div>
                     </div>
                   );
                 });

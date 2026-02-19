@@ -15,7 +15,7 @@ const MALFUNCTION_STATUSES = {
 
 const ComplianceTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, drivers } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,6 @@ const ComplianceTab = () => {
   const [ymByDriver, setYmByDriver] = useState([]);
   const [eldMalfunctions, setEldMalfunctions] = useState([]);
   const [eldCount, setEldCount] = useState(0);
-  const [driverInfo, setDriverInfo] = useState(new Map());
 
   const hasData = useRef(false);
   const lastGroupFilter = useRef(null);
@@ -78,28 +77,14 @@ const ComplianceTab = () => {
     };
   };
 
-  // ── Fetch driver info (names + timezones) ──────────────────────────
-  const fetchDriverInfo = (driverIds) => new Promise((resolve) => {
-    if (driverIds.length === 0) { resolve(new Map()); return; }
-    const calls = driverIds.map(id => ['Get', { typeName: 'User', search: { id } }]);
-    geotabApi.multiCall(calls, (results) => {
-      const infoMap = new Map();
-      results.forEach((users) => {
-        if (users && users.length > 0) {
-          const u = users[0];
-          const fullName = `${u.firstName || ''} ${u.lastName || ''}`.trim();
-          infoMap.set(u.id, {
-            name: fullName || u.name || u.id,
-            timeZoneId: u.timeZoneId || 'UTC'
-          });
-        }
-      });
-      resolve(infoMap);
-    }, () => resolve(new Map()));
-  });
-
   // ── Main data loader ───────────────────────────────────────────────
   useEffect(() => {
+    if (!devices || !drivers) {
+      hasData.current = false;
+      lastGroupFilter.current = null;
+      return;
+    }
+
     const currentFilter = getGroupFilterKey();
     if (hasData.current && currentFilter === lastGroupFilter.current) return;
     lastGroupFilter.current = currentFilter;
@@ -118,13 +103,14 @@ const ComplianceTab = () => {
     ];
 
     geotabApi.multiCall(calls, async (results) => {
-      const thisWeekViolations = results[0] || [];
-      const prevWeekViolations = results[1] || [];
-      const allLogs = results[2] || [];
-      const malfunctionLogs = results[3] || [];
+      // Filter violations and logs to only drivers in the current group scope
+      const thisWeekViolations = (results[0] || []).filter(v => drivers.has(v.driver?.id));
+      const prevWeekViolations = (results[1] || []).filter(v => drivers.has(v.driver?.id));
+      const allLogs = (results[2] || []).filter(log => drivers.has(log.driver?.id));
+      const malfunctionLogs = (results[3] || []).filter(log => devices.has(log.device?.id));
 
-      logger.log(`HOS Violations: ${thisWeekViolations.length} this week, ${prevWeekViolations.length} prev week`);
-      logger.log(`Duty status logs: ${allLogs.length} total`);
+      logger.log(`HOS Violations: ${thisWeekViolations.length} this week (scoped), ${prevWeekViolations.length} prev week (scoped)`);
+      logger.log(`Duty status logs: ${allLogs.length} total (scoped)`);
 
       // ── Process violations ───────────────────────────────────────
       setHosViolations(thisWeekViolations);
@@ -202,37 +188,35 @@ const ComplianceTab = () => {
       setYmDistanceKm(Math.round(ymMeters / 1000));
       logger.log(`Distances — PC: ${Math.round(pcMeters / 1000)} km, YM: ${Math.round(ymMeters / 1000)} km`);
 
-      // ── Process ELD malfunctions ───────────────────────────────
+      // ── Process ELD malfunctions (group by device) ─────────────
       logger.log(`ELD malfunction logs: ${malfunctionLogs.length}`);
       setEldCount(malfunctionLogs.length);
 
-      const malfByType = new Map();
+      const malfByDevice = new Map();
       malfunctionLogs.forEach(log => {
+        const did = log.device?.id;
+        if (!did) return;
+        if (!malfByDevice.has(did)) malfByDevice.set(did, { count: 0, types: new Map() });
+        const entry = malfByDevice.get(did);
+        entry.count++;
         const status = log.status || 'Unknown';
-        if (!malfByType.has(status)) malfByType.set(status, 0);
-        malfByType.set(status, malfByType.get(status) + 1);
+        entry.types.set(status, (entry.types.get(status) || 0) + 1);
       });
-      const malfSorted = [...malfByType.entries()]
-        .map(([status, count]) => ({
-          status,
-          label: MALFUNCTION_STATUSES[status] ? t(MALFUNCTION_STATUSES[status]) : status,
-          count
+
+      const malfSorted = [...malfByDevice.entries()]
+        .map(([id, { count, types }]) => ({
+          id,
+          name: devices.get(id) || id,
+          count,
+          types: [...types.entries()].sort((a, b) => b[1] - a[1])
         }))
         .sort((a, b) => b.count - a.count);
       setEldMalfunctions(malfSorted);
 
-      // ── Collect all driver IDs, fetch info ───────────────────────
-      const allDriverIds = new Set();
-      thisWeekViolations.forEach(v => { if (v.driver?.id) allDriverIds.add(v.driver.id); });
-      allLogs.forEach(log => { if (log.driver?.id) allDriverIds.add(log.driver.id); });
-
-      const info = await fetchDriverInfo([...allDriverIds]);
-      setDriverInfo(info);
-
       // ── Build per-driver PC/YM tables ──────────────────────────
       const buildDriverList = (driverMap) => [...driverMap.entries()]
         .map(([id, { count, meters }]) => ({
-          id, name: info.get(id)?.name || id, count, km: Math.round(meters / 1000)
+          id, name: drivers.get(id)?.name || id, count, km: Math.round(meters / 1000)
         }))
         .sort((a, b) => b.km - a.km);
       setPcByDriver(buildDriverList(pcDriverMap));
@@ -243,7 +227,7 @@ const ComplianceTab = () => {
       unverifiedLogs.forEach(log => {
         const driverId = log.driver?.id;
         if (!driverId || !log.dateTime) return;
-        const tz = info.get(driverId)?.timeZoneId || 'UTC';
+        const tz = drivers.get(driverId)?.timeZoneId || 'UTC';
         let localDate;
         try {
           localDate = new Date(log.dateTime).toLocaleDateString('en-CA', { timeZone: tz });
@@ -258,7 +242,7 @@ const ComplianceTab = () => {
       const unverified = [...driverDates.entries()]
         .map(([id, dates]) => {
           totalDriverDays += dates.size;
-          return { id, name: info.get(id)?.name || id, days: dates.size };
+          return { id, name: drivers.get(id)?.name || id, days: dates.size };
         })
         .sort((a, b) => b.days - a.days);
 
@@ -271,7 +255,7 @@ const ComplianceTab = () => {
       logger.error('Error loading compliance data: ' + error);
       setLoading(false);
     });
-  }, [focusKey]);
+  }, [focusKey, devices, drivers]);
 
   // ── Group violations by driver ─────────────────────────────────────
   const getViolationsByDriver = () => {
@@ -288,7 +272,7 @@ const ComplianceTab = () => {
       if (reason) entry.reasons.set(reason, (entry.reasons.get(reason) || 0) + 1);
     });
     return [...map.values()]
-      .map(d => ({ ...d, name: driverInfo.get(d.id)?.name || d.id, reasons: [...d.reasons.entries()] }))
+      .map(d => ({ ...d, name: drivers?.get(d.id)?.name || d.id, reasons: [...d.reasons.entries()] }))
       .sort((a, b) => b.count - a.count);
   };
 
@@ -398,15 +382,26 @@ const ComplianceTab = () => {
                     <table className="compliance-table">
                       <thead>
                         <tr>
-                          <th>{t('Type')}</th>
+                          <th>{t('Vehicle')}</th>
                           <th>{t('Count')}</th>
+                          <th>{t('Type')}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {eldMalfunctions.map(m => (
-                          <tr key={m.status}>
-                            <td>{m.label}</td>
+                          <tr key={m.id}>
+                            <td>{m.name}</td>
                             <td>{m.count}</td>
+                            <td>
+                              <ul className="compliance-reason-list">
+                                {m.types.map(([status, count]) => (
+                                  <li key={status}>
+                                    {MALFUNCTION_STATUSES[status] ? t(MALFUNCTION_STATUSES[status]) : status}
+                                    {count > 1 ? ` (${count})` : ''}
+                                  </li>
+                                ))}
+                              </ul>
+                            </td>
                           </tr>
                         ))}
                       </tbody>

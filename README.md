@@ -106,6 +106,22 @@ All good now. From my initial assessment, now I'm able to create a new add-in wi
 > The productivity map consumes a large amount of RAM and uses lots of resources. I know the map-matching payload results are very big, but I think once we convert to encoded polylines, it should be reduced, no? Do you think it would help using deck.gl for the polyline layer here as well? I think it would. Maybe we need to use loader.gl too but I'm not sure. Whatever you think makes sense to free up resources.
 
 > It hasn't completed yet, so maybe it will change colors and update when it's done map-matching, but so far all lines are black and as the trips get map-matched, the map doesn't change at all. Can we still make it 1-color-per-truck and map-match dynamically as it's ready with deck.gl?
+
+> I think it's weird to show a bunch of vehicles with "0" distance driven. If they have no trips at all, they should not be shown at all. If they have trips that round down to 0 km, show "<1" instead.
+
+> For ELD malfunctions, the table doesn't have enough details. First column should be vehicle, 2nd column should be count, 3rd column should be a list of malfunction types with counts (similar to our violations card).
+
+> I know it's counterintuitive, but it's now less efficient to retrieve individual devices in a multicall than it is to get all devices in a single call. This is because a single multicall to get 150 individual trucks counts as 150 requests toward the rate limits, whereas the single Get Device call counts as 1. We are hitting rate limits right now, so refactor. Use a single Get Device call, search for "groups" as the current group filter value. Use a propertySelector to get only the relevant properties to keep the payload small, ie likely id and name only. Also, this will solve another issue: it's not possible to pass a deviceSearch that is a groupSearch to the Get Trip API call, so right now regardless of the group filter selection, we are getting all trips from all devices. Let's change the logic here: Get Devices using the group filter scope. Get Trip (as currently). Filter trips for unknown devices (not in the previous payload). Then keep only those for KPI and map display. If possible, keep the device list global and shared between all tabs.
+
+> Mostly works, however: 1. If I change the group filter while the trips are being map-matched, it seems to continue with the same trips (is that possible)? If I wait until it has finished, then I see it update the trips according to the new filter. 2. On the safety tab, the map renders after initial load, but it fails to update after group filter change. See attached, it is blank like that after filter change.
+
+> Now it renders, but after group filter change, it doesn't map-match the new trips. The numbers also don't seem to change after filter change for exceptionevents. Make sure to pass deviceSearch.groups to the current groupfilter in all Get ExceptionEvent calls. Same for compliance, when you get DutyStatusViolations, instead of forcing GroupCompanyId, use group-filter value.
+
+> Still doesn't map-match the the trips after group filter change, though they update. And I always get the same HOS violations regardless of group filter.
+
+> Apparently this does not work at Geotab, the groupSearch in the userSearch is ignored for DutyStatusViolation. This returns all violations. For this reason, please make the change as we did for devices. Globally, Get User search isDriver:true, fromDate: new Date(), companyGroups: current group filter. Reuse this for components that need driver identities. You should also use a propertyselector. Make sure violations received where driver.id is not know are filtered out.
+
+> Use the driver filter on the unverified logs, too - logs from drivers not in the user map should be filtered out. Similarly, for ELD malfunctions, filter out logs from unknown devices.
   
 ## Authors
 
