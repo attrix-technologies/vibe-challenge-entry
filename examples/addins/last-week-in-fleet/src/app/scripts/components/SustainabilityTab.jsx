@@ -3,20 +3,21 @@ import GeotabContext from '../contexts/Geotab';
 
 const SustainabilityTab = () => {
   const [{ geotabState }] = useContext(GeotabContext);
+  const t = (key) => geotabState.translate(key);
 
   return (
     <div>
-      <h2>{geotabState.translate('Sustainability')}</h2>
-      <p>{geotabState.translate('Environmental impact and sustainability metrics will appear here.')}</p>
+      <h2>{t('Sustainability')}</h2>
+      <p>{t('Environmental impact and sustainability metrics will appear here.')}</p>
       <p style={{ color: '#6c757d', marginTop: '16px' }}>
-        {geotabState.translate('This tab will show:')}
+        {t('This tab will show:')}
       </p>
       <ul style={{ color: '#6c757d' }}>
-        <li>{geotabState.translate('Total fuel consumption')}</li>
-        <li>{geotabState.translate('CO2 emissions')}</li>
-        <li>{geotabState.translate('Fuel efficiency trends')}</li>
-        <li>{geotabState.translate('Electric vehicle usage statistics')}</li>
-        <li>{geotabState.translate('Carbon footprint reduction recommendations')}</li>
+        <li>{t('Total fuel consumption')}</li>
+        <li>{t('CO2 emissions')}</li>
+        <li>{t('Fuel efficiency trends')}</li>
+        <li>{t('Electric vehicle usage statistics')}</li>
+        <li>{t('Carbon footprint reduction recommendations')}</li>
       </ul>
     </div>
   );

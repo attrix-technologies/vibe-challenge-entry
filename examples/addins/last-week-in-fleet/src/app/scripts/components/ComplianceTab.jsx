@@ -1,23 +1,481 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar, Card } from '@geotab/zenith';
+import { Overview, OverviewOptionsArrow, OverviewOptionsType } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 
+const MALFUNCTION_STATUSES = {
+  PowerCompliance: '[P] Power malfunction',
+  EngineSyncCompliance: '[E] Engine sync malfunction',
+  TimingCompliance: '[T] Timing malfunction',
+  PositioningCompliance: '[L] Positioning malfunction',
+  DataRecordingCompliance: '[R] Data recording malfunction',
+  DataTransferCompliance: '[S] Data transfer malfunction',
+  OtherCompliance: '[O] Other malfunction'
+};
+
 const ComplianceTab = () => {
-  const [{ geotabState }] = useContext(GeotabContext);
+  const [context] = useContext(GeotabContext);
+  const { geotabApi, logger, focusKey, geotabState } = context;
+  const t = (key) => geotabState.translate(key);
+
+  const [loading, setLoading] = useState(true);
+  const [hosViolations, setHosViolations] = useState([]);
+  const [hosCount, setHosCount] = useState(0);
+  const [prevHosCount, setPrevHosCount] = useState(0);
+  const [unverifiedByDriver, setUnverifiedByDriver] = useState([]);
+  const [unverifiedDriverDays, setUnverifiedDriverDays] = useState(0);
+  const [pcDistanceKm, setPcDistanceKm] = useState(0);
+  const [ymDistanceKm, setYmDistanceKm] = useState(0);
+  const [pcByDriver, setPcByDriver] = useState([]);
+  const [ymByDriver, setYmByDriver] = useState([]);
+  const [eldMalfunctions, setEldMalfunctions] = useState([]);
+  const [eldCount, setEldCount] = useState(0);
+  const [driverInfo, setDriverInfo] = useState(new Map());
+
+  const hasData = useRef(false);
+  const lastGroupFilter = useRef(null);
+  const pcYmLogsRef = useRef([]);
+
+  // ── Date helpers ───────────────────────────────────────────────────
+  const getWeekRanges = () => {
+    const now = new Date();
+    const currentDay = now.getDay();
+
+    const lastSunday = new Date(now);
+    lastSunday.setDate(now.getDate() - currentDay - 7);
+    lastSunday.setHours(0, 0, 0, 0);
+    const lastSaturday = new Date(lastSunday);
+    lastSaturday.setDate(lastSunday.getDate() + 6);
+    lastSaturday.setHours(23, 59, 59, 999);
+
+    const prevSunday = new Date(lastSunday);
+    prevSunday.setDate(lastSunday.getDate() - 7);
+    const prevSaturday = new Date(prevSunday);
+    prevSaturday.setDate(prevSunday.getDate() + 6);
+    prevSaturday.setHours(23, 59, 59, 999);
+
+    return {
+      thisWeek: { fromDate: lastSunday.toISOString(), toDate: lastSaturday.toISOString() },
+      prevWeek: { fromDate: prevSunday.toISOString(), toDate: prevSaturday.toISOString() }
+    };
+  };
+
+  const getGroupFilterKey = () => {
+    try { return JSON.stringify(geotabState.getGroupFilter()); }
+    catch (e) { return ''; }
+  };
+
+  // Fewer violations = positive (same as Safety tab)
+  const getLabel = (current, previous) => {
+    if (previous === 0 && current === 0) return undefined;
+    if (previous === 0) return { percentage: 100, arrow: OverviewOptionsArrow.Up, type: OverviewOptionsType.Negative };
+    const pctChange = Math.round(((current - previous) / previous) * 100);
+    if (pctChange === 0) return undefined;
+    return {
+      percentage: Math.abs(pctChange),
+      arrow: pctChange > 0 ? OverviewOptionsArrow.Up : OverviewOptionsArrow.Down,
+      type: pctChange > 0 ? OverviewOptionsType.Negative : OverviewOptionsType.Positive
+    };
+  };
+
+  // ── Fetch driver info (names + timezones) ──────────────────────────
+  const fetchDriverInfo = (driverIds) => new Promise((resolve) => {
+    if (driverIds.length === 0) { resolve(new Map()); return; }
+    const calls = driverIds.map(id => ['Get', { typeName: 'User', search: { id } }]);
+    geotabApi.multiCall(calls, (results) => {
+      const infoMap = new Map();
+      results.forEach((users) => {
+        if (users && users.length > 0) {
+          const u = users[0];
+          const fullName = `${u.firstName || ''} ${u.lastName || ''}`.trim();
+          infoMap.set(u.id, {
+            name: fullName || u.name || u.id,
+            timeZoneId: u.timeZoneId || 'UTC'
+          });
+        }
+      });
+      resolve(infoMap);
+    }, () => resolve(new Map()));
+  });
+
+  // ── Main data loader ───────────────────────────────────────────────
+  useEffect(() => {
+    const currentFilter = getGroupFilterKey();
+    if (hasData.current && currentFilter === lastGroupFilter.current) return;
+    lastGroupFilter.current = currentFilter;
+    hasData.current = true;
+
+    setLoading(true);
+    const { thisWeek, prevWeek } = getWeekRanges();
+
+    const userSearch = { groups: [{ id: 'GroupCompanyId' }] };
+    const malfunctionStatuses = Object.keys(MALFUNCTION_STATUSES);
+    const calls = [
+      ['Get', { typeName: 'DutyStatusViolation', search: { fromDate: thisWeek.fromDate, toDate: thisWeek.toDate, userSearch } }],
+      ['Get', { typeName: 'DutyStatusViolation', search: { fromDate: prevWeek.fromDate, toDate: prevWeek.toDate, userSearch } }],
+      ['Get', { typeName: 'DutyStatusLog', search: { fromDate: thisWeek.fromDate, toDate: thisWeek.toDate, statuses: ['D', 'ON', 'OFF', 'SB', 'PC', 'YM'], userSearch } }],
+      ['Get', { typeName: 'DutyStatusLog', search: { fromDate: thisWeek.fromDate, toDate: thisWeek.toDate, statuses: malfunctionStatuses, userSearch: { id: 'NoUserId' } } }]
+    ];
+
+    geotabApi.multiCall(calls, async (results) => {
+      const thisWeekViolations = results[0] || [];
+      const prevWeekViolations = results[1] || [];
+      const allLogs = results[2] || [];
+      const malfunctionLogs = results[3] || [];
+
+      logger.log(`HOS Violations: ${thisWeekViolations.length} this week, ${prevWeekViolations.length} prev week`);
+      logger.log(`Duty status logs: ${allLogs.length} total`);
+
+      // ── Process violations ───────────────────────────────────────
+      setHosViolations(thisWeekViolations);
+      setHosCount(thisWeekViolations.length);
+      setPrevHosCount(prevWeekViolations.length);
+
+      // ── Filter unverified logs ────────────────────────────────────
+      const unverifiedLogs = allLogs.filter(log => !log.certifyDateTime);
+      logger.log(`Duty status logs: unverified ${unverifiedLogs.length} / ${allLogs.length}`);
+
+      // ── Group all logs by driver, sort by dateTime ─────────────
+      const logsByDriver = new Map();
+      allLogs.forEach(log => {
+        const did = log.driver?.id;
+        if (!did) return;
+        if (!logsByDriver.has(did)) logsByDriver.set(did, []);
+        logsByDriver.get(did).push(log);
+      });
+      logsByDriver.forEach(logs => {
+        logs.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+      });
+
+      // ── Enrich PC/YM logs with end data from next log ──────────
+      const enrichedPcYm = [];
+      let odoPresent = 0, odoMissing = 0;
+
+      logsByDriver.forEach((logs) => {
+        for (let i = 0; i < logs.length; i++) {
+          if (logs[i].status !== 'PC' && logs[i].status !== 'YM') continue;
+          const nextLog = i + 1 < logs.length ? logs[i + 1] : null;
+          enrichedPcYm.push({
+            status: logs[i].status,
+            dateTime: logs[i].dateTime,
+            odometer: logs[i].odometer,
+            driver: logs[i].driver,
+            endDateTime: nextLog?.dateTime || null,
+            endOdometer: nextLog?.odometer || null
+          });
+          if (logs[i].odometer != null && nextLog?.odometer != null) odoPresent++;
+          else odoMissing++;
+        }
+      });
+
+      pcYmLogsRef.current = enrichedPcYm;
+      logger.log(`Enriched PC/YM: ${enrichedPcYm.length}, odometer pairs: ${odoPresent} present, ${odoMissing} missing`);
+      if (enrichedPcYm.length > 0) {
+        logger.log('Sample enriched PC/YM:', JSON.stringify(enrichedPcYm[0]));
+      }
+
+      // ── Compute PC and YM distances (total + per driver) ───────
+      let pcMeters = 0, ymMeters = 0;
+      const pcDriverMap = new Map();
+      const ymDriverMap = new Map();
+
+      enrichedPcYm.forEach(log => {
+        const did = log.driver?.id;
+        if (!did) return;
+        const hasDist = log.odometer != null && log.endOdometer != null;
+        const dist = hasDist ? Math.max(0, log.endOdometer - log.odometer) : 0;
+
+        if (log.status === 'PC') {
+          if (!pcDriverMap.has(did)) pcDriverMap.set(did, { count: 0, meters: 0 });
+          pcDriverMap.get(did).count++;
+          pcDriverMap.get(did).meters += dist;
+          pcMeters += dist;
+        } else {
+          if (!ymDriverMap.has(did)) ymDriverMap.set(did, { count: 0, meters: 0 });
+          ymDriverMap.get(did).count++;
+          ymDriverMap.get(did).meters += dist;
+          ymMeters += dist;
+        }
+      });
+
+      setPcDistanceKm(Math.round(pcMeters / 1000));
+      setYmDistanceKm(Math.round(ymMeters / 1000));
+      logger.log(`Distances — PC: ${Math.round(pcMeters / 1000)} km, YM: ${Math.round(ymMeters / 1000)} km`);
+
+      // ── Process ELD malfunctions ───────────────────────────────
+      logger.log(`ELD malfunction logs: ${malfunctionLogs.length}`);
+      setEldCount(malfunctionLogs.length);
+
+      const malfByType = new Map();
+      malfunctionLogs.forEach(log => {
+        const status = log.status || 'Unknown';
+        if (!malfByType.has(status)) malfByType.set(status, 0);
+        malfByType.set(status, malfByType.get(status) + 1);
+      });
+      const malfSorted = [...malfByType.entries()]
+        .map(([status, count]) => ({
+          status,
+          label: MALFUNCTION_STATUSES[status] ? t(MALFUNCTION_STATUSES[status]) : status,
+          count
+        }))
+        .sort((a, b) => b.count - a.count);
+      setEldMalfunctions(malfSorted);
+
+      // ── Collect all driver IDs, fetch info ───────────────────────
+      const allDriverIds = new Set();
+      thisWeekViolations.forEach(v => { if (v.driver?.id) allDriverIds.add(v.driver.id); });
+      allLogs.forEach(log => { if (log.driver?.id) allDriverIds.add(log.driver.id); });
+
+      const info = await fetchDriverInfo([...allDriverIds]);
+      setDriverInfo(info);
+
+      // ── Build per-driver PC/YM tables ──────────────────────────
+      const buildDriverList = (driverMap) => [...driverMap.entries()]
+        .map(([id, { count, meters }]) => ({
+          id, name: info.get(id)?.name || id, count, km: Math.round(meters / 1000)
+        }))
+        .sort((a, b) => b.km - a.km);
+      setPcByDriver(buildDriverList(pcDriverMap));
+      setYmByDriver(buildDriverList(ymDriverMap));
+
+      // ── Map unverified logs to driver-dates (local tz) ───────────
+      const driverDates = new Map();
+      unverifiedLogs.forEach(log => {
+        const driverId = log.driver?.id;
+        if (!driverId || !log.dateTime) return;
+        const tz = info.get(driverId)?.timeZoneId || 'UTC';
+        let localDate;
+        try {
+          localDate = new Date(log.dateTime).toLocaleDateString('en-CA', { timeZone: tz });
+        } catch (e) {
+          localDate = new Date(log.dateTime).toLocaleDateString('en-CA', { timeZone: 'UTC' });
+        }
+        if (!driverDates.has(driverId)) driverDates.set(driverId, new Set());
+        driverDates.get(driverId).add(localDate);
+      });
+
+      let totalDriverDays = 0;
+      const unverified = [...driverDates.entries()]
+        .map(([id, dates]) => {
+          totalDriverDays += dates.size;
+          return { id, name: info.get(id)?.name || id, days: dates.size };
+        })
+        .sort((a, b) => b.days - a.days);
+
+      setUnverifiedByDriver(unverified);
+      setUnverifiedDriverDays(totalDriverDays);
+      logger.log(`Unverified: ${totalDriverDays} driver-days across ${unverified.length} drivers`);
+
+      setLoading(false);
+    }, (error) => {
+      logger.error('Error loading compliance data: ' + error);
+      setLoading(false);
+    });
+  }, [focusKey]);
+
+  // ── Group violations by driver ─────────────────────────────────────
+  const getViolationsByDriver = () => {
+    const map = new Map();
+    hosViolations.forEach(v => {
+      const driverId = v.driver?.id;
+      if (!driverId) return;
+      if (!map.has(driverId)) {
+        map.set(driverId, { id: driverId, count: 0, reasons: new Map() });
+      }
+      const entry = map.get(driverId);
+      entry.count++;
+      const reason = v.reason || v.type || '';
+      if (reason) entry.reasons.set(reason, (entry.reasons.get(reason) || 0) + 1);
+    });
+    return [...map.values()]
+      .map(d => ({ ...d, name: driverInfo.get(d.id)?.name || d.id, reasons: [...d.reasons.entries()] }))
+      .sort((a, b) => b.count - a.count);
+  };
 
   return (
     <div>
-      <h2>{geotabState.translate('Compliance')}</h2>
-      <p>{geotabState.translate('Compliance metrics and reports will appear here.')}</p>
-      <p style={{ color: '#6c757d', marginTop: '16px' }}>
-        {geotabState.translate('This tab will show:')}
-      </p>
-      <ul style={{ color: '#6c757d' }}>
-        <li>{geotabState.translate('HOS (Hours of Service) violations')}</li>
-        <li>{geotabState.translate('Driver duty status logs')}</li>
-        <li>{geotabState.translate('Vehicle inspection reports')}</li>
-        <li>{geotabState.translate('Regulatory compliance scores')}</li>
-        <li>{geotabState.translate('DVIR (Driver Vehicle Inspection Report) completion rates')}</li>
-      </ul>
+      {loading ? (
+        <div style={{ marginTop: '16px' }}>
+          <ProgressBar min={0} max={100} now={50} size="medium" />
+          <div className="status-message">{t('Loading compliance data...')}</div>
+        </div>
+      ) : (
+        <>
+          <SummaryTileBar>
+            <SummaryTile id="hos" title={t('HOS Violations')} size={SummaryTileSize.Small}>
+              <Overview
+                title={String(hosCount)}
+                description={t('violations')}
+                label={getLabel(hosCount, prevHosCount)}
+              />
+            </SummaryTile>
+            <SummaryTile id="unverified" title={t('Unverified Logs')} size={SummaryTileSize.Small}>
+              <Overview
+                title={String(unverifiedDriverDays)}
+                description={t('driver-days')}
+              />
+            </SummaryTile>
+            <SummaryTile id="eld" title={t('ELD Malfunctions')} size={SummaryTileSize.Small}>
+              <Overview title={String(eldCount)} description={t('malfunctions')} />
+            </SummaryTile>
+            <SummaryTile id="pc" title={t('PC Distance')} size={SummaryTileSize.Small}>
+              <Overview title={String(pcDistanceKm)} description={t('km')} />
+            </SummaryTile>
+            <SummaryTile id="ym" title={t('YM Distance')} size={SummaryTileSize.Small}>
+              <Overview title={String(ymDistanceKm)} description={t('km')} />
+            </SummaryTile>
+          </SummaryTileBar>
+
+          <div className="compliance-sections">
+            <Card title={t('HOS Violations')} fullWidth autoHeight>
+              <Card.Content>
+                <div className="compliance-card-scroll">
+                  {getViolationsByDriver().length === 0 ? (
+                    <p className="status-message" style={{ margin: 0 }}>{t('No HOS violations found for last week')}</p>
+                  ) : (
+                    <table className="compliance-table">
+                      <thead>
+                        <tr>
+                          <th>{t('Driver')}</th>
+                          <th>{t('Count')}</th>
+                          <th>{t('Reason')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {getViolationsByDriver().map(d => (
+                          <tr key={d.id}>
+                            <td>{d.name}</td>
+                            <td>{d.count}</td>
+                            <td>
+                              <ul className="compliance-reason-list">
+                                {d.reasons.map(([reason, count]) => (
+                                  <li key={reason}>{reason}{count > 1 ? ` (${count})` : ''}</li>
+                                ))}
+                              </ul>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </Card.Content>
+            </Card>
+
+            <Card title={t('Unverified Logs')} fullWidth autoHeight>
+              <Card.Content>
+                <div className="compliance-card-scroll">
+                  {unverifiedByDriver.length === 0 ? (
+                    <p className="status-message" style={{ margin: 0 }}>{t('No unverified logs found for last week')}</p>
+                  ) : (
+                    <table className="compliance-table">
+                      <thead>
+                        <tr>
+                          <th>{t('Driver')}</th>
+                          <th>{t('Unverified Days')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {unverifiedByDriver.map(d => (
+                          <tr key={d.id}>
+                            <td>{d.name}</td>
+                            <td>{d.days}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </Card.Content>
+            </Card>
+
+            <Card title={t('ELD Malfunctions')} fullWidth autoHeight>
+              <Card.Content>
+                <div className="compliance-card-scroll">
+                  {eldMalfunctions.length === 0 ? (
+                    <p className="status-message" style={{ margin: 0 }}>{t('No ELD malfunctions found for last week')}</p>
+                  ) : (
+                    <table className="compliance-table">
+                      <thead>
+                        <tr>
+                          <th>{t('Type')}</th>
+                          <th>{t('Count')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {eldMalfunctions.map(m => (
+                          <tr key={m.status}>
+                            <td>{m.label}</td>
+                            <td>{m.count}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </Card.Content>
+            </Card>
+
+            <Card title={t('Personal Conveyance (PC)')} fullWidth autoHeight>
+              <Card.Content>
+                <div className="compliance-card-scroll">
+                  {pcByDriver.length === 0 ? (
+                    <p className="status-message" style={{ margin: 0 }}>{t('No PC logs found for last week')}</p>
+                  ) : (
+                    <table className="compliance-table">
+                      <thead>
+                        <tr>
+                          <th>{t('Driver')}</th>
+                          <th>{t('Logs')}</th>
+                          <th>{t('Distance (km)')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pcByDriver.map(d => (
+                          <tr key={d.id}>
+                            <td>{d.name}</td>
+                            <td>{d.count}</td>
+                            <td>{d.km}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </Card.Content>
+            </Card>
+
+            <Card title={t('Yard Moves (YM)')} fullWidth autoHeight>
+              <Card.Content>
+                <div className="compliance-card-scroll">
+                  {ymByDriver.length === 0 ? (
+                    <p className="status-message" style={{ margin: 0 }}>{t('No YM logs found for last week')}</p>
+                  ) : (
+                    <table className="compliance-table">
+                      <thead>
+                        <tr>
+                          <th>{t('Driver')}</th>
+                          <th>{t('Logs')}</th>
+                          <th>{t('Distance (km)')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ymByDriver.map(d => (
+                          <tr key={d.id}>
+                            <td>{d.name}</td>
+                            <td>{d.count}</td>
+                            <td>{d.km}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </Card.Content>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   );
 };

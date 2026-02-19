@@ -20,12 +20,13 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
   const [selectedTab, setSelectedTab] = useState('productivity');
 
   const context = { geotabApi, geotabState, logger, focusKey: focusKeyRef.current };
+  const t = (key) => geotabState.translate(key);
 
   const tabs = [
-    { id: 'productivity', name: geotabState.translate('Productivity') },
-    { id: 'safety', name: geotabState.translate('Safety') },
-    { id: 'compliance', name: geotabState.translate('Compliance') },
-    { id: 'sustainability', name: geotabState.translate('Sustainability') }
+    { id: 'productivity', name: t('Productivity') },
+    { id: 'safety', name: t('Safety') },
+    { id: 'compliance', name: t('Compliance') },
+    { id: 'sustainability', name: t('Sustainability') }
   ];
 
   return (
@@ -33,7 +34,7 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
       <GeotabContext.Provider value={[context]}>
         <div style={{ height: '100%' }}>
           <Header>
-            <Header.Title pageName={geotabState.translate('Last Week in Fleet')} />
+            <Header.Title pageName={t('Last Week in Fleet')} />
           </Header>
 
           <Tabs tabs={tabs} activeTabId={selectedTab} onTabChange={setSelectedTab} />

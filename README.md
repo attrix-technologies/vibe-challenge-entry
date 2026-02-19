@@ -79,6 +79,28 @@ All good now. From my initial assessment, now I'm able to create a new add-in wi
 
 > Looks good. Now again similar to the Productivity tab, draft a simple bar chart to show exception counts by device. Show vehicle names. Bars should now be stacked and colored according the the exception's type. Show total exception count next to the bar, but also make sure on mouseover to the bars we show the detail - if I slide over the speeding part I should see "Speeding: 3" for instance, then "Tailgating: 5", etc. Adjust colors so the red is for collisions, this makes more sense.
 
+> Let's start with the Compliance tab. We will want a section that highlights HOS Violations, another that highlights unverified logs, another that highlights ELD Malfunctions, and finally a section that shows PC and YM usage (abuse?). There won't be any map component on this tab, but let's add summary-tiles at the top for consistency: HOS Violations (count), Unverified Logs (driver-days), ELD Malfunctions (count), PC distance (km or miles) and YM distance (km or miles). Don't make assumptions or go too fast, put the summary-tiles in place, and let's start with the HOS Violations first. Ask me about the next items as we progress. I think using Zenith Card components makes sense here ? I'm not sure, you can suggest or just use something else. See attached though, if you do use cards, this is how Geotab uses them (I think). Margin around them and a grayish background.
+
+> Your multicall for violations doesn't work right now. You NEED to pass a userSearch, but in our case since we don't want to search a specific driver, pass it a groups value of GroupCompanyId (the root group). See attached. You'll also see an example return value.
+
+> Maybe use a <ul> for the reasons, because it's not very readable right now. Also, use user.firstName + " " user.lastName, the .name prop is a username.
+
+> I know it was my idea to use ul, but I don't really like the list-style-icons. Either change the styling to be more modern/elegant, or just remove the icons entirely. You could just use line breaks instead. Also, remove the gap under the tab and before the content. I had removed it on the productivity tab, but you added it for safety and compliance.
+
+> This works well, but in our case there are lots of violations and the card is pretty big. I'd rather not have to scroll down to see that there are more cards below - can we give the card a max-height around 250px and auto-scroll? Then, on to unverified logs. Basically, do a call to Get DutyStatusLog with the proper fromDate/toDate params, and statuses: ["D", "ON, "OFF", "SB", "PC", "YM"]. Map them to drivers, and filter the ones that don't have a certifyDateTime property, or that have it null. These are unverified logs. You can throwaway the other D, ON, OFF and SB logs at this point because there might be very many, and we want to free up memory, but keep the PC and YM logs for the next step. With the remaining unverified logs, we need to map them to drivers, and then to dates. Careful, logs will have their dateTime in UTC, but the date to use is the driver's timeZoneId property. Compile unverified logs by driver-date, and show that count in the summary-tile at the top. In the card, list drivers that have unverified logs with the number of days for which they have unverified logs. The number of logs does not matter - if they have 1 unverified log or 20 during that day, it's considered the same, so don't bother to show it.
+
+> This works. I was wrong about discarding D, ON, OFF and SB logs though, we will want to free them up, but before doing so we need another computation. Logs don't have an end in and of themselves, they each have a dateTime and that's it. They end when the next starts. So before we drop anything, we need to sort logs by dateTime (for each driver). Then, for each PC and YM log, we need to add endDateTime and endOdometer properties by looking at the driver's next log's dateTime and odometer properties, respectively. Once we have those, forget the rest. And now you understand what we need to do for PC and YM distances. Let's try it first to test for odometer coverage (see if PC and YM logs reliably have this property). Otherwise we will need to request StatusData from the assigned device.id to find the odometer at these dateTimes. Do all of this, and then I will explain ELD malfunctions.
+
+> Add an abort button (or just an X) right of the progress bar on the productivity tab, sometimes the process is long and I don't want to wait. This prevents sending Get LogRecord multicalls, and also the map-matching process.
+
+> The PC and YM distances work in the summary-tiles, but now I want to add cards for each of them. Show driver name, PC log count and total distance. Sort by distance desc so we see abusers first.
+
+> For ELD Malfunctions, they are also DutyStatusLog entities that we need to get, but userSearch: { id: 'NoUserId' } (they are always unassigned), and statuses should look for the keys in the following object:[Pasted text #6 +8 lines]
+
+> We need translations for the malfunction descriptions, but keep the same letters in the beginning, they are important. In French, "ELD Malfunctions" should be "Défaillances" and not "Pannes ELD".
+
+> I see you added a t() function again. If you think it helps readability, I'll live with it, but for consistency do the same throughout the entire add-in.
+  
 ## Authors
 
 This repo was initially forked from [https://github.com/fhoffa/geotab-vibe-guide](https://github.com/fhoffa/geotab-vibe-guide) created by [Felipe Hoffa](https://www.linkedin.com/in/hoffa/). 

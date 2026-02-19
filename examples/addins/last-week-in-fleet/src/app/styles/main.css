@@ -135,7 +135,7 @@ body {
 }
 
 .tab-content {
-  padding-top: 16px;
+  padding-top: 0;
 }
 
 .productivity-layout {
@@ -143,6 +143,40 @@ body {
   flex-direction: column;
 }
 
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-bar-flex {
+  flex: 1;
+  min-width: 0;
+}
+
+.abort-button {
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  color: #6b7280;
+  font-size: 18px;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.abort-button:hover {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #9ca3af;
+}
 
 .status-message {
   margin-top: 12px;
@@ -159,6 +193,61 @@ body {
   font-size: 13px;
   color: #9ca3af;
   font-style: italic;
+}
+
+.compliance-sections {
+  margin-top: 0;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.compliance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.compliance-table th {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid #e5e7eb;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.compliance-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+}
+
+.compliance-table tr:hover {
+  background: #f9fafb;
+}
+
+.compliance-card-scroll {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.compliance-reason-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.compliance-reason-list li {
+  padding: 1px 0;
+}
+
+.compliance-reason-list li + li {
+  border-top: 1px solid #f3f4f6;
 }
 
 .stacked-bar-track {

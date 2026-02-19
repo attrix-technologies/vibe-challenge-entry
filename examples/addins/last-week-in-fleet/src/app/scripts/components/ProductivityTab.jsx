@@ -37,6 +37,7 @@ const parseTimeSpanToHours = (ts) => {
 const ProductivityTab = () => {
   const [context] = useContext(GeotabContext);
   const { geotabApi, logger, focusKey, geotabState } = context;
+  const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
@@ -248,7 +249,7 @@ ${trkpts}
         matchedCount.current++;
 
         setProgress(30 + Math.round((matchedCount.current / totalTrips) * 60));
-        setStatus(`${geotabState.translate('Map matching:')} ${matchedCount.current} / ${totalTrips}`);
+        setStatus(`${t('Map matching:')} ${matchedCount.current} / ${totalTrips}`);
 
         if (coords && map.current) {
           drawTrip(trip, coords);
@@ -325,7 +326,7 @@ ${trkpts}
         }
 
         setLoading(true);
-        setStatus(geotabState.translate('Getting trips from last week...'));
+        setStatus(t('Getting trips from last week...'));
         setProgress(5);
 
         // Resolve map center from company address before anything else
@@ -361,7 +362,7 @@ ${trkpts}
           setProgress(20);
 
           if (trips.length === 0) {
-            setStatus(geotabState.translate('No trips found for last week'));
+            setStatus(t('No trips found for last week'));
             setLoading(false);
             hasData.current = true;
             return;
@@ -373,7 +374,7 @@ ${trkpts}
             return new Date(a.start) - new Date(b.start);
           });
 
-          setStatus(geotabState.translate('Linking trips...'));
+          setStatus(t('Linking trips...'));
           setProgress(25);
 
           // Link predecessor trips to map startPoints
@@ -405,7 +406,7 @@ ${trkpts}
           logger.log(`${tripsToMatch.length} trips ready for map matching`);
 
           // ── Draw all trips as straight lines immediately ──────────
-          setStatus(geotabState.translate('Drawing straight-line routes...'));
+          setStatus(t('Drawing straight-line routes...'));
           const bounds = new maplibregl.LngLatBounds();
 
           tripsToMatch.forEach(trip => {
@@ -489,14 +490,12 @@ ${trkpts}
           hasData.current = true;
 
           // ── Progressive map matching with 5 concurrent slots ──────
-          setStatus(`${geotabState.translate('Map matching:')} 0 / ${tripsToMatch.length}`);
+          setStatus(`${t('Map matching:')} 0 / ${tripsToMatch.length}`);
           await processTripsWithPool(tripsToMatch, tripsToMatch.length, controller.signal);
 
-          if (!controller.signal.aborted) {
-            setProgress(100);
-            setStatus(geotabState.translate('Complete'));
-            setLoading(false);
-          }
+          setProgress(100);
+          setStatus(t('Complete'));
+          setLoading(false);
 
         }, (error) => {
           logger.error('Error loading trips: ' + error);
@@ -527,16 +526,16 @@ ${trkpts}
   return (
     <div className="productivity-layout">
       <SummaryTileBar>
-        <SummaryTile id="distance" title={geotabState.translate('Total Distance')} size={SummaryTileSize.Small}>
-          <Overview title={kpis.totalDistance} description={geotabState.translate('km')} />
+        <SummaryTile id="distance" title={t('Total Distance')} size={SummaryTileSize.Small}>
+          <Overview title={kpis.totalDistance} description={t('km')} />
         </SummaryTile>
-        <SummaryTile id="driving-time" title={geotabState.translate('Driving Time')} size={SummaryTileSize.Small}>
-          <Overview title={kpis.totalDrivingTime} description={geotabState.translate('hrs')} label={{
+        <SummaryTile id="driving-time" title={t('Driving Time')} size={SummaryTileSize.Small}>
+          <Overview title={kpis.totalDrivingTime} description={t('hrs')} label={{
             percentage: kpis.drivingTimePercent
           }} />
         </SummaryTile>
-        <SummaryTile id="idling-time" title={geotabState.translate('Idling Time')} size={SummaryTileSize.Small}>
-          <Overview title={kpis.totalIdlingTime} description={geotabState.translate('hrs')} label={{
+        <SummaryTile id="idling-time" title={t('Idling Time')} size={SummaryTileSize.Small}>
+          <Overview title={kpis.totalIdlingTime} description={t('hrs')} label={{
             percentage: kpis.idlingTimePercent
           }} />
         </SummaryTile>
@@ -549,7 +548,14 @@ ${trkpts}
           </div>
           {loading && (
             <div style={{ marginTop: '16px' }}>
-              <ProgressBar min={0} max={100} now={progress} size="medium" />
+              <div className="progress-row">
+                <div className="progress-bar-flex"><ProgressBar min={0} max={100} now={progress} size="medium" /></div>
+                <button className="abort-button" onClick={() => {
+                  if (abortRef.current) abortRef.current.abort();
+                  setLoading(false);
+                  setStatus('');
+                }} title={t('Cancel')}>&times;</button>
+              </div>
               <div className="status-message">{status}</div>
             </div>
           )}
@@ -557,7 +563,7 @@ ${trkpts}
 
         {deviceDistances.length > 0 && (
           <div className="distance-chart">
-            <div className="distance-chart-title">{geotabState.translate('Distance by Vehicle')} ({geotabState.translate('km')})</div>
+            <div className="distance-chart-title">{t('Distance by Vehicle')} ({t('km')})</div>
             <div className="distance-chart-list">
               {(() => {
                 const maxDist = deviceDistances[0].distance;
@@ -578,7 +584,7 @@ ${trkpts}
                       <div key="separator" className="distance-chart-separator">
                         <span>⋮</span>
                         <span className="separator-label">
-                          {deviceDistances.length - 20} {geotabState.translate('more')}
+                          {deviceDistances.length - 20} {t('more')}
                         </span>
                       </div>
                     );

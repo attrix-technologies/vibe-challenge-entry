@@ -45,6 +45,7 @@ const DENSITY_GRID = 0.005;
 const SafetyTab = () => {
   const [context] = useContext(GeotabContext);
   const { geotabApi, logger, focusKey, geotabState } = context;
+  const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
   const [counts, setCounts] = useState({});
@@ -173,7 +174,7 @@ const SafetyTab = () => {
       } catch (err) {
         logger.warn(`LogRecord batch ${Math.floor(i / BATCH_SIZE) + 1} failed: ${err}`);
       }
-      setMapStatus(`${geotabState.translate('Locating events:')} ${Math.min(i + BATCH_SIZE, allEvents.length)} / ${allEvents.length}`);
+      setMapStatus(`${t('Locating events:')} ${Math.min(i + BATCH_SIZE, allEvents.length)} / ${allEvents.length}`);
     }
 
     // Density-based radius
@@ -342,7 +343,7 @@ const SafetyTab = () => {
         // ── Fetch event locations for map ──────────────────────────
         if (allEvents.length === 0) return;
         logger.log(`Fetching locations for ${allEvents.length} exception events`);
-        setMapStatus(`${geotabState.translate('Locating events:')} 0 / ${allEvents.length}`);
+        setMapStatus(`${t('Locating events:')} 0 / ${allEvents.length}`);
         const points = await fetchEventLocations(allEvents);
         logger.log(`Mapped ${points.length} events to coordinates`);
         setEventPoints(points);
@@ -366,7 +367,7 @@ const SafetyTab = () => {
 
   const labelForType = (type) => {
     const cfg = TILE_CONFIG.find(t => t.key === type);
-    return cfg ? geotabState.translate(cfg.label) : type;
+    return cfg ? t(cfg.label) : type;
   };
 
   const renderDeviceChart = () => {
@@ -382,7 +383,7 @@ const SafetyTab = () => {
 
     return (
       <div className="distance-chart">
-        <div className="distance-chart-title">{geotabState.translate('Events by Vehicle')}</div>
+        <div className="distance-chart-title">{t('Events by Vehicle')}</div>
         <div className="distance-chart-list">
           {items.map((item, i) => {
             if (item === null) {
@@ -390,7 +391,7 @@ const SafetyTab = () => {
                 <div key="separator" className="distance-chart-separator">
                   <span>&#8942;</span>
                   <span className="separator-label">
-                    {deviceEventData.length - 20} {geotabState.translate('more')}
+                    {deviceEventData.length - 20} {t('more')}
                   </span>
                 </div>
               );
@@ -427,7 +428,7 @@ const SafetyTab = () => {
       {loading ? (
         <div style={{ marginTop: '16px' }}>
           <ProgressBar min={0} max={100} now={50} size="medium" />
-          <div className="status-message">{geotabState.translate('Loading safety events...')}</div>
+          <div className="status-message">{t('Loading safety events...')}</div>
         </div>
       ) : (
         <>
@@ -438,17 +439,17 @@ const SafetyTab = () => {
                 <SummaryTile
                   key={key}
                   id={key}
-                  title={geotabState.translate(label)}
+                  title={t(label)}
                   size={SummaryTileSize.Small}
                   className={isDisabled ? 'tile-disabled' : undefined}
                 >
                   {isDisabled ? (
-                    <span className="tile-no-rules">{geotabState.translate('No rules')}</span>
+                    <span className="tile-no-rules">{t('No rules')}</span>
                   ) : (
                     <Overview
                       icon={colorDot(EVENT_COLORS[key].hex)}
                       title={String(counts[key] || 0)}
-                      description={geotabState.translate('events')}
+                      description={t('events')}
                       label={getLabel(counts[key] || 0, prevCounts[key] || 0)}
                     />
                   )}
@@ -457,7 +458,7 @@ const SafetyTab = () => {
             })}
           </SummaryTileBar>
 
-          <div className="map-and-chart" style={{ marginTop: '16px' }}>
+          <div className="map-and-chart">
             <div className="map-section">
               <div className="map-wrapper">
                 <div ref={mapContainer} className="map-container" />
