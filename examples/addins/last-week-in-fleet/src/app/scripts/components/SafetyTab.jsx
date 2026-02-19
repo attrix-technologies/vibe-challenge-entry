@@ -331,7 +331,7 @@ const SafetyTab = () => {
         const sorted = [...deviceMap.entries()]
           .map(([id, eventCounts]) => ({
             id,
-            name: devices.get(id) || id,
+            name: devices.get(id)?.name || id,
             counts: eventCounts,
             total: Object.values(eventCounts).reduce((a, b) => a + b, 0)
           }))

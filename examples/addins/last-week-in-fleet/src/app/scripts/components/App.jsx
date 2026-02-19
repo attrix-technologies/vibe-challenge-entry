@@ -37,7 +37,7 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
       ['Get', {
         typeName: 'Device',
         search: { groups },
-        propertySelector: { fields: ['id', 'name'], isIncluded: true }
+        propertySelector: { fields: ['id', 'name', 'vehicleIdentificationNumber'], isIncluded: true }
       }],
       ['Get', {
         typeName: 'User',
@@ -46,7 +46,10 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
       }]
     ], (results) => {
       const deviceMap = new Map();
-      (results[0] || []).forEach(d => deviceMap.set(d.id, d.name || d.id));
+      (results[0] || []).forEach(d => deviceMap.set(d.id, {
+        name: d.name || d.id,
+        vin: d.vehicleIdentificationNumber || null
+      }));
       logger.log(`Loaded ${deviceMap.size} devices for group filter`);
       setDevices(deviceMap);
 

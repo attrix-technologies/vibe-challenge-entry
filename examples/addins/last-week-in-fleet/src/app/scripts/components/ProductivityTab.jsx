@@ -480,7 +480,7 @@ ${trkpts}
             .filter(([, dist]) => dist > 0)
             .map(([id, dist]) => ({
               id,
-              name: devices.get(id) || id,
+              name: devices.get(id)?.name || id,
               distance: dist,
               color: getDeviceColor(id)
             }))

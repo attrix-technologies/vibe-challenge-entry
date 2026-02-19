@@ -206,7 +206,7 @@ const ComplianceTab = () => {
       const malfSorted = [...malfByDevice.entries()]
         .map(([id, { count, types }]) => ({
           id,
-          name: devices.get(id) || id,
+          name: devices.get(id)?.name || id,
           count,
           types: [...types.entries()].sort((a, b) => b[1] - a[1])
         }))
