@@ -20,7 +20,7 @@ body {
 .map-wrapper {
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 505px;
   border: 1px solid #ddd;
   overflow: hidden;
 }

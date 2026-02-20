@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { SummaryTileBar, SummaryTile, SummaryTileSize } from '@geotab/zenith';
+import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
+import { SummaryTileBar, SummaryTile, SummaryTileSize, Table, Pill, Banner } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import { convertDistance, distanceUnit, fmt } from '../utils/units';
@@ -53,6 +53,9 @@ const ProductivityTab = () => {
     idlingTimePercent: 0
   });
   const [deviceDistances, setDeviceDistances] = useState([]);
+  const [faultCount, setFaultCount] = useState(0);
+  const [faultRows, setFaultRows] = useState([]);
+  const [faultSortSettings, setFaultSortSettings] = useState(undefined);
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -64,6 +67,7 @@ const ProductivityTab = () => {
   const hasData = useRef(false);
   const abortRef = useRef(null);
   const mapBoundsRef = useRef(null);
+  const criticalDiagsRef = useRef(null);
 
   // ── Date helpers ──────────────────────────────────────────────────────
   const getLastWeekRange = () => {
@@ -307,6 +311,83 @@ ${trkpts}
     });
   };
 
+  // ── Load critical engine faults (runs in background) ────────────────
+  const loadCriticalFaults = async (fromDate, toDate, signal) => {
+    try {
+      // 1. Fetch & cache critical diagnostics (riskOfBreakdown >= 15)
+      if (!criticalDiagsRef.current) {
+        const diags = await new Promise((resolve) => {
+          geotabApi.call('Get', { typeName: 'Diagnostic' },
+            (r) => resolve(r || []), () => resolve([]));
+        });
+        if (signal.aborted) return;
+        const critMap = new Map();
+        diags.forEach(d => {
+          if (d.metadata && d.metadata.riskOfBreakdown >= 15) {
+            critMap.set(d.id, {
+              name: d.name,
+              severity: d.metadata.severity || 0,
+              riskOfBreakdown: d.metadata.riskOfBreakdown || 0,
+              recommendation: d.metadata.recommendation || '',
+              effect: d.metadata.effectOnComponent || ''
+            });
+          }
+        });
+        criticalDiagsRef.current = critMap;
+        logger.log(`Critical diagnostics: ${critMap.size} with riskOfBreakdown >= 15`);
+      }
+
+      if (criticalDiagsRef.current.size === 0) {
+        setFaultCount(0);
+        setFaultRows([]);
+        return;
+      }
+
+      // 2. Fetch FaultData for last week
+      const faults = await new Promise((resolve) => {
+        geotabApi.call('Get', {
+          typeName: 'FaultData',
+          search: { fromDate, toDate, deviceSearch: { groups: geotabState.getGroupFilter() } }
+        }, (r) => resolve(r || []), () => resolve([]));
+      });
+      if (signal.aborted) return;
+
+      // 3. Filter to in-scope devices + critical diagnostics, group by vehicle+diag
+      const faultMap = new Map();
+      faults.forEach(f => {
+        const did = f.device?.id;
+        const diagId = f.diagnostic?.id;
+        if (!did || !diagId || !devices.has(did) || !criticalDiagsRef.current.has(diagId)) return;
+        const key = `${did}|${diagId}`;
+        if (!faultMap.has(key)) faultMap.set(key, { deviceId: did, diagId, count: 0 });
+        faultMap.get(key).count++;
+      });
+
+      // 4. Build rows
+      const rows = [...faultMap.values()].map(({ deviceId, diagId, count }) => {
+        const diag = criticalDiagsRef.current.get(diagId);
+        return {
+          id: `${deviceId}|${diagId}`,
+          name: devices.get(deviceId)?.name || deviceId,
+          fault: diag.name,
+          effect: diag.effect,
+          recommendation: diag.recommendation,
+          severity: diag.severity,
+          risk: Math.round(diag.riskOfBreakdown),
+          count
+        };
+      }).sort((a, b) => b.count - a.count);
+
+      if (signal.aborted) return;
+      const total = rows.reduce((sum, r) => sum + r.count, 0);
+      setFaultRows(rows);
+      setFaultCount(total);
+      logger.log(`Critical faults: ${total} across ${rows.length} vehicle/diagnostic pairs`);
+    } catch (err) {
+      logger.error(`Fault loading error: ${err.message}`);
+    }
+  };
+
   // ── Serialize group filter for comparison ─────────────────────────────
   const getGroupFilterKey = () => {
     try {
@@ -372,6 +453,9 @@ ${trkpts}
 
         const { fromDate, toDate } = getLastWeekRange();
         logger.log(`Loading trips from ${fromDate} to ${toDate}`);
+
+        // Fire fault loading in background (independent of trips)
+        loadCriticalFaults(fromDate, toDate, controller.signal);
 
         geotabApi.call('Get', {
           typeName: 'Trip',
@@ -553,6 +637,44 @@ ${trkpts}
     };
   }, []);
 
+  // ── Fault table columns ──────────────────────────────────────────────
+  const faultColumns = useMemo(() => [
+    { id: 'name', title: t('Vehicle'), sortable: true, meta: { defaultWidth: 140 } },
+    { id: 'fault', title: t('Fault'), sortable: true, meta: { defaultWidth: 200 } },
+    { id: 'effect', title: t('Effect'), sortable: true, meta: { defaultWidth: 180 } },
+    { id: 'recommendation', title: t('Recommendation'), sortable: true, meta: { defaultWidth: 200 } },
+    {
+      id: 'severity', title: t('Severity'), sortable: true,
+      columnComponent: { render: (e) => <Pill type={e.severity >= 50 ? 'error' : 'warning'}>{e.severity}</Pill> },
+      meta: { defaultWidth: 100 }
+    },
+    {
+      id: 'risk', title: t('Risk'), sortable: true,
+      columnComponent: { render: (e) => <Pill type={e.risk >= 30 ? 'error' : 'warning'}>{e.risk}%</Pill> },
+      meta: { defaultWidth: 100 }
+    },
+    {
+      id: 'count', title: t('Occurrences'), sortable: true,
+      columnComponent: { render: (e) => fmt(e.count, language) },
+      meta: { defaultWidth: 100 }
+    }
+  ], [language, isMetric]);
+
+  // ── Sorted fault entities ─────────────────────────────────────────────
+  const faultEntities = useMemo(() => {
+    const rows = [...faultRows];
+    if (faultSortSettings) {
+      const { sortColumn, sortDirection } = faultSortSettings;
+      const dir = sortDirection === 'ASC' ? 1 : -1;
+      rows.sort((a, b) => {
+        const av = a[sortColumn], bv = b[sortColumn];
+        if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
+        return String(av).localeCompare(String(bv)) * dir;
+      });
+    }
+    return rows;
+  }, [faultRows, faultSortSettings]);
+
   return (
     <div className="productivity-layout">
       <SummaryTileBar>
@@ -568,6 +690,9 @@ ${trkpts}
           <Overview title={fmt(kpis.totalIdlingTime, language, 1)} description={t('hrs')} label={{
             percentage: fmt(kpis.idlingTimePercent, language, 1)
           }} />
+        </SummaryTile>
+        <SummaryTile id="critical-faults" title={t('Critical Faults')} size={SummaryTileSize.Small}>
+          <Overview title={fmt(faultCount, language)} description={t('faults')} />
         </SummaryTile>
       </SummaryTileBar>
 
@@ -638,6 +763,24 @@ ${trkpts}
           </div>
         )}
       </div>
+
+      {faultRows.length > 0 && (
+        <>
+          <Banner type="error" header={t('Caution')} icon size="XXL">
+              {t('Critical engine faults')}
+          </Banner>
+          <Table
+            description={t('Critical engine faults')}
+            columns={faultColumns}
+            entities={faultEntities}
+            sortable={{
+              pageName: 'productivityFaults',
+              value: faultSortSettings,
+              onChange: setFaultSortSettings
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };

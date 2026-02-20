@@ -105,5 +105,17 @@
   "vehicle excluded — fuel type unknown": "v\u00e9hicule exclu \u2014 type de carburant inconnu",
   "vehicles excluded — fuel type unknown": "v\u00e9hicules exclus \u2014 type de carburant inconnu",
   "vehicle excluded — fuel type unknown. VIN data is required to determine fuel type.": "v\u00e9hicule exclu \u2014 type de carburant inconnu. Les donn\u00e9es NIV sont requises pour d\u00e9terminer le type de carburant.",
-  "vehicles excluded — fuel type unknown. VIN data is required to determine fuel type.": "v\u00e9hicules exclus \u2014 type de carburant inconnu. Les donn\u00e9es NIV sont requises pour d\u00e9terminer le type de carburant."
+  "vehicles excluded — fuel type unknown. VIN data is required to determine fuel type.": "v\u00e9hicules exclus \u2014 type de carburant inconnu. Les donn\u00e9es NIV sont requises pour d\u00e9terminer le type de carburant.",
+
+  "Critical Faults": "Fautes critiques",
+  "Critical engine faults": "Fautes critiques du moteur",
+  "faults": "fautes",
+  "Fault": "Faute",
+  "Effect": "Effet",
+  "Recommendation": "Recommandation",
+  "Severity": "S\u00e9v\u00e9rit\u00e9",
+  "Risk": "Risque",
+  "Occurrences": "Occurrences",
+
+  "Caution": "Attention"
 }

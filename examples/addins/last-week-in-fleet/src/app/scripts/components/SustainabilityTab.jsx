@@ -412,7 +412,7 @@ const SustainabilityTab = () => {
           <div className="compliance-sections">
             {fuelByVehicle.length === 0 && !statusMessage ? (
               excludedCount > 0 ? (
-                <Banner header={t('Notice')}>
+                <Banner header={t('Notice')} size="XXL">
                   {fmt(excludedCount, language)} {excludedCount === 1 ? t('vehicle excluded — fuel type unknown. VIN data is required to determine fuel type.') : t('vehicles excluded — fuel type unknown. VIN data is required to determine fuel type.')}
                 </Banner>
               ) : (
@@ -421,7 +421,7 @@ const SustainabilityTab = () => {
             ) : fuelByVehicle.length > 0 ? (
               <>
                 {excludedCount > 0 && (
-                  <Banner header={t('Notice')}>
+                  <Banner header={t('Notice')} size="XXL">
                     {fmt(excludedCount, language)} {excludedCount === 1 ? t('vehicle excluded — fuel type unknown') : t('vehicles excluded — fuel type unknown')}
                   </Banner>
                 )}
@@ -429,7 +429,6 @@ const SustainabilityTab = () => {
                 description={t('Fuel Usage by Vehicle')}
                 columns={columns}
                 entities={entities}
-                height="calc(100vh - 260px)"
                 sortable={{
                   pageName: 'sustainabilityFuel',
                   value: sortSettings,
