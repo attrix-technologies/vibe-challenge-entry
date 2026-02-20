@@ -8,7 +8,8 @@
       "WebFetch(domain:developers.geotab.com)",
       "WebSearch",
       "Bash(ls:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(node:*)"
     ]
   }
 }

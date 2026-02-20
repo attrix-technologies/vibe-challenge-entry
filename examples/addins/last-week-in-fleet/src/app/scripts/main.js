@@ -8,7 +8,7 @@ import App from './components/App.jsx';
 geotab.addin.lastWeekInFleet = function (api, state, meta) {
   'use strict';
   const appName = 'lastWeekInFleet';
-  const addinId = 'lwif-2024-001';
+  const addinId = 'MGJlODc0ZjAtZWExNy00ZD';
 
   // the root container
   var elAddin = document.getElementById(appName);

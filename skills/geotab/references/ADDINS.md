@@ -57,7 +57,7 @@ Other options: Netlify, Vercel, Firebase Hosting (all have CORS support).
 | Approach | Best For | Notes |
 |----------|----------|-------|
 | **Vanilla JS + External CSS** | Most add-ins, embedded | External CSS for reliable styling |
-| **React + Zenith** | Professional UI matching MyGeotab | See [ZENITH_STYLING.md](ZENITH_STYLING.md) |
+| **React + Zenith** | Professional UI matching MyGeotab | See [ZENITH_STYLING.md](ZENITH_STYLING.md) - favor this approach for all new page add-ins unless told otherwise |
 
 **Note:** Embedded add-ins must use vanilla JS with inline styles. React/Zenith requires external hosting.
 
@@ -124,7 +124,7 @@ body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
   "version": "1.0.0",
   "items": [{
     "url": "https://yourusername.github.io/repo/your-addin.html",
-    "path": "ActivityLink/",
+    "category": "Addins",
     "menuName": { "en": "Your Add-In", "fr": "Votre Module Complémentaire" }
   }]
 }
@@ -161,7 +161,7 @@ initialize: function(api, state, callback) {
 }
 ```
 
-MyGeotab handles `menuName` translations automatically. For external add-ins, your JavaScript handles UI labels via `state.translate`, and you should include translations/<lang>.json files that return an object with key/value pairs for each string to be translated. The key can be the default (English) string or a dereferenced key (in which case there should be an entry in the translations/en.json file).
+MyGeotab handles `menuName` translations automatically. For external add-ins, your JavaScript handles UI labels via `state.translate`, and you should include translations/<lang>.json files that return an object with key/value pairs for each string to be translated. The key can be the default (English) string or a dereferenced key (in which case there should be an entry in the translations/en.json file). Do not build i18n objects as above for external add-ins, always leverage translation files and state.translate.
 
 #### React/Zenith Add-Ins: LanguageProvider
 
@@ -589,6 +589,8 @@ api.call("Get", {
 });
 ```
 
+**⚠️ IMPORTANT:** Each Add-In must have a **unique, fixed AddInId**. Generate it once and hardcode it in the Add-In. All new external add-ins should use this pattern, even if they do not use the AddInData API at first. AddinIds must be a **base64-encoded UUID v4** (22 characters). Generate with: `btoa(crypto.randomUUID()).replace(/=/g, '').substring(0, 22)`. Example: `"a2C4ABQuLFkepPVf6-4OKAQ"`. Random text labels like `"my-addin-001"` are **not valid** and will not work correctly with the AddInData API.
+
 > **Full documentation:** See [STORAGE_API.md](STORAGE_API.md) for query operators, object path notation, update/delete patterns, and limitations.
 
 ## Using Geotab Ace in Add-Ins
@@ -768,6 +770,75 @@ link.onclick = function(e) {
 | Geocoding | `https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lng}&format=json` | 1 req/sec limit |
 
 > **Full documentation:** See [INTEGRATIONS.md](INTEGRATIONS.md) for complete code examples (email, calendar, maps, clipboard, CSV export, print, text-to-speech, native share).
+
+## Production Quality Patterns
+
+### Loading Indicators & Progress
+
+Never leave the user staring at a blank screen. Every API call or data processing step must have a visible loading state.
+
+- **Short operations** (single API call): use an indeterminate progress bar or Zenith `<Waiting>`
+- **Multi-step operations** (batch processing): use a determinate progress bar showing percentage
+- **Optional long operations** (e.g., fetching GPS for events): provide an abort/cancel button
+- Keep progress indicators slim and unobtrusive — they should inform without dominating the UI
+- Use consistent progress bar styling across all views/tabs in an add-in
+
+### Progressive Loading
+
+For large datasets, show results as they arrive rather than waiting for all data:
+
+```jsx
+// Pattern: update state after each batch, not after all batches
+for (const batch of batches) {
+  const results = await fetchBatch(batch);
+  setData(prev => [...prev, ...processResults(results)]);
+  setProgress(Math.round((done / total) * 100));
+}
+```
+
+**Generation counter pattern** — prevent stale async updates when a new load starts before the previous one finishes:
+
+```jsx
+const loadGeneration = useRef(0);
+
+async function loadData() {
+  const thisGen = ++loadGeneration.current;
+  // ... fetch data ...
+  if (thisGen !== loadGeneration.current) return; // stale, discard
+  setData(results);
+}
+```
+
+### API Rate Limits & Batch Sizing
+
+- Use `multiCall` to batch independent API calls into a single request
+- For large date ranges, split into chunks (e.g., 7-day windows) and process sequentially
+- For many devices, batch into groups of ~100
+- On rate limit errors: wait with exponential backoff and retry
+- On non-critical failures: degrade gracefully (show partial data with a warning) instead of failing the entire view
+
+### Group Filter Integration (External/React Add-Ins)
+
+External add-ins must respect MyGeotab's global group filter. In `focus()`, read `freshState.getGroupFilter()` and pass it to your React app. Use a single `Get Device` call with the group scope, build device/driver lookup maps, and share them via React context so tabs don't duplicate API calls. When the user changes the group filter, MyGeotab re-calls `focus()` — your add-in must re-render.
+
+### Unit Conversion & Locale Formatting
+
+- Fetch the user's `isMetric` preference from their Geotab User profile on mount
+- Convert all displayed measurements appropriately (km↔mi, L↔gal, kg↔lb, L/100km↔MPG)
+- Format numbers with `Intl.NumberFormat(language)` for locale-appropriate separators (French: spaces, English: commas)
+- Keep raw numeric values in state for calculations and table sorting; format only at display time
+- For Zenith `Table`, use `columnComponent.render` to format displayed values while entity properties stay numeric for sorting
+
+### API Data Gotchas
+
+| Data Point | Gotcha | Solution |
+|-----------|--------|----------|
+| `Trip.distance` | Already in **km** (not meters) | Divide by 1.60934 for miles |
+| Odometer (`StatusData`) | Value in **meters** | Divide by 1000 for km, then convert |
+| `FuelTransaction` fields | Inconsistent casing (`totalFuelUsed` vs `totalIdlingFuelUsedL`) | Check exact property names |
+| `DutyStatusViolation` | Ignores group filters | Filter results client-side |
+| Disabled `Rule` entities | Throw errors when queried by ID | Wrap in try/catch, skip gracefully |
+| `ExceptionEvent` | Has no GPS coordinates | Query `LogRecord` for the device's time range |
 
 ## Critical Mistakes to Avoid
 
@@ -959,7 +1030,6 @@ Here's my current vanilla JS add-in:
 **Zenith Gotchas We Discovered:**
 - `FeedbackProvider` wrapper required for `Alert` components
 - `LanguageProvider` wrapper required for Zenith components to display in the user's language (use `zh-Hans`, not `zh-hans`)
-- Zenith `Table` component has issues with custom render functions -> use HTML table with Zenith styling instead
 - Component names differ: `TextInput` (not TextField), `Waiting` (not Spinner)
 - Large bundle includes all fonts even if unused
 
