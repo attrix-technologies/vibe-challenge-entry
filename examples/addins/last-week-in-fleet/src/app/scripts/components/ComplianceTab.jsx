@@ -312,7 +312,7 @@ const ComplianceTab = () => {
           </SummaryTileBar>
 
           <div className="compliance-sections">
-            <Card title={t('HOS Violations')} fullWidth autoHeight>
+            <Card title={t('HOS Violations')} fullWidth autoHeight tooltipSize="auto" tooltip={t('HOS violations put the driver out of compliance and should be avoided or resolved if possible.')}>
               <Card.Content>
                 <div className="compliance-card-scroll">
                   {getViolationsByDriver().length === 0 ? (
@@ -347,7 +347,7 @@ const ComplianceTab = () => {
               </Card.Content>
             </Card>
 
-            <Card title={t('Unverified Logs')} fullWidth autoHeight>
+            <Card title={t('Unverified Logs')} fullWidth autoHeight tooltipSize="auto" tooltip={t('Drivers should verify their logs at the end of each day, or as they begin their shift the next day. Unverified logs are a point of inspection under a regulatory audit.')}>
               <Card.Content>
                 <div className="compliance-card-scroll">
                   {unverifiedByDriver.length === 0 ? (
@@ -374,7 +374,7 @@ const ComplianceTab = () => {
               </Card.Content>
             </Card>
 
-            <Card title={t('ELD Malfunctions')} fullWidth autoHeight>
+            <Card title={t('ELD Malfunctions')} fullWidth autoHeight tooltipSize="auto" tooltip={t('Malfunctions should be monitored and addressed, corrective actions might be required to prevent recurrence.')}>
               <Card.Content>
                 <div className="compliance-card-scroll">
                   {eldMalfunctions.length === 0 ? (
@@ -412,7 +412,7 @@ const ComplianceTab = () => {
               </Card.Content>
             </Card>
 
-            <Card title={t('Personal Conveyance (PC)')} fullWidth autoHeight>
+            <Card title={t('Personal Conveyance (PC)')} fullWidth autoHeight tooltipSize="auto" tooltip={t('Personal Conveyance should be closely monitored to prevent abuse. Usage should be justified.')}>
               <Card.Content>
                 <div className="compliance-card-scroll">
                   {pcByDriver.length === 0 ? (
@@ -441,7 +441,7 @@ const ComplianceTab = () => {
               </Card.Content>
             </Card>
 
-            <Card title={t('Yard Moves (YM)')} fullWidth autoHeight>
+            <Card title={t('Yard Moves (YM)')} fullWidth autoHeight tooltipSize="auto" tooltip={t('Yard Move should be monitored for abuse or mistakes. YM logs should not be used for long distances, and cannot legally be used on public roads.')}>
               <Card.Content>
                 <div className="compliance-card-scroll">
                   {ymByDriver.length === 0 ? (

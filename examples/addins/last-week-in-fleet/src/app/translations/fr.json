@@ -66,6 +66,12 @@
   "[S] Data transfer malfunction": "[S] D\u00e9faillance de transfert de donn\u00e9es",
   "[O] Other malfunction": "[O] Autre d\u00e9faillance",
 
+  "HOS violations put the driver out of compliance and should be avoided or resolved if possible.": "Les violations HOS mettent le conducteur en non-conformit\u00e9 et devraient \u00eatre \u00e9vit\u00e9es ou r\u00e9solues dans la mesure du possible.",
+  "Drivers should verify their logs at the end of each day, or as they begin their shift the next day. Unverified logs are a point of inspection under a regulatory audit.": "Les conducteurs doivent v\u00e9rifier leurs journaux \u00e0 la fin de chaque journ\u00e9e, ou au d\u00e9but de leur quart de travail le lendemain. Les journaux non v\u00e9rifi\u00e9s sont un point d\u2019inspection lors d\u2019un audit r\u00e9glementaire.",
+  "Malfunctions should be monitored and addressed, corrective actions might be required to prevent recurrence.": "Les d\u00e9faillances doivent \u00eatre surveill\u00e9es et corrig\u00e9es. Des actions correctives peuvent \u00eatre n\u00e9cessaires pour pr\u00e9venir leur r\u00e9currence.",
+  "Personal Conveyance should be closely monitored to prevent abuse. Usage should be justified.": "Le d\u00e9placement personnel doit \u00eatre surveill\u00e9 pour pr\u00e9venir les abus. Tout usage doit \u00eatre justifi\u00e9.",
+  "Yard Move should be monitored for abuse or mistakes. YM logs should not be used for long distances, and cannot legally be used on public roads.": "L\u2019exemption de man\u0153uvre de cour doit \u00eatre surveill\u00e9e pour pr\u00e9venir les abus ou erreurs. Les man\u0153uvres de cour ne doivent pas \u00eatre utilis\u00e9es sur de longues distances et ne peuvent l\u00e9galement \u00eatre utilis\u00e9es sur la voie publique.",
+
   "Loading sustainability data...": "Chargement des donn\u00e9es de durabilit\u00e9\u2026",
   "Decoding vehicle VINs:": "D\u00e9codage des NIV\u00a0:",
   "Fetching fuel data...": "R\u00e9cup\u00e9ration des donn\u00e9es de carburant\u2026",
@@ -94,5 +100,10 @@
   "Distance": "Distance",
   "Fuel Used": "Carburant utilis\u00e9",
   "Idling Fuel": "Carburant au ralenti",
-  "Idling CO\u2082": "CO\u2082 au ralenti"
+  "Idling CO\u2082": "CO\u2082 au ralenti",
+  "Notice": "Notice",
+  "vehicle excluded — fuel type unknown": "v\u00e9hicule exclu \u2014 type de carburant inconnu",
+  "vehicles excluded — fuel type unknown": "v\u00e9hicules exclus \u2014 type de carburant inconnu",
+  "vehicle excluded — fuel type unknown. VIN data is required to determine fuel type.": "v\u00e9hicule exclu \u2014 type de carburant inconnu. Les donn\u00e9es NIV sont requises pour d\u00e9terminer le type de carburant.",
+  "vehicles excluded — fuel type unknown. VIN data is required to determine fuel type.": "v\u00e9hicules exclus \u2014 type de carburant inconnu. Les donn\u00e9es NIV sont requises pour d\u00e9terminer le type de carburant."
 }

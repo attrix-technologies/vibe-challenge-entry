@@ -267,6 +267,7 @@ ${trkpts}
 
         if (coords && map.current) {
           addPath(trip, coords);
+          coords.forEach(c => mapBoundsRef.current?.extend(c));
           flushPaths();
         }
       }
@@ -497,6 +498,11 @@ ${trkpts}
           // ── Progressive map matching with 5 concurrent slots ──────
           setStatus(`${t('Map matching:')} 0 / ${tripsToMatch.length}`);
           await processTripsWithPool(tripsToMatch, tripsToMatch.length, controller.signal);
+
+          // Re-fit bounds to include all map-matched polyline geometry
+          if (mapBoundsRef.current && !mapBoundsRef.current.isEmpty() && map.current) {
+            map.current.fitBounds(mapBoundsRef.current, { padding: 40 });
+          }
 
           setProgress(100);
           setStatus(t('Complete'));

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
-import { SummaryTileBar, SummaryTile, SummaryTileSize, Table } from '@geotab/zenith';
+import { SummaryTileBar, SummaryTile, SummaryTileSize, Table, Banner } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import { convertDistance, convertVolume, convertWeight, convertEconomy, distanceUnit, volumeUnit, weightUnit, economyUnit, fmt } from '../utils/units';
@@ -37,6 +37,7 @@ const SustainabilityTab = () => {
   const [dieselEconomy, setDieselEconomy] = useState(null); // L/100km or null
   const [gasolineEconomy, setGasolineEconomy] = useState(null);
   const [fuelByVehicle, setFuelByVehicle] = useState([]);
+  const [excludedCount, setExcludedCount] = useState(0);
 
   const hasData = useRef(false);
   const lastGroupFilter = useRef(null);
@@ -108,9 +109,16 @@ const SustainabilityTab = () => {
       setStatusMessage(t('Loading sustainability data...'));
 
       try {
-        // 1. Extract VINs from devices
-        const vinToDeviceIds = new Map(); // VIN → [deviceId, ...]
+        // 1. Filter to tracked vehicles only (have a GO device serial number)
+        const trackedDevices = new Map();
         devices.forEach((info, id) => {
+          if (info.serialNumber) trackedDevices.set(id, info);
+        });
+        logger.log(`Sustainability: ${devices.size} total devices, ${trackedDevices.size} with serial numbers`);
+
+        // 2. Extract VINs from tracked devices
+        const vinToDeviceIds = new Map(); // VIN → [deviceId, ...]
+        trackedDevices.forEach((info, id) => {
           if (info.vin) {
             const vin = info.vin.toUpperCase();
             if (!vinToDeviceIds.has(vin)) vinToDeviceIds.set(vin, []);
@@ -119,20 +127,26 @@ const SustainabilityTab = () => {
         });
 
         const allVins = [...vinToDeviceIds.keys()];
-        logger.log(`Sustainability: ${devices.size} devices, ${allVins.length} with VINs`);
+        let devicesWithVin = 0;
+        vinToDeviceIds.forEach(ids => { devicesWithVin += ids.length; });
+        const noVinCount = trackedDevices.size - devicesWithVin;
+        logger.log(`Sustainability: ${trackedDevices.size} tracked, ${devicesWithVin} with VINs, ${noVinCount} without`);
 
-        const setEmpty = () => {
+        const setEmpty = (excluded = 0) => {
           setDieselLiters(0); setGasolineLiters(0);
           setDieselIdlingLiters(0); setGasolineIdlingLiters(0);
           setDieselCO2(0); setGasolineCO2(0);
           setDieselIdlingCO2(0); setGasolineIdlingCO2(0);
           setDieselEconomy(null); setGasolineEconomy(null);
           setFuelByVehicle([]);
+          setExcludedCount(excluded);
+          setStatusMessage('');
+          setProgress(0);
           setLoading(false);
         };
 
         if (allVins.length === 0) {
-          if (!isStale()) setEmpty();
+          if (!isStale()) setEmpty(trackedDevices.size);
           return;
         }
 
@@ -282,14 +296,19 @@ const SustainabilityTab = () => {
           updateState();
         }
 
+        // Count devices with unknown fuel type (VIN decoded but not diesel/gasoline)
+        let unknownFuelCount = 0;
+        fuelByDeviceId.forEach(info => { if (!info.fuelType) unknownFuelCount++; });
+        const totalExcluded = noVinCount + unknownFuelCount;
+
         // If no VIN batch produced fuel devices, clear loading
         if (!shownLayout) {
-          if (!isStale()) setEmpty();
+          if (!isStale()) setEmpty(totalExcluded);
           return;
         }
 
-        logger.log(`Sustainability complete: ${vehicleRows.length} vehicles with fuel data`);
-        if (!isStale()) { setStatusMessage(''); setProgress(100); }
+        logger.log(`Sustainability complete: ${vehicleRows.length} vehicles with fuel data, ${totalExcluded} excluded`);
+        if (!isStale()) { setExcludedCount(totalExcluded); setStatusMessage(''); setProgress(100); }
       } catch (err) {
         logger.error(`Sustainability load error: ${err.message}`);
         if (!isStale()) setLoading(false);
@@ -392,9 +411,21 @@ const SustainabilityTab = () => {
 
           <div className="compliance-sections">
             {fuelByVehicle.length === 0 && !statusMessage ? (
-              <p className="status-message">{t('No fuel data available for last week')}</p>
+              excludedCount > 0 ? (
+                <Banner header={t('Notice')}>
+                  {fmt(excludedCount, language)} {excludedCount === 1 ? t('vehicle excluded — fuel type unknown. VIN data is required to determine fuel type.') : t('vehicles excluded — fuel type unknown. VIN data is required to determine fuel type.')}
+                </Banner>
+              ) : (
+                <p className="status-message">{t('No fuel data available for last week')}</p>
+              )
             ) : fuelByVehicle.length > 0 ? (
-              <Table
+              <>
+                {excludedCount > 0 && (
+                  <Banner header={t('Notice')}>
+                    {fmt(excludedCount, language)} {excludedCount === 1 ? t('vehicle excluded — fuel type unknown') : t('vehicles excluded — fuel type unknown')}
+                  </Banner>
+                )}
+                <Table
                 description={t('Fuel Usage by Vehicle')}
                 columns={columns}
                 entities={entities}
@@ -405,6 +436,7 @@ const SustainabilityTab = () => {
                   onChange: setSortSettings
                 }}
               />
+              </>
             ) : null}
           </div>
         </>
