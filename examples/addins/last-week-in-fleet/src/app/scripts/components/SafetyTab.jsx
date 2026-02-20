@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar } from '@geotab/zenith';
+import { SummaryTileBar, SummaryTile, SummaryTileSize } from '@geotab/zenith';
 import { Overview, OverviewOptionsArrow, OverviewOptionsType } from '@geotab/zenith/dist/overview/overview';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { ScatterplotLayer } from '@deck.gl/layers';
@@ -61,6 +61,10 @@ const SafetyTab = () => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const deckOverlay = useRef(null);
+  const [mapProgress, setMapProgress] = useState(0);
+  const hasFitBounds = useRef(false);
+  const mapBoundsRef = useRef(null);
+  const locationAbortRef = useRef(false);
 
   // ── Date helpers ───────────────────────────────────────────────────
   const getWeekRanges = () => {
@@ -127,9 +131,10 @@ const SafetyTab = () => {
     return null;
   };
 
-  // ── Fetch LogRecords in batches ────────────────────────────────────
-  const fetchEventLocations = async (allEvents) => {
-    if (allEvents.length === 0) return [];
+  // ── Fetch LogRecords in batches (progressive — updates map after each batch) ──
+  const fetchEventLocationsProgressive = async (allEvents) => {
+    if (allEvents.length === 0) return;
+    locationAbortRef.current = false;
 
     const logCalls = allEvents.map(e => ['Get', {
       typeName: 'LogRecord',
@@ -140,43 +145,52 @@ const SafetyTab = () => {
       }
     }]);
 
-    const points = [];
+    const accumulated = []; // raw {position, type} without radius/color yet
 
     for (let i = 0; i < logCalls.length; i += BATCH_SIZE) {
+      if (locationAbortRef.current) break;
       const batch = logCalls.slice(i, Math.min(i + BATCH_SIZE, logCalls.length));
       try {
         const batchResults = await new Promise((resolve, reject) => {
           geotabApi.multiCall(batch, resolve, reject);
         });
+        if (locationAbortRef.current) break;
         batchResults.forEach((records, j) => {
           const event = allEvents[i + j];
           if (records && records.length > 0) {
             const rec = records[0];
             if (rec.latitude !== 0 || rec.longitude !== 0) {
-              points.push({ position: [rec.longitude, rec.latitude], type: event.type });
+              accumulated.push({ position: [rec.longitude, rec.latitude], type: event.type });
             }
           }
         });
       } catch (err) {
         logger.warn(`LogRecord batch ${Math.floor(i / BATCH_SIZE) + 1} failed: ${err}`);
       }
-      setMapStatus(`${t('Locating events:')} ${Math.min(i + BATCH_SIZE, allEvents.length)} / ${allEvents.length}`);
+      const done = Math.min(i + BATCH_SIZE, allEvents.length);
+      setMapStatus(`${t('Locating events:')} ${done} / ${allEvents.length}`);
+      setMapProgress(Math.round((done / allEvents.length) * 100));
+
+      // Recalculate density on all accumulated points and push to state
+      if (accumulated.length > 0) {
+        const grid = new Map();
+        accumulated.forEach(p => {
+          const key = `${Math.round(p.position[0] / DENSITY_GRID)},${Math.round(p.position[1] / DENSITY_GRID)}`;
+          grid.set(key, (grid.get(key) || 0) + 1);
+        });
+        const maxDensity = Math.max(1, ...grid.values());
+        const styled = accumulated.map(p => {
+          const key = `${Math.round(p.position[0] / DENSITY_GRID)},${Math.round(p.position[1] / DENSITY_GRID)}`;
+          return {
+            position: p.position,
+            type: p.type,
+            radius: 4 + (grid.get(key) / maxDensity) * 12,
+            color: [...EVENT_COLORS[p.type].rgb, 180]
+          };
+        });
+        setEventPoints(styled);
+      }
     }
-
-    // Density-based radius
-    const grid = new Map();
-    points.forEach(p => {
-      const key = `${Math.round(p.position[0] / DENSITY_GRID)},${Math.round(p.position[1] / DENSITY_GRID)}`;
-      grid.set(key, (grid.get(key) || 0) + 1);
-    });
-    const maxDensity = Math.max(1, ...grid.values());
-    points.forEach(p => {
-      const key = `${Math.round(p.position[0] / DENSITY_GRID)},${Math.round(p.position[1] / DENSITY_GRID)}`;
-      p.radius = 4 + (grid.get(key) / maxDensity) * 12;
-      p.color = [...EVENT_COLORS[p.type].rgb, 180];
-    });
-
-    return points;
   };
 
   // ── Map init + deck.gl overlay ─────────────────────────────────────
@@ -215,15 +229,41 @@ const SafetyTab = () => {
           })
         ]
       });
-      const bounds = new maplibregl.LngLatBounds();
-      eventPoints.forEach(p => bounds.extend(p.position));
-      if (!bounds.isEmpty()) map.current.fitBounds(bounds, { padding: 40 });
+      if (!hasFitBounds.current) {
+        const bounds = new maplibregl.LngLatBounds();
+        eventPoints.forEach(p => bounds.extend(p.position));
+        if (!bounds.isEmpty()) {
+          mapBoundsRef.current = bounds;
+          map.current.fitBounds(bounds, { padding: 40 });
+          hasFitBounds.current = true;
+        }
+      }
     };
     initMap();
   }, [loading, eventPoints]);
 
+  // Re-fit bounds when map container resizes (e.g. chart appears beside it)
   useEffect(() => {
-    return () => { if (map.current) { map.current.remove(); map.current = null; } };
+    const container = mapContainer.current;
+    if (!container) return;
+    let debounce;
+    const observer = new ResizeObserver(() => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        if (map.current) {
+          map.current.resize();
+          if (mapBoundsRef.current) {
+            map.current.fitBounds(mapBoundsRef.current, { padding: 40 });
+          }
+        }
+      }, 150);
+    });
+    observer.observe(container);
+    return () => {
+      clearTimeout(debounce);
+      observer.disconnect();
+      if (map.current) { map.current.remove(); map.current = null; }
+    };
   }, []);
 
   // ── Main data loader ───────────────────────────────────────────────
@@ -231,6 +271,8 @@ const SafetyTab = () => {
     if (!devices) {
       hasData.current = false;
       lastGroupFilter.current = null;
+      if (deckOverlay.current) deckOverlay.current.setProps({ layers: [] });
+      mapBoundsRef.current = null;
       return;
     }
 
@@ -242,6 +284,10 @@ const SafetyTab = () => {
     setEventPoints([]);
     setDeviceEventData([]);
     setMapStatus('');
+    setMapProgress(0);
+    hasFitBounds.current = false;
+    mapBoundsRef.current = null;
+    if (deckOverlay.current) deckOverlay.current.setProps({ layers: [] });
     const { thisWeek, prevWeek } = getWeekRanges();
 
     geotabApi.call('Get', { typeName: 'Rule' }, (rules) => {
@@ -339,14 +385,13 @@ const SafetyTab = () => {
           .sort((a, b) => b.total - a.total);
         setDeviceEventData(sorted);
 
-        // ── Fetch event locations for map ──────────────────────────
+        // ── Fetch event locations for map (progressive) ─────────
         if (allEvents.length === 0) return;
         logger.log(`Fetching locations for ${allEvents.length} exception events`);
         setMapStatus(`${t('Locating events:')} 0 / ${allEvents.length}`);
-        const points = await fetchEventLocations(allEvents);
-        logger.log(`Mapped ${points.length} events to coordinates`);
-        setEventPoints(points);
+        await fetchEventLocationsProgressive(allEvents);
         setMapStatus('');
+        setMapProgress(0);
       }, (error) => {
         logger.error('Error loading safety events: ' + error);
         setLoading(false);
@@ -423,9 +468,9 @@ const SafetyTab = () => {
   return (
     <div>
       {loading ? (
-        <div style={{ marginTop: '16px' }}>
-          <ProgressBar min={0} max={100} now={50} size="medium" />
-          <div className="status-message">{t('Loading safety events...')}</div>
+        <div className="slim-progress">
+          <div className="slim-progress-fill indeterminate" />
+          <div className="slim-progress-text">{t('Loading safety events...')}</div>
         </div>
       ) : (
         <SummaryTileBar>
@@ -455,16 +500,23 @@ const SafetyTab = () => {
         </SummaryTileBar>
       )}
 
+      {mapStatus && !loading && (
+        <div className="slim-progress">
+          <div className="slim-progress-fill" style={{ width: `${mapProgress}%` }} />
+          <div className="slim-progress-text">{mapStatus}</div>
+          <button className="slim-progress-abort" onClick={() => {
+            locationAbortRef.current = true;
+            setMapStatus('');
+            setMapProgress(0);
+          }}>&#215;</button>
+        </div>
+      )}
+
       <div className="map-and-chart" style={{ display: loading ? 'none' : undefined }}>
         <div className="map-section">
           <div className="map-wrapper">
             <div ref={mapContainer} className="map-container" />
           </div>
-          {mapStatus && (
-            <div style={{ marginTop: '8px' }}>
-              <div className="status-message">{mapStatus}</div>
-            </div>
-          )}
         </div>
         {renderDeviceChart()}
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar, Card } from '@geotab/zenith';
+import { SummaryTileBar, SummaryTile, SummaryTileSize, Card } from '@geotab/zenith';
 import { Overview, OverviewOptionsArrow, OverviewOptionsType } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import { convertDistance, distanceUnit, fmt } from '../utils/units';
@@ -280,9 +280,9 @@ const ComplianceTab = () => {
   return (
     <div>
       {loading ? (
-        <div style={{ marginTop: '16px' }}>
-          <ProgressBar min={0} max={100} now={50} size="medium" />
-          <div className="status-message">{t('Loading compliance data...')}</div>
+        <div className="slim-progress">
+          <div className="slim-progress-fill indeterminate" />
+          <div className="slim-progress-text">{t('Loading compliance data...')}</div>
         </div>
       ) : (
         <>

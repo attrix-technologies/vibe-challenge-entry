@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
-import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar, Table } from '@geotab/zenith';
+import { SummaryTileBar, SummaryTile, SummaryTileSize, Table } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import { convertDistance, convertVolume, convertWeight, convertEconomy, distanceUnit, volumeUnit, weightUnit, economyUnit, fmt } from '../utils/units';
@@ -25,6 +25,7 @@ const SustainabilityTab = () => {
 
   const [loading, setLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState('');
+  const [progress, setProgress] = useState(0);
   const [dieselLiters, setDieselLiters] = useState(0);
   const [gasolineLiters, setGasolineLiters] = useState(0);
   const [dieselIdlingLiters, setDieselIdlingLiters] = useState(0);
@@ -103,6 +104,7 @@ const SustainabilityTab = () => {
 
     const load = async () => {
       setLoading(true);
+      setProgress(0);
       setStatusMessage(t('Loading sustainability data...'));
 
       try {
@@ -134,48 +136,9 @@ const SustainabilityTab = () => {
           return;
         }
 
-        // 2. Decode VINs in batches of 50
-        const fuelByDeviceId = new Map(); // deviceId → { fuelPrimary, fuelSecondary, fuelType }
-        for (let i = 0; i < allVins.length; i += VIN_BATCH_SIZE) {
-          const batch = allVins.slice(i, i + VIN_BATCH_SIZE);
-          const batchNum = Math.floor(i / VIN_BATCH_SIZE) + 1;
-          const totalBatches = Math.ceil(allVins.length / VIN_BATCH_SIZE);
-          if (!isStale()) setStatusMessage(`${t('Decoding vehicle VINs:')} ${batchNum}/${totalBatches}`);
-
-          try {
-            const vinResults = await decodeVinBatch(batch);
-            logger.log(`VIN batch ${batchNum}/${totalBatches} decoded: ${vinResults.size} results`);
-            vinResults.forEach((fuel, vin) => {
-              const deviceIds = vinToDeviceIds.get(vin) || [];
-              const fuelType = classifyFuel(fuel.fuelPrimary, fuel.fuelSecondary);
-              deviceIds.forEach(did => {
-                fuelByDeviceId.set(did, { ...fuel, fuelType });
-              });
-            });
-          } catch (err) {
-            logger.error(`VIN decode batch ${batchNum} failed: ${err.message}`);
-          }
-        }
-
-        if (isStale()) return;
-        const withFuelType = [...fuelByDeviceId.values()].filter(f => f.fuelType).length;
-        logger.log(`VIN decode complete: ${fuelByDeviceId.size} decoded, ${withFuelType} with known fuel type`);
-
-        // 3. Get FuelUsed + Trips for devices with known fuel type
+        // 2. Start trip fetch in background (single call, usually fast)
         const { fromDate, toDate } = getLastWeekRange();
-        const fuelDeviceIds = [...fuelByDeviceId.entries()]
-          .filter(([, f]) => f.fuelType)
-          .map(([id]) => id);
-
-        if (fuelDeviceIds.length === 0) {
-          setEmpty();
-          return;
-        }
-
-        setStatusMessage(t('Fetching fuel data...'));
-
-        // Fetch trips (for distance/fuel economy) in parallel with FuelUsed
-        const distanceByDevice = new Map(); // deviceId → distance in meters
+        const distanceByDevice = new Map(); // deviceId → distance in km
         const tripPromise = new Promise((resolve) => {
           geotabApi.call('Get', {
             typeName: 'Trip',
@@ -194,98 +157,139 @@ const SustainabilityTab = () => {
           });
         });
 
-        // Fetch FuelUsed in batches
-        const fuelResults = new Map(); // deviceId → { totalFuel, idlingFuel }
-        const fuelPromise = (async () => {
-          for (let i = 0; i < fuelDeviceIds.length; i += FUEL_CALL_BATCH) {
-            const batch = fuelDeviceIds.slice(i, i + FUEL_CALL_BATCH);
-            const calls = batch.map(id => ['Get', {
-              typeName: 'FuelUsed',
-              search: { deviceSearch: { id }, fromDate, toDate }
-            }]);
-
-            await new Promise((resolve) => {
-              geotabApi.multiCall(calls, (results) => {
-                results.forEach((deviceFuelRecords, idx) => {
-                  const did = batch[idx];
-                  let totalFuel = 0, idlingFuel = 0;
-                  (deviceFuelRecords || []).forEach(r => {
-                    totalFuel += r.totalFuelUsed || 0;
-                    idlingFuel += r.totalIdlingFuelUsedL || 0;
-                  });
-                  if (totalFuel > 0 || idlingFuel > 0) {
-                    fuelResults.set(did, { totalFuel, idlingFuel });
-                  }
-                });
-                resolve();
-              }, (err) => {
-                logger.error(`FuelUsed batch failed: ${err}`);
-                resolve();
-              });
-            });
-          }
-        })();
-
-        await Promise.all([tripPromise, fuelPromise]);
-
-        if (isStale()) return;
-        logger.log(`FuelUsed: ${fuelResults.size} devices with fuel data`);
-
-        // 4. Aggregate by fuel type
+        // 3. Decode VINs batch-by-batch, fetching fuel for each batch immediately
         let dTotal = 0, dIdle = 0, gTotal = 0, gIdle = 0;
         let dDistKm = 0, gDistKm = 0;
         const vehicleRows = [];
+        let tripsReady = false;
+        let shownLayout = false;
 
-        fuelResults.forEach((fuel, did) => {
-          const fuelInfo = fuelByDeviceId.get(did);
-          const fuelType = fuelInfo?.fuelType;
-          if (!fuelType) return;
+        const updateState = () => {
+          if (isStale()) return;
+          vehicleRows.sort((a, b) => b.totalFuel - a.totalFuel);
+          setFuelByVehicle([...vehicleRows]);
 
-          const ghg = GHG_FACTORS[fuelType] || 0;
-          const co2 = fuel.totalFuel * ghg;
-          const idlingCo2 = fuel.idlingFuel * ghg;
-          const distKm = distanceByDevice.get(did) || 0;
-          const economy = distKm > 0 ? (fuel.totalFuel / distKm) * 100 : null;
+          setDieselLiters(Math.round(convertVolume(dTotal, isMetric)));
+          setGasolineLiters(Math.round(convertVolume(gTotal, isMetric)));
+          setDieselIdlingLiters(Math.round(convertVolume(dIdle, isMetric)));
+          setGasolineIdlingLiters(Math.round(convertVolume(gIdle, isMetric)));
+          setDieselCO2(Math.round(convertWeight(dTotal * GHG_FACTORS.Diesel, isMetric)));
+          setGasolineCO2(Math.round(convertWeight(gTotal * GHG_FACTORS.Gasoline, isMetric)));
+          setDieselIdlingCO2(Math.round(convertWeight(dIdle * GHG_FACTORS.Diesel, isMetric)));
+          setGasolineIdlingCO2(Math.round(convertWeight(gIdle * GHG_FACTORS.Gasoline, isMetric)));
+          const dEcon = dDistKm > 0 ? (dTotal / dDistKm) * 100 : null;
+          const gEcon = gDistKm > 0 ? (gTotal / gDistKm) * 100 : null;
+          setDieselEconomy(dEcon !== null ? Math.round(convertEconomy(dEcon, isMetric) * 10) / 10 : null);
+          setGasolineEconomy(gEcon !== null ? Math.round(convertEconomy(gEcon, isMetric) * 10) / 10 : null);
+        };
 
-          vehicleRows.push({
-            id: did,
-            name: devices.get(did)?.name || did,
-            fuelType,
-            totalFuel: Math.round(convertVolume(fuel.totalFuel, isMetric) * 10) / 10,
-            idlingFuel: Math.round(convertVolume(fuel.idlingFuel, isMetric) * 10) / 10,
-            dist: Math.round(convertDistance(distKm, isMetric)),
-            economy: economy !== null ? Math.round(convertEconomy(economy, isMetric) * 10) / 10 : null,
-            co2: Math.round(convertWeight(co2, isMetric) * 10) / 10,
-            idlingCo2: Math.round(convertWeight(idlingCo2, isMetric) * 10) / 10
+        const processFuelBatch = (deviceIds) => {
+          return new Promise((resolve) => {
+            if (deviceIds.length === 0) { resolve(); return; }
+            const calls = deviceIds.map(id => ['Get', {
+              typeName: 'FuelUsed',
+              search: { deviceSearch: { id }, fromDate, toDate }
+            }]);
+            geotabApi.multiCall(calls, (results) => {
+              results.forEach((deviceFuelRecords, idx) => {
+                const did = deviceIds[idx];
+                let totalFuel = 0, idlingFuel = 0;
+                (deviceFuelRecords || []).forEach(r => {
+                  totalFuel += r.totalFuelUsed || 0;
+                  idlingFuel += r.totalIdlingFuelUsedL || 0;
+                });
+                if (totalFuel > 0 || idlingFuel > 0) {
+                  const fuelInfo = fuelByDeviceId.get(did);
+                  const fuelType = fuelInfo?.fuelType;
+                  if (!fuelType) return;
+
+                  const ghg = GHG_FACTORS[fuelType] || 0;
+                  const co2 = totalFuel * ghg;
+                  const idlingCo2 = idlingFuel * ghg;
+                  const distKm = distanceByDevice.get(did) || 0;
+                  const economy = distKm > 0 ? (totalFuel / distKm) * 100 : null;
+
+                  vehicleRows.push({
+                    id: did,
+                    name: devices.get(did)?.name || did,
+                    fuelType,
+                    totalFuel: Math.round(convertVolume(totalFuel, isMetric) * 10) / 10,
+                    idlingFuel: Math.round(convertVolume(idlingFuel, isMetric) * 10) / 10,
+                    dist: Math.round(convertDistance(distKm, isMetric)),
+                    economy: economy !== null ? Math.round(convertEconomy(economy, isMetric) * 10) / 10 : null,
+                    co2: Math.round(convertWeight(co2, isMetric) * 10) / 10,
+                    idlingCo2: Math.round(convertWeight(idlingCo2, isMetric) * 10) / 10
+                  });
+
+                  if (fuelType === 'Diesel') {
+                    dTotal += totalFuel; dIdle += idlingFuel; dDistKm += distKm;
+                  } else {
+                    gTotal += totalFuel; gIdle += idlingFuel; gDistKm += distKm;
+                  }
+                }
+              });
+              resolve();
+            }, (err) => {
+              logger.error(`FuelUsed batch failed: ${err}`);
+              resolve();
+            });
           });
+        };
 
-          if (fuelType === 'Diesel') {
-            dTotal += fuel.totalFuel;
-            dIdle += fuel.idlingFuel;
-            dDistKm += distKm;
-          } else {
-            gTotal += fuel.totalFuel;
-            gIdle += fuel.idlingFuel;
-            gDistKm += distKm;
+        const fuelByDeviceId = new Map();
+        const totalVinBatches = Math.ceil(allVins.length / VIN_BATCH_SIZE);
+
+        for (let i = 0; i < allVins.length; i += VIN_BATCH_SIZE) {
+          const batch = allVins.slice(i, i + VIN_BATCH_SIZE);
+          const batchNum = Math.floor(i / VIN_BATCH_SIZE) + 1;
+          if (!isStale()) {
+            setStatusMessage(`${t('Decoding vehicle VINs:')} ${batchNum}/${totalVinBatches}`);
+            setProgress(Math.round((batchNum / totalVinBatches) * 100));
           }
-        });
 
-        vehicleRows.sort((a, b) => b.totalFuel - a.totalFuel);
+          // a. Decode this VIN batch
+          const batchDeviceIds = [];
+          try {
+            const vinResults = await decodeVinBatch(batch);
+            logger.log(`VIN batch ${batchNum}/${totalVinBatches} decoded: ${vinResults.size} results`);
+            vinResults.forEach((fuel, vin) => {
+              const deviceIds = vinToDeviceIds.get(vin) || [];
+              const fuelType = classifyFuel(fuel.fuelPrimary, fuel.fuelSecondary);
+              deviceIds.forEach(did => {
+                fuelByDeviceId.set(did, { ...fuel, fuelType });
+                if (fuelType) batchDeviceIds.push(did);
+              });
+            });
+          } catch (err) {
+            logger.error(`VIN decode batch ${batchNum} failed: ${err.message}`);
+          }
 
-        setDieselLiters(Math.round(convertVolume(dTotal, isMetric)));
-        setGasolineLiters(Math.round(convertVolume(gTotal, isMetric)));
-        setDieselIdlingLiters(Math.round(convertVolume(dIdle, isMetric)));
-        setGasolineIdlingLiters(Math.round(convertVolume(gIdle, isMetric)));
-        setDieselCO2(Math.round(convertWeight(dTotal * GHG_FACTORS.Diesel, isMetric)));
-        setGasolineCO2(Math.round(convertWeight(gTotal * GHG_FACTORS.Gasoline, isMetric)));
-        setDieselIdlingCO2(Math.round(convertWeight(dIdle * GHG_FACTORS.Diesel, isMetric)));
-        setGasolineIdlingCO2(Math.round(convertWeight(gIdle * GHG_FACTORS.Gasoline, isMetric)));
-        const dEcon = dDistKm > 0 ? (dTotal / dDistKm) * 100 : null;
-        const gEcon = gDistKm > 0 ? (gTotal / gDistKm) * 100 : null;
-        setDieselEconomy(dEcon !== null ? Math.round(convertEconomy(dEcon, isMetric) * 10) / 10 : null);
-        setGasolineEconomy(gEcon !== null ? Math.round(convertEconomy(gEcon, isMetric) * 10) / 10 : null);
-        setFuelByVehicle(vehicleRows);
-        setLoading(false);
+          if (isStale()) return;
+          if (batchDeviceIds.length === 0) continue;
+
+          // b. Ensure trips are ready before computing economy (awaits only once)
+          if (!tripsReady) {
+            await tripPromise;
+            tripsReady = true;
+          }
+
+          // c. Fetch fuel for this batch's devices, then update UI
+          if (!isStale()) setStatusMessage(`${t('Fetching fuel data...')} ${batchNum}/${totalVinBatches}`);
+          await processFuelBatch(batchDeviceIds);
+
+          // d. Show layout on first batch with data
+          if (!shownLayout) { setLoading(false); shownLayout = true; }
+          updateState();
+        }
+
+        // If no VIN batch produced fuel devices, clear loading
+        if (!shownLayout) {
+          if (!isStale()) setEmpty();
+          return;
+        }
+
+        logger.log(`Sustainability complete: ${vehicleRows.length} vehicles with fuel data`);
+        if (!isStale()) { setStatusMessage(''); setProgress(100); }
       } catch (err) {
         logger.error(`Sustainability load error: ${err.message}`);
         if (!isStale()) setLoading(false);
@@ -340,9 +344,9 @@ const SustainabilityTab = () => {
   return (
     <div>
       {loading ? (
-        <div style={{ marginTop: '16px' }}>
-          <ProgressBar min={0} max={100} now={50} size="medium" />
-          <div className="status-message">{statusMessage}</div>
+        <div className="slim-progress">
+          <div className={`slim-progress-fill${progress === 0 ? ' indeterminate' : ''}`} style={progress > 0 ? { width: `${progress}%` } : undefined} />
+          <div className="slim-progress-text">{statusMessage}</div>
         </div>
       ) : (
         <>
@@ -379,10 +383,17 @@ const SustainabilityTab = () => {
             </div>
           </SummaryTileBar>
 
+          {statusMessage && (
+            <div className="slim-progress">
+              <div className="slim-progress-fill" style={{ width: `${progress}%` }} />
+              <div className="slim-progress-text">{statusMessage}</div>
+            </div>
+          )}
+
           <div className="compliance-sections">
-            {fuelByVehicle.length === 0 ? (
+            {fuelByVehicle.length === 0 && !statusMessage ? (
               <p className="status-message">{t('No fuel data available for last week')}</p>
-            ) : (
+            ) : fuelByVehicle.length > 0 ? (
               <Table
                 description={t('Fuel Usage by Vehicle')}
                 columns={columns}
@@ -394,7 +405,7 @@ const SustainabilityTab = () => {
                   onChange: setSortSettings
                 }}
               />
-            )}
+            ) : null}
           </div>
         </>
       )}

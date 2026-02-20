@@ -134,6 +134,20 @@ All good now. From my initial assessment, now I'm able to create a new add-in wi
 > The summary-tiles for gasoline are still not grayed out in this case and there doesn't seem to be any data, gray them out. Replace the card's table content with a DataGrid Zenith component so we can sort columns.
 
 > I'd like to make everything shown in the user's preferred unit. There is a boolean property for the current user: isMetric. If user.isMetric then we should show in km, kg, liters, like we do now. If not, then the data will still come in metric units, but we need to make the conversions. Apply this to all tabs, charts, summary-tiles, tables, everywhere. I'd also like to format numbers nicely according to locale, 20135 L is not proper formatting. In the US they would expect 20,135 and in Canada it should be 20 135. Make sure this doesn't break sorting for the datagrid, I still want to sort by numerical value and not do a string comparison.
+
+> I'm testing and thinking of progressive loading. We already do it nicely on the Productivity tab the time to first paint is low, and then we gradually amplify it through map-matching. For the safety tab however, the time to paint is very log, we have to wait for all batches to complete. Please render the points on the layer as they come (batch by batch) instead of waiting for the entire payload to be ready. For compliance I don't think we can do much better and it's not too long to wait. For sustainability, I think we can also do progressive loading, show processed data batch by batch after VIN decoding - can we not?
+
+> On map resize, fitbounds again. What happens is that we fitbounds too quickly on the productivity map, once the chart on the right appears, the map gets smaller, and now lots of trips are out
+of the viewport.
+
+> Progressive load isn't really optimal for the sustainability tab - what's long is the VIN decoding batches, and right now we wait until all of them are finished to show anything. Can't we start 
+showing partial data after 1st VIN batch?
+
+> Look at the safety tab again, if I change the group filter (reduced scope), the summary tile numbers go down, the chart numbers go down, but the dots on the map remain way too many.  
+
+> For the sake of uniformity, change this naked text for a progress indicator - about 18px high, no border radius, fill entire gap there. The text should be ON the progress bar. This one should not have a cancel button. But then, do similar for other tabs: Sustainability should move the progress bar above the map/chart, same look, text on top. The current abort button is ugly, style it better, maybe minimalistic or just a simple X icon. Do the same for the Safety tab, move it to top, and add an abort button there too. The map components are not REQUIRED, so we can alleviate API calls and UI overload if the user doesn't care about them.
+
+
   
 ## Authors
 

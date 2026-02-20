@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { SummaryTileBar, SummaryTile, SummaryTileSize, ProgressBar } from '@geotab/zenith';
+import { SummaryTileBar, SummaryTile, SummaryTileSize } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import { convertDistance, distanceUnit, fmt } from '../utils/units';
@@ -63,6 +63,7 @@ const ProductivityTab = () => {
   const lastGroupFilter = useRef(null);
   const hasData = useRef(false);
   const abortRef = useRef(null);
+  const mapBoundsRef = useRef(null);
 
   // ── Date helpers ──────────────────────────────────────────────────────
   const getLastWeekRange = () => {
@@ -442,6 +443,7 @@ ${trkpts}
           flushPaths();
 
           if (!bounds.isEmpty()) {
+            mapBoundsRef.current = bounds;
             map.current.fitBounds(bounds, { padding: 40 });
           }
 
@@ -516,9 +518,26 @@ ${trkpts}
     loadData();
   }, [focusKey, devices]);
 
-  // Clean up map only on unmount
+  // Re-fit bounds when map container resizes (e.g. chart appears beside it)
   useEffect(() => {
+    const container = mapContainer.current;
+    if (!container) return;
+    let debounce;
+    const observer = new ResizeObserver(() => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        if (map.current) {
+          map.current.resize();
+          if (mapBoundsRef.current) {
+            map.current.fitBounds(mapBoundsRef.current, { padding: 40 });
+          }
+        }
+      }, 150);
+    });
+    observer.observe(container);
     return () => {
+      clearTimeout(debounce);
+      observer.disconnect();
       pathsData.current = [];
       deckOverlay.current = null;
       if (map.current) {
@@ -546,24 +565,23 @@ ${trkpts}
         </SummaryTile>
       </SummaryTileBar>
 
+      {loading && (
+        <div className="slim-progress">
+          <div className="slim-progress-fill" style={{ width: `${progress}%` }} />
+          <div className="slim-progress-text">{status}</div>
+          <button className="slim-progress-abort" onClick={() => {
+            if (abortRef.current) abortRef.current.abort();
+            setLoading(false);
+            setStatus('');
+          }}>&#215;</button>
+        </div>
+      )}
+
       <div className="map-and-chart">
         <div className="map-section">
           <div className="map-wrapper">
             <div ref={mapContainer} className="map-container" />
           </div>
-          {loading && (
-            <div style={{ marginTop: '16px' }}>
-              <div className="progress-row">
-                <div className="progress-bar-flex"><ProgressBar min={0} max={100} now={progress} size="medium" /></div>
-                <button className="abort-button" onClick={() => {
-                  if (abortRef.current) abortRef.current.abort();
-                  setLoading(false);
-                  setStatus('');
-                }} title={t('Cancel')}>&times;</button>
-              </div>
-              <div className="status-message">{status}</div>
-            </div>
-          )}
         </div>
 
         {deviceDistances.length > 0 && (
