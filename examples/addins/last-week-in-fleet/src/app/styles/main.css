@@ -14,7 +14,6 @@ body {
 
 #lastWeekInFleet {
   height: 100%;
-  padding: 16px;
 }
 
 .map-wrapper {
@@ -228,7 +227,7 @@ body {
 
 .compliance-sections {
   margin-top: 0;
-  padding: 16px;
+  padding: 10px 23px;
   background: #f8f9fa;
   border-radius: 8px;
   display: flex;

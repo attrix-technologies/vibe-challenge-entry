@@ -119,7 +119,9 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
             <Header.Title pageName={t('Last Week in Fleet')} />
           </Header>
 
-          <Tabs tabs={tabs} activeTabId={selectedTab} onTabChange={setSelectedTab} />
+          <div style={{ margin: '0 1.5rem' }}>
+            <Tabs tabs={tabs} activeTabId={selectedTab} onTabChange={setSelectedTab} />
+          </div>
 
           <div className="tab-content">
             <div style={{ display: selectedTab === 'productivity' ? 'block' : 'none' }}>
