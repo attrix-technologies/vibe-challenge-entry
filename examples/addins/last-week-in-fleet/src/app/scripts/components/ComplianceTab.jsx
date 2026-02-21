@@ -16,7 +16,7 @@ const MALFUNCTION_STATUSES = {
 
 const ComplianceTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices, drivers, isMetric, language } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, drivers, isMetric, language, reportWrapped } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -250,6 +250,12 @@ const ComplianceTab = () => {
       setUnverifiedByDriver(unverified);
       setUnverifiedDriverDays(totalDriverDays);
       logger.log(`Unverified: ${totalDriverDays} driver-days across ${unverified.length} drivers`);
+
+      reportWrapped('compliance', {
+        hosViolations: thisWeekViolations.length,
+        unverifiedDriverDays: totalDriverDays,
+        eldMalfunctions: malfunctionLogs.length
+      });
 
       setLoading(false);
     }, (error) => {

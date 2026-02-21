@@ -328,3 +328,303 @@ body {
 .stacked-bar-segment:hover::after {
   opacity: 1;
 }
+
+/* ── Corner ribbon  ────────────────────────── */
+.wrapped-ribbon {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9000;
+  width: 90px;
+  height: 90px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  animation: ribbon-fadein 3s ease 0.5s forwards;
+}
+.wrapped-ribbon-stripe {
+  position: absolute;
+  top: 18px;
+  right: -24px;
+  width: 110px;
+  height: 18px;
+  background: linear-gradient(180deg, #ccc 0%, #b8b8b8 50%, #ccc 100%);
+  transform: rotate(45deg);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.wrapped-ribbon:hover .wrapped-ribbon-stripe {
+  background: linear-gradient(180deg, #d4a, #c06 50%, #d4a 100%);
+  transition: background 0.6s ease;
+}
+@keyframes ribbon-fadein {
+  from { opacity: 0; }
+  to { opacity: 0.55; }
+}
+.wrapped-ribbon:hover {
+  opacity: 1 !important;
+}
+
+/* ── Wrapped overlay ───────────────────────────────────────────── */
+.wrapped-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.wrapped-overlay.wrapped-visible {
+  opacity: 1;
+}
+
+/* Close button */
+.wrapped-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10001;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.wrapped-close:hover {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+/* Progress bar (Stories style) */
+.wrapped-progress {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  right: 60px;
+  display: flex;
+  gap: 4px;
+  z-index: 10001;
+}
+.wrapped-seg {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.wrapped-seg-fill {
+  width: 0;
+  height: 100%;
+  background: white;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.wrapped-seg.done .wrapped-seg-fill,
+.wrapped-seg.active .wrapped-seg-fill {
+  width: 100%;
+}
+
+/* Slide content */
+.wrapped-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 0 32px;
+  max-width: 700px;
+  width: 100%;
+}
+.wrapped-slide-enter {
+  animation: wrappedSlideIn 0.45s ease forwards;
+}
+.wrapped-slide-exit {
+  animation: wrappedSlideOut 0.3s ease forwards;
+}
+@keyframes wrappedSlideIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes wrappedSlideOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-20px) scale(0.97); }
+}
+
+/* ── Intro slide ─────────────────────────────────────────────── */
+.wrapped-emoji-hero {
+  font-size: 64px;
+  margin-bottom: 16px;
+  animation: wrappedBounce 0.6s ease 0.2s both;
+}
+@keyframes wrappedBounce {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.wrapped-overtitle {
+  font-size: clamp(0.7rem, 2vw, 0.9rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 8px;
+}
+.wrapped-title {
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.wrapped-title-accent {
+  color: #f0c040;
+}
+.wrapped-date {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: rgba(255,255,255,0.5);
+  margin-top: 16px;
+}
+.wrapped-intro-hint {
+  margin-top: 48px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.35);
+  animation: wrappedPulse 2s ease-in-out 1s infinite;
+}
+@keyframes wrappedPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.7; }
+}
+
+/* ── Stat slides ─────────────────────────────────────────────── */
+.wrapped-label {
+  font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 16px;
+}
+.wrapped-big-number {
+  font-size: clamp(3.5rem, 12vw, 7rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.wrapped-unit {
+  font-size: 0.35em;
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+}
+.wrapped-comparison {
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  color: rgba(255,255,255,0.85);
+  margin-top: 20px;
+  font-style: italic;
+  max-width: 500px;
+  line-height: 1.4;
+}
+.wrapped-cmp-emoji {
+  font-style: normal;
+}
+.wrapped-footnote {
+  font-size: 14px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 12px;
+}
+
+/* Idling section */
+.wrapped-idle-section {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+.wrapped-idle-number {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+}
+.wrapped-idle-quip {
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  color: rgba(255,255,255,0.55);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* CO2 section */
+.wrapped-co2-section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+.wrapped-co2-producing {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.45);
+}
+.wrapped-co2-number {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-top: 4px;
+}
+.wrapped-co2-comparison {
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  color: rgba(255,255,255,0.65);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* ── Outro slide ─────────────────────────────────────────────── */
+.wrapped-outro-title {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 36px;
+}
+.wrapped-outro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 28px;
+  width: 100%;
+  max-width: 520px;
+}
+.wrapped-outro-stat {
+  text-align: center;
+}
+.wrapped-outro-value {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 800;
+}
+.wrapped-outro-unit {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+.wrapped-signoff {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  margin-top: 44px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+}
+
+/* Tap hint */
+.wrapped-tap-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.1em;
+}

@@ -45,7 +45,7 @@ const DENSITY_GRID = 0.005;
 
 const SafetyTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices, language } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, language, reportWrapped } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -353,6 +353,11 @@ const SafetyTab = () => {
         setLoading(false);
         hasData.current = true;
         logger.log('Safety events loaded', { thisWeek: thisTotals, prevWeek: prevTotals });
+
+        reportWrapped('safety', {
+          totalEvents: Object.values(thisTotals).reduce((a, b) => a + b, 0),
+          ...thisTotals
+        });
 
         // ── Collect events + aggregate by device ───────────────────
         const allEvents = [];

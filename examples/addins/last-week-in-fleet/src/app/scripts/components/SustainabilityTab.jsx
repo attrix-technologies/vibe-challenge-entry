@@ -20,7 +20,7 @@ const DISABLED_TILE_STYLE = { opacity: 0.4, pointerEvents: 'none' };
 
 const SustainabilityTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices, isMetric, language } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, isMetric, language, reportWrapped } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -308,7 +308,15 @@ const SustainabilityTab = () => {
         }
 
         logger.log(`Sustainability complete: ${vehicleRows.length} vehicles with fuel data, ${totalExcluded} excluded`);
-        if (!isStale()) { setExcludedCount(totalExcluded); setStatusMessage(''); setProgress(100); }
+        if (!isStale()) {
+          reportWrapped('sustainability', {
+            dieselLiters: dTotal,
+            gasolineLiters: gTotal,
+            dieselCo2Kg: dTotal * GHG_FACTORS.Diesel,
+            gasolineCo2Kg: gTotal * GHG_FACTORS.Gasoline
+          });
+          setExcludedCount(totalExcluded); setStatusMessage(''); setProgress(100);
+        }
       } catch (err) {
         logger.error(`Sustainability load error: ${err.message}`);
         if (!isStale()) setLoading(false);

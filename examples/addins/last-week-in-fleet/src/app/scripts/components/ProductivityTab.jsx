@@ -39,7 +39,7 @@ const parseTimeSpanToHours = (ts) => {
 
 const ProductivityTab = () => {
   const [context] = useContext(GeotabContext);
-  const { geotabApi, logger, focusKey, geotabState, devices, isMetric, language } = context;
+  const { geotabApi, logger, focusKey, geotabState, devices, isMetric, language, reportWrapped } = context;
   const t = (key) => geotabState.translate(key);
 
   const [loading, setLoading] = useState(true);
@@ -555,6 +555,14 @@ ${trkpts}
             drivingTimePercent: totalVehicleHours > 0 ? ((totalDrivingHours / totalVehicleHours) * 100) : 0,
             totalIdlingTime: totalIdlingHours,
             idlingTimePercent: totalVehicleHours > 0 ? ((totalIdlingHours / totalVehicleHours) * 100) : 0
+          });
+
+          reportWrapped('productivity', {
+            totalDistance,
+            totalDrivingHours,
+            totalIdlingHours,
+            vehicleCount: deviceIds.size,
+            tripCount: processedTrips.length
           });
 
           // ── Distance per device + resolve names ─────────────────

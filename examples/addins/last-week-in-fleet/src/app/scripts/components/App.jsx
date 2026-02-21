@@ -1,10 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { LanguageProvider, Tabs, Header } from '@geotab/zenith';
 
 import ProductivityTab from './ProductivityTab.jsx';
 import SafetyTab from './SafetyTab.jsx';
 import ComplianceTab from './ComplianceTab.jsx';
 import SustainabilityTab from './SustainabilityTab.jsx';
+import WrappedOverlay from './WrappedOverlay.jsx';
 
 import GeotabContext from '../contexts/Geotab';
 import Logger from '../utils/logger';
@@ -22,6 +23,20 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
   const [drivers, setDrivers] = useState(null);  // Map<id, {name, timeZoneId}> | null while loading
   const [isMetric, setIsMetric] = useState(true);
   const lastDeviceFilterRef = useRef(null);
+
+  // ── Wrapped ────────────────────────────
+  const isMonday = useRef(new Date().getDay() === 1).current;
+  const wrappedRef = useRef({});
+  const [wrappedReady, setWrappedReady] = useState(false);
+  const [wrappedSeen, setWrappedSeen] = useState(false);
+  const [showWrapped, setShowWrapped] = useState(false);
+  const WRAPPED_KEYS = ['productivity', 'safety', 'compliance', 'sustainability'];
+  const reportWrapped = useCallback((key, data) => {
+    wrappedRef.current[key] = data;
+    if (isMonday && !wrappedReady && WRAPPED_KEYS.every(k => k in wrappedRef.current)) {
+      setWrappedReady(true);
+    }
+  }, [wrappedReady]);
 
   // ── Fetch devices + drivers for current group filter ───────────────
   useEffect(() => {
@@ -86,7 +101,7 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
     });
   }, []);
 
-  const context = { geotabApi, geotabState, logger, focusKey: focusKeyRef.current, devices, drivers, isMetric, language };
+  const context = { geotabApi, geotabState, logger, focusKey: focusKeyRef.current, devices, drivers, isMetric, language, reportWrapped };
   const t = (key) => geotabState.translate(key);
 
   const tabs = [
@@ -120,6 +135,21 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
               <SustainabilityTab />
             </div>
           </div>
+
+          {wrappedReady && !wrappedSeen && (
+            <div className="wrapped-ribbon" onClick={() => setShowWrapped(true)}>
+              <div className="wrapped-ribbon-stripe" />
+            </div>
+          )}
+
+          {showWrapped && (
+            <WrappedOverlay
+              stats={wrappedRef.current}
+              language={language}
+              isMetric={isMetric}
+              onClose={() => { setShowWrapped(false); setWrappedSeen(true); }}
+            />
+          )}
         </div>
       </GeotabContext.Provider>
     </LanguageProvider>
