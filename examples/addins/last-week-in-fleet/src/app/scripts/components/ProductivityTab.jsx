@@ -654,24 +654,24 @@ ${trkpts}
 
   // ── Fault table columns ──────────────────────────────────────────────
   const faultColumns = useMemo(() => [
-    { id: 'name', title: t('Vehicle'), sortable: true, meta: { defaultWidth: 140 } },
-    { id: 'fault', title: t('Fault'), sortable: true, meta: { defaultWidth: 200 } },
-    { id: 'effect', title: t('Effect'), sortable: true, meta: { defaultWidth: 180 } },
-    { id: 'recommendation', title: t('Recommendation'), sortable: true, meta: { defaultWidth: 200 } },
+    { id: 'name', title: t('Vehicle'), sortable: true, meta: { defaultWidth: 120 } },
+    { id: 'fault', title: t('Fault'), sortable: true, meta: { defaultWidth: 350 } },
+    { id: 'effect', title: t('Effect'), sortable: true, meta: { defaultWidth: 250 } },
+    /*{ id: 'recommendation', title: t('Recommendation'), sortable: true, meta: { defaultWidth: 200 } },*/
     {
       id: 'severity', title: t('Severity'), sortable: true,
       columnComponent: { render: (e) => <Pill type={e.severity >= 50 ? 'error' : 'warning'}>{e.severity}</Pill> },
-      meta: { defaultWidth: 100 }
+      meta: { defaultWidth: 80 }
     },
     {
       id: 'risk', title: t('Risk'), sortable: true,
       columnComponent: { render: (e) => <Pill type={e.risk >= 30 ? 'error' : 'warning'}>{e.risk}%</Pill> },
-      meta: { defaultWidth: 100 }
+      meta: { defaultWidth: 80 }
     },
     {
       id: 'count', title: t('Occurrences'), sortable: true,
       columnComponent: { render: (e) => fmt(e.count, language) },
-      meta: { defaultWidth: 100 }
+      meta: { defaultWidth: 80 }
     }
   ], [language, isMetric]);
 

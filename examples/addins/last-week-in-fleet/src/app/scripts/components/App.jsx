@@ -13,6 +13,14 @@ import Logger from '../utils/logger';
 import '@geotab/zenith/dist/index.css'
 import 'maplibre-gl/dist/maplibre-gl.css';
 
+// ── Demo mode: anonymize names on localhost ─────────────────────────
+const IS_LOCAL_DEV = typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const DEMO_FIRST = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Cameron', 'Dakota',
+  'Emerson', 'Finley', 'Harper', 'Jesse', 'Kennedy', 'Logan', 'Mackenzie', 'Noel', 'Parker', 'Reese'];
+const DEMO_LAST = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez',
+  'Martinez', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson', 'White', 'Harris'];
+
 const App = ({ geotabApi, geotabState, appName, language }) => {
   const logger = Logger(appName);
   const focusKeyRef = useRef(0);
@@ -68,7 +76,6 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
         serialNumber: d.serialNumber || null
       }));
       logger.log(`Loaded ${deviceMap.size} devices for group filter`);
-      setDevices(deviceMap);
 
       const driverMap = new Map();
       (results[1] || []).forEach(u => {
@@ -79,6 +86,20 @@ const App = ({ geotabApi, geotabState, appName, language }) => {
         });
       });
       logger.log(`Loaded ${driverMap.size} drivers for group filter`);
+
+      // Anonymize names in local dev (demo recording)
+      if (IS_LOCAL_DEV) {
+        let v = 1;
+        deviceMap.forEach(info => { info.name = `Vehicle ${v++}`; });
+        let d = 0;
+        driverMap.forEach(info => {
+          info.name = `${DEMO_FIRST[d % DEMO_FIRST.length]} ${DEMO_LAST[Math.floor(d / DEMO_FIRST.length) % DEMO_LAST.length]}`;
+          d++;
+        });
+        logger.log('Demo mode: anonymized device and driver names');
+      }
+
+      setDevices(deviceMap);
       setDrivers(driverMap);
     }, (error) => {
       logger.error('Error fetching devices/drivers: ' + error);
