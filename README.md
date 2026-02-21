@@ -180,6 +180,8 @@ showing partial data after 1st VIN batch?
 
 Oops, the prompt above can't be shown until April 5th, 2026... 🥚
 
+> I think it would be neat if we could add a bit more interactivity to the map components. Would it be easy to make it so that hovering over a vehicle on the bar chart would dim opacity really low for all other vehicle's data and bring this vehicle's data to focus? For instance on the productivity map with trips, the trips often overlap in some parts, so we see only the trip at the top. When I mouseover a vehicle, I would like to isolate all of their trips. I don't know if we need to hide all others or just dim them to make this work, whatever you think makes sense without add-in too much complexity (or affecting performance). Similarly on the safety tab, when I mouseover a vehicle in the chart, I'd like to be able to distinguish their events on the map. What do you think?
+
 ### The feedback loop
 
 Here is the critical part that will help you leverage your vibe-coding efforts. Every time you correct the agent's work, it's a cue to improve the agent's knowledge and capabilities. Don't work only for *now*, prompts like the following are what will allow you to leverage your effort for the next time. Always provide feedback to the LLM when it does something wrong or suboptimal, and ALWAYS ask it to learn from its mistakes - through memories, skills, prompting or other tools and mechanisms available.

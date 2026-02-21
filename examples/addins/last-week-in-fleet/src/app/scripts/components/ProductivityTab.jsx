@@ -68,6 +68,8 @@ const ProductivityTab = () => {
   const abortRef = useRef(null);
   const mapBoundsRef = useRef(null);
   const criticalDiagsRef = useRef(null);
+  const [hoveredDeviceId, setHoveredDeviceId] = useState(null);
+  const hoveredDeviceRef = useRef(null);
 
   // ── Date helpers ──────────────────────────────────────────────────────
   const getLastWeekRange = () => {
@@ -110,18 +112,23 @@ const ProductivityTab = () => {
   // ── Flush paths data to a single deck.gl PathLayer ──────────────────
   const flushPaths = () => {
     if (!deckOverlay.current) return;
+    const hov = hoveredDeviceRef.current;
     deckOverlay.current.setProps({
       layers: [
         new PathLayer({
           id: 'trip-paths',
-          data: pathsData.current.slice(), // new ref so deck.gl detects change
+          data: pathsData.current.slice(),
           getPath: d => d.path,
-          getColor: d => d.color,
+          getColor: d => {
+            if (!hov) return [...d.color, 180];
+            return d.deviceId === hov ? [...d.color, 230] : [...d.color, 25];
+          },
           getWidth: 3,
           widthUnits: 'pixels',
           capRounded: true,
           jointRounded: true,
-          opacity: 0.7
+          updateTriggers: { getColor: hov },
+          transitions: { getColor: 150 }
         })
       ]
     });
@@ -131,7 +138,7 @@ const ProductivityTab = () => {
   const addPath = (trip, coordinates) => {
     const color = getDeviceColor(trip.device.id);
     const idx = pathsData.current.findIndex(d => d.id === trip.id);
-    const entry = { id: trip.id, path: coordinates, color };
+    const entry = { id: trip.id, deviceId: trip.device.id, path: coordinates, color };
     if (idx >= 0) pathsData.current[idx] = entry;
     else pathsData.current.push(entry);
   };
@@ -754,7 +761,11 @@ ${trkpts}
                   const converted = convertDistance(item.distance, isMetric);
                   const pct = maxDist > 0 ? (converted / maxDist) * 100 : 0;
                   return (
-                    <div key={item.id} className="distance-bar-row">
+                    <div key={item.id} className="distance-bar-row"
+                      style={hoveredDeviceId && hoveredDeviceId !== item.id ? { opacity: 0.2 } : undefined}
+                      onMouseEnter={() => { hoveredDeviceRef.current = item.id; setHoveredDeviceId(item.id); flushPaths(); }}
+                      onMouseLeave={() => { hoveredDeviceRef.current = null; setHoveredDeviceId(null); flushPaths(); }}
+                    >
                       <div className="distance-bar-name" title={item.name}>{item.name}</div>
                       <div className="distance-bar-track">
                         <div

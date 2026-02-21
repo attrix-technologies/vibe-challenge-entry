@@ -62,6 +62,7 @@ const SafetyTab = () => {
   const map = useRef(null);
   const deckOverlay = useRef(null);
   const [mapProgress, setMapProgress] = useState(0);
+  const [hoveredDeviceId, setHoveredDeviceId] = useState(null);
   const hasFitBounds = useRef(false);
   const mapBoundsRef = useRef(null);
   const locationAbortRef = useRef(false);
@@ -160,7 +161,7 @@ const SafetyTab = () => {
           if (records && records.length > 0) {
             const rec = records[0];
             if (rec.latitude !== 0 || rec.longitude !== 0) {
-              accumulated.push({ position: [rec.longitude, rec.latitude], type: event.type });
+              accumulated.push({ position: [rec.longitude, rec.latitude], type: event.type, deviceId: event.deviceId });
             }
           }
         });
@@ -184,6 +185,7 @@ const SafetyTab = () => {
           return {
             position: p.position,
             type: p.type,
+            deviceId: p.deviceId,
             radius: 4 + (grid.get(key) / maxDensity) * 12,
             color: [...EVENT_COLORS[p.type].rgb, 180]
           };
@@ -219,13 +221,18 @@ const SafetyTab = () => {
             id: 'safety-events',
             data: eventPoints,
             getPosition: d => d.position,
-            getFillColor: d => d.color,
+            getFillColor: d => {
+              if (!hoveredDeviceId) return d.color;
+              return d.deviceId === hoveredDeviceId ? [...d.color.slice(0, 3), 220] : [...d.color.slice(0, 3), 25];
+            },
             getRadius: d => d.radius,
             radiusUnits: 'pixels',
             radiusMinPixels: 3,
             radiusMaxPixels: 18,
             opacity: 0.8,
-            antialiasing: true
+            antialiasing: true,
+            updateTriggers: { getFillColor: hoveredDeviceId },
+            transitions: { getFillColor: 150 }
           })
         ]
       });
@@ -240,7 +247,7 @@ const SafetyTab = () => {
       }
     };
     initMap();
-  }, [loading, eventPoints]);
+  }, [loading, eventPoints, hoveredDeviceId]);
 
   // Re-fit bounds when map container resizes (e.g. chart appears beside it)
   useEffect(() => {
@@ -444,7 +451,11 @@ const SafetyTab = () => {
               );
             }
             return (
-              <div key={item.id} className="distance-bar-row">
+              <div key={item.id} className="distance-bar-row"
+                style={hoveredDeviceId && hoveredDeviceId !== item.id ? { opacity: 0.2 } : undefined}
+                onMouseEnter={() => setHoveredDeviceId(item.id)}
+                onMouseLeave={() => setHoveredDeviceId(null)}
+              >
                 <div className="distance-bar-name" title={item.name}>{item.name}</div>
                 <div className="stacked-bar-track">
                   {EVENT_ORDER.map(type => {

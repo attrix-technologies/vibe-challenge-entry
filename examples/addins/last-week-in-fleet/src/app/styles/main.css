@@ -66,6 +66,7 @@ body {
   align-items: center;
   gap: 8px;
   padding: 4px 0;
+  transition: opacity 0.1s;
 }
 
 .distance-bar-name {
