@@ -335,7 +335,10 @@ const ComplianceTab = () => {
                       <tbody>
                         {getViolationsByDriver().map(d => (
                           <tr key={d.id}>
-                            <td>{d.name}</td>
+                            <td><a className="compliance-link" onClick={() => {
+                              const { thisWeek } = getWeekRanges();
+                              geotabState.gotoPage('hosViolations', { dateRange: { startDate: thisWeek.fromDate, endDate: thisWeek.toDate }, drivers: [d.id] });
+                            }}>{d.name}</a></td>
                             <td>{fmt(d.count, language)}</td>
                             <td>
                               <ul className="compliance-reason-list">
@@ -369,7 +372,9 @@ const ComplianceTab = () => {
                       <tbody>
                         {unverifiedByDriver.map(d => (
                           <tr key={d.id}>
-                            <td>{d.name}</td>
+                            <td><a className="compliance-link" onClick={() => {
+                              geotabState.gotoPage('driverLogs', { drivers: [d.id] });
+                            }}>{d.name}</a></td>
                             <td>{fmt(d.days, language)}</td>
                           </tr>
                         ))}
@@ -397,7 +402,10 @@ const ComplianceTab = () => {
                       <tbody>
                         {eldMalfunctions.map(m => (
                           <tr key={m.id}>
-                            <td>{m.name}</td>
+                            <td><a className="compliance-link" onClick={() => {
+                              const { thisWeek } = getWeekRanges();
+                              geotabState.gotoPage('hosLogs', { dateRange: { startDate: thisWeek.fromDate, endDate: thisWeek.toDate }, driver: 'NoUserId', includeExemptions: true, includeIntermediateLogs: false, search: m.name });
+                            }}>{m.name}</a></td>
                             <td>{fmt(m.count, language)}</td>
                             <td>
                               <ul className="compliance-reason-list">
@@ -435,7 +443,9 @@ const ComplianceTab = () => {
                       <tbody>
                         {pcByDriver.map(d => (
                           <tr key={d.id}>
-                            <td>{d.name}</td>
+                            <td><a className="compliance-link" onClick={() => {
+                              geotabState.gotoPage('driverLogs', { drivers: [d.id], statuses: ['PC'] });
+                            }}>{d.name}</a></td>
                             <td>{fmt(d.count, language)}</td>
                             <td>{fmt(convertDistance(d.km, isMetric), language)}</td>
                           </tr>
@@ -464,7 +474,9 @@ const ComplianceTab = () => {
                       <tbody>
                         {ymByDriver.map(d => (
                           <tr key={d.id}>
-                            <td>{d.name}</td>
+                            <td><a className="compliance-link" onClick={() => {
+                              geotabState.gotoPage('driverLogs', { drivers: [d.id], statuses: ['YM'] });
+                            }}>{d.name}</a></td>
                             <td>{fmt(d.count, language)}</td>
                             <td>{fmt(convertDistance(d.km, isMetric), language)}</td>
                           </tr>

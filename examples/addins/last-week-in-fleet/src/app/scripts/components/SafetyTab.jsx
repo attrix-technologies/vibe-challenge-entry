@@ -452,7 +452,7 @@ const SafetyTab = () => {
             }
             return (
               <div key={item.id} className="distance-bar-row"
-                style={hoveredDeviceId && hoveredDeviceId !== item.id ? { opacity: 0.2 } : undefined}
+                style={hoveredDeviceId && hoveredDeviceId !== item.id ? { opacity: 0.1 } : undefined}
                 onMouseEnter={() => setHoveredDeviceId(item.id)}
                 onMouseLeave={() => setHoveredDeviceId(null)}
               >

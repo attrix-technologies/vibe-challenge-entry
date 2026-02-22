@@ -267,6 +267,15 @@ body {
   overflow-y: auto;
 }
 
+.compliance-link {
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: none;
+}
+.compliance-link:hover {
+  text-decoration: underline;
+}
+
 .compliance-reason-list {
   margin: 0;
   padding: 0;

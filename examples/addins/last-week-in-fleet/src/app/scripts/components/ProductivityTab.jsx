@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
-import { SummaryTileBar, SummaryTile, SummaryTileSize, Table, Pill, Banner } from '@geotab/zenith';
+import { SummaryTileBar, SummaryTile, SummaryTileSize, Table, Pill, Banner, MainColumn } from '@geotab/zenith';
 import { Overview } from '@geotab/zenith/dist/overview/overview';
 import GeotabContext from '../contexts/Geotab';
 import { convertDistance, distanceUnit, fmt } from '../utils/units';
@@ -375,6 +375,7 @@ ${trkpts}
         const diag = criticalDiagsRef.current.get(diagId);
         return {
           id: `${deviceId}|${diagId}`,
+          deviceId,
           name: devices.get(deviceId)?.name || deviceId,
           fault: diag.name,
           effect: diag.effect,
@@ -654,7 +655,17 @@ ${trkpts}
 
   // ── Fault table columns ──────────────────────────────────────────────
   const faultColumns = useMemo(() => [
-    { id: 'name', title: t('Vehicle'), sortable: true, meta: { defaultWidth: 120 } },
+    { id: 'name', title: t('Vehicle'), sortable: true,
+      columnComponent: new MainColumn('name', false, {
+        mainText: {
+          createText: (e) => e.name,
+          createLink: (e) => {
+            const { fromDate, toDate } = getLastWeekRange();
+            return `#faults,dateRange:(from:'${fromDate}',to:'${toDate}'),faultAssets:!('${e.deviceId}')`;
+          }
+        }
+      }),
+      meta: { defaultWidth: 120 } },
     { id: 'fault', title: t('Fault'), sortable: true, meta: { defaultWidth: 350 } },
     { id: 'effect', title: t('Effect'), sortable: true, meta: { defaultWidth: 250 } },
     /*{ id: 'recommendation', title: t('Recommendation'), sortable: true, meta: { defaultWidth: 200 } },*/
@@ -762,7 +773,7 @@ ${trkpts}
                   const pct = maxDist > 0 ? (converted / maxDist) * 100 : 0;
                   return (
                     <div key={item.id} className="distance-bar-row"
-                      style={hoveredDeviceId && hoveredDeviceId !== item.id ? { opacity: 0.2 } : undefined}
+                      style={hoveredDeviceId && hoveredDeviceId !== item.id ? { opacity: 0.1 } : undefined}
                       onMouseEnter={() => { hoveredDeviceRef.current = item.id; setHoveredDeviceId(item.id); flushPaths(); }}
                       onMouseLeave={() => { hoveredDeviceRef.current = null; setHoveredDeviceId(null); flushPaths(); }}
                     >
