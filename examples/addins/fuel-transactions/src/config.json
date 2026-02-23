@@ -1,0 +1,20 @@
+{
+  "name": "fuelTransactions",
+  "supportEmail": "support@attrix.ca",
+  "version": "0.0.1",
+  "items": [{
+    "url": "fuelTransactions.html",
+    "category": "AddIns",
+    "menuName": {
+      "en": "Fuel Transactions",
+      "fr": "Transactions de carburant"
+    },
+    "icon": "images/icon.svg"
+  }],
+  "dev": {
+    "root": "fuelTransactions",
+    "dist": {
+      "host": "https://storage.googleapis.com/geotab-addins/main/vibe/fuel-transactions/"
+    }
+  }
+}

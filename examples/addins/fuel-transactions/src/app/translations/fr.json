@@ -1,0 +1,16 @@
+{
+  "Fuel Transactions": "Transactions de carburant",
+  "Vehicle": "Véhicule",
+  "Driver": "Conducteur",
+  "Date / Time": "Date / Heure",
+  "Date range": "Période",
+  "Volume": "Volume",
+  "Cost": "Coût",
+  "Currency": "Devise",
+  "Comments": "Commentaires",
+  "Export CSV": "Exporter CSV",
+  "Loading...": "Chargement...",
+  "Error": "Erreur",
+  "No fuel transactions found for the selected period.": "Aucune transaction de carburant trouvée pour la période sélectionnée.",
+  "transactions": "transactions"
+}
