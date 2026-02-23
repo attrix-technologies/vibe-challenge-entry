@@ -23,11 +23,12 @@ const FuelTransactionsPage = () => {
   const [isAllFiltersVisible, setIsAllFiltersVisible] = useState(false);
 
   // Date range filter — default to "This week"
-  const thisWeek = useMemo(() => GET_THIS_WEEK_OPTION(), []);
+  const todayOption = GET_TODAY_OPTION();
   const dateRangeDefaultValue = useMemo(() => ({
-    label: thisWeek.label,
-    ...thisWeek.getRange()
-  }), [thisWeek]);
+    label: todayOption.label,
+    ...todayOption.getRange()
+  }
+  ), [todayOption]);
   const [dateRangeValue, setDateRangeValue] = useState(dateRangeDefaultValue);
 
   const onClearAllFilters = useCallback(() => {
@@ -229,12 +230,12 @@ const FuelTransactionsPage = () => {
             onChange={setDateRangeValue}
             props={{
               options: [
-                GET_TODAY_OPTION(),
-                GET_YESTERDAY_OPTION(),
-                GET_THIS_WEEK_OPTION(),
-                GET_LAST_WEEK_OPTION(),
-                GET_THIS_MONTH_OPTION(),
-                GET_LAST_MONTH_OPTION(),
+                "Today",
+                "Yesterday",
+                "ThisWeek",
+                "LastWeek",
+                "ThisMonth",
+                "LastMonth",
                 'Custom'
               ],
               disableFutureDates: true
