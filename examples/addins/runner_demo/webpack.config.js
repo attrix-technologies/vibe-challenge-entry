@@ -108,12 +108,12 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: './src/app/images/icon.svg', to: 'images/' },
         {
           from: './src/config.json',
           transform: transform,
           to: 'configuration.json'
         },
+        { from: './src/app/translations/', to: 'translations/' },
       ]
     })
   ]
