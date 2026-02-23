@@ -7,6 +7,10 @@
     {
       "name": "rules_overview",
       "path": "examples/addins/rules_overview"
+    },
+    {
+      "name": "fuel-transactions",
+      "path": "examples/addins/fuel-transactions"
     }
   ]
 }
