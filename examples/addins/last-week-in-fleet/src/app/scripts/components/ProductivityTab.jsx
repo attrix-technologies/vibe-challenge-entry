@@ -236,7 +236,7 @@ ${trkpts}
 
       const gpxPayload = buildGPX(waypoints);
 
-      const response = await fetch('https://nav.attrix.ai/match?instructions=false&profile=car', {
+      const response = await fetch('https://map-matching-worker.attrix.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/xml' },
         body: gpxPayload
