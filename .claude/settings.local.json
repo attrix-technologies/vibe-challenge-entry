@@ -10,7 +10,14 @@
       "Bash(ls:*)",
       "Bash(npm ls:*)",
       "Bash(node:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "mcp__looker-toolbox__health_pulse",
+      "mcp__looker-toolbox__get_models",
+      "mcp__looker-toolbox__get_explores",
+      "mcp__looker-toolbox__get_dimensions",
+      "mcp__looker-toolbox__get_measures",
+      "mcp__looker-toolbox__query",
+      "Bash(python3:*)"
     ]
   }
 }
